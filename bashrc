@@ -1,11 +1,16 @@
 [[ $- != *i* ]] && return
 [[ -f /etc/bashrc ]] && . /etc/bashrc
 
-# Aliases
-alias watchNode="watch -n0 'ps -eH | grep node -B 2'"
+# General Exports
+export HISTIGNORE='*'
 
-# Scripts
-eval "$(ssh-agent -s)"
-
-# Exports
+# Node Exports
+export BABEL_CACHE_PATH=$home/.cache/babel.json
 export N_PREFIX=$HOME/n
+
+command -v zsh >/dev/null 2>&1 || {
+  read -p "$*Please install zsh. Press [Enter] to continue..."
+}
+
+zsh
+

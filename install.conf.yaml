@@ -2,6 +2,7 @@
 # todo: node
 # todo: emacs
 # todo: cron / scripts
+# todo: zsh
 
 - defaults:
     link:
@@ -11,8 +12,13 @@
 - clean: ['~', '~/.config']
 
 - link:
-    ~/.bashrc: bashrc
+    ~/.aliases: aliases
+    ~/.antigen.zsh: antigen/antigen.zsh
+    ~/.zshrc: zshrc
     ~/.emacs.d: emacs.d
     ~/.npmrc: npmrc
     ~/.gitconfig: gitconfig
     ~/.gitignore: gitignore
+
+- shell:
+  - git submodule update --init --recursive
