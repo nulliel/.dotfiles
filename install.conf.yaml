@@ -11,6 +11,7 @@
 - clean: ['~', '~/.config']
 
 - link:
+    ~/.bashrc: bashrc
     ~/.emacs.d: emacs.d
     ~/.npmrc: npmrc
     ~/.gitconfig: gitconfig
