@@ -1,0 +1,15 @@
+# todo: n
+# todo: node
+# todo: emacs
+# todo: cron / scripts
+
+- defaults:
+    link:
+      create: true
+      relink: true
+
+- clean: ['~', '~/.config']
+
+- link:
+    ~/.emacs.d: emacs.d
+
