@@ -1,0 +1,5 @@
+[user]
+	name = Stephen Ribich
+	email = stephen.ribich@gmail.com
+[core]
+	excludesFile = ~/.gitignore

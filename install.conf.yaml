@@ -12,4 +12,6 @@
 
 - link:
     ~/.emacs.d: emacs.d
-
+    ~/.npmrc: npmrc
+    ~/.gitconfig: gitconfig
+    ~/.gitignore: gitignore
