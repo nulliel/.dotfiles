@@ -14,11 +14,13 @@
 - link:
     ~/.aliases: aliases
     ~/.antigen.zsh: antigen/antigen.zsh
-    ~/.zshrc: zshrc
+    ~/.config/deadbeef: config/deadbeef
+    ~/.config/mpv: config/mpv
     ~/.emacs.d: emacs.d
-    ~/.npmrc: npmrc
     ~/.gitconfig: gitconfig
     ~/.gitignore: gitignore
+    ~/.npmrc: npmrc
+    ~/.zshrc: zshrc
 
 - shell:
   - git submodule update --init --recursive
