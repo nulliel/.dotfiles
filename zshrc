@@ -17,6 +17,6 @@ antigen bundles <<EOBUNDLES
   zsh-users/zsh-syntax-highlighting
 EOBUNDLES
 
-antigen theme agnoster
+antigen theme cloud
 
 antigen apply
