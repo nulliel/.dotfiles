@@ -21,15 +21,12 @@
     ~/.bash_paths: shell/bash_paths
     ~/.bash_profile: shell/bash_profile
     ~/.bashrc: shell/bashrc
-
+    ~/.config/deadbeef: config/deadbeef
+    ~/.config/mpv: config/mpv
+    ~/.emacs.d: emacs.d
     ~/.gitconfig: git/gitconfig
     ~/.gitignore: git/gitignore
-
-#    ~/.npmrc: npmrc
-#    ~/.config/deadbeef: config/deadbeef
-#    ~/.config/mpv: config/mpv
-#    ~/.emacs.d: emacs.d
-
+    ~/.npmrc: config/npmrc
     ~/.zshrc: shell/zshrc
 
 - shell:
