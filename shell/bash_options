@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# -- Options --------------------------------------------------------------------------------------
+shopt -s autocd
+shopt -s cdspell
+shopt -s globstar

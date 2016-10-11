@@ -1,0 +1,14 @@
+# -- Exit when not interactive ---------------------------------------------------------------------
+if [[ $- != *i* ]]; then
+    return
+fi
+
+# -- Source global definitions ---------------------------------------------------------------------
+if [[ -f /etc/bashrc ]]; then
+    source /etc/bashrc
+fi
+
+# -- Source the main configuration -----------------------------------------------------------------
+if [[ -f ~/.bash_profile ]] && [[ -n "$PS1" ]]; then
+    source ~/.bash_profile
+fi

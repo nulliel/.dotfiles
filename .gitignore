@@ -1,3 +1,6 @@
+#Shell
+bash_nocommit
+
 # NPM
 npmrc
 
@@ -5,3 +8,4 @@ npmrc
 emacs.d/save
 emacs.d/elpa
 emacs.d/*.desktop*
+emacs.d/session*

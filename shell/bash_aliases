@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# -- Directory aliases -----------------------------------------------------------------------------
+alias p="cd ~/code/projects"
+alias o="cd ~/code/orgs"
+alias t="cd ~/code/templates"
+alias s="cd ~/code/scripts"
+
+# -- ls aliases ------------------------------------------------------------------------------------
+alias l="ls -lF --color"
+alias la="ls -laF --color"
+alias lsd="ls -lF --color | grep --color=never '^d'"
+alias ls="command ls -F --color"
+
+# -- Grep aliases ----------------------------------------------------------------------------------
+alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
+
+# -- Create a timer --------------------------------------------------------------------------------
+alias timer="echo 'Timer started. Stop with Ctrl-D.' && date && time cat && date"
+
+# -- Process watchers ------------------------------------------------------------------------------
+alias watchNode="watch -n0 'ps -eH | grep node -B 2'"

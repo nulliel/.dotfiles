@@ -12,15 +12,25 @@
 - clean: ['~', '~/.config']
 
 - link:
-    ~/.aliases: aliases
     ~/.antigen.zsh: antigen/antigen.zsh
-    ~/.config/deadbeef: config/deadbeef
-    ~/.config/mpv: config/mpv
-    ~/.emacs.d: emacs.d
-    ~/.gitconfig: gitconfig
-    ~/.gitignore: gitignore
-    ~/.npmrc: npmrc
-    ~/.zshrc: zshrc
+    ~/.bash_aliases: shell/bash_aliases
+    ~/.bash_exports: shell/bash_exports
+    ~/.bash_functions: shell/bash_functions
+    ~/.bash_nocommit: shell/bash_nocommit
+    ~/.bash_options: shell/bash_options
+    ~/.bash_paths: shell/bash_paths
+    ~/.bash_profile: shell/bash_profile
+    ~/.bashrc: shell/bashrc
+
+    ~/.gitconfig: git/gitconfig
+    ~/.gitignore: git/gitignore
+
+#    ~/.npmrc: npmrc
+#    ~/.config/deadbeef: config/deadbeef
+#    ~/.config/mpv: config/mpv
+#    ~/.emacs.d: emacs.d
+
+    ~/.zshrc: shell/zshrc
 
 - shell:
   - git submodule update --init --recursive

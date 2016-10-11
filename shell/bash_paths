@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# -- Prepend ---------------------------------------------------------------------------------------
+declare -a prepend_dirs=(
+    "/usr/local/bin"
+)
+
+for index in ${!prepend_dirs[*]}
+do
+    if [ -d ${prepend_dirs[$index]} ]; then
+        PATH="${prepend_dirs[$index]}:$PATH"
+    fi
+done
+
+unset prepend_dirs
+
+# -- Append ----------------------------------------------------------------------------------------
+declare -a append_dirs=(
+    "/usr/bin"
+    "$HOME/bin"
+    "$HOME/dotfiles/bin"
+    "$HOME/n/bin"
+)
+
+for index in ${!append_dirs[*]}
+do
+    if [ -d ${append_dirs[$index]} ]; then
+        PATH="$PATH:${append_dirs[$index]}"
+    fi
+done
+
+unset append_dirs
+
+# -- Export ------------------------------------------------------------------------------
+export PATH

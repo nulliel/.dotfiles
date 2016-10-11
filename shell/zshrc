@@ -1,5 +1,4 @@
-[[ -f $HOME/.aliases ]] && source $HOME/.aliases
-
+# -- Antigen ---------------------------------------------------------------------------------------
 source ~/.antigen.zsh
 
 antigen use oh-my-zsh
@@ -20,3 +19,8 @@ EOBUNDLES
 antigen theme cloud
 
 antigen apply
+
+# -- Aliases ---------------------------------------------------------------------------------------
+if [[ -f "$HOME/.bash_aliases" ]]; then
+    source $HOME/.bash_aliases
+fi
