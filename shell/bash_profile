@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 # -- Load .bashrc ----------------------------------------------------------------------------------
-for file in ~/.{bash_aliases,bash_exports,bash_functions,bash_nocommit,bash_options,bash_path}; do
+for file in ~/.{bash_aliases,bash_exports,bash_functions,bash_nocommit,bash_options,bash_paths}; do
     [ -r "$file" ] && [ -f "$file" ] && source "$file"
 done
 
 unset file
 
 # -- Message ---------------------------------------------------------------------------------------
-shopt -q login_shell && command -v screenfetch >/dev/null 2>&1 && {
+[[ -o login ]] || shopt -q login_shell 2>/dev/null && command -v screenfetch >/dev/null 2>&1 && {
     echo "$(screenfetch)"
 }
