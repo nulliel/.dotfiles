@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # -- Make emacs the default editor -----------------------------------------------------------------
-export EDITOR='emacs -Q'
+export EDITOR='emacs -nw -Q'
 
 # -- Make ZSH the default shell --------------------------------------------------------------------
 # command -v zsh >/dev/null 2>&1 && {
