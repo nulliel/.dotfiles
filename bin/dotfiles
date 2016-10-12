@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+clear
+
+#-- Config -----------------------------------------------------------------------------------------
+DOTFILES_DIRECTORY="${HOME}/.dotfiles"
+DOTFILES_GIT="https://github.com/nulliel/dotfiles/tarball/master"
+
+#-- Check for root ---------------------------------------------------------------------------------
+if [[ "$EUID" -eq 0 ]]; then
+    printf "[\e[1;91mError\e[0m] This script should not be run using sudo or as the root user\n" >&2
+    exit 1
+fi
+
+#-- Ensure sudo access -----------------------------------------------------------------------------
+sudo -n true >/dev/null 2>&1 || {
+    printf "[\e[1;91mError\e[0m] This script requires the use of sudo without a password\n" >&2
+    exit 1
+}
+
+#-- Check for preexisting configuration ----------------------------------------
+if [[ -d ${DOTFILES_DIRECTORY} ]]; then
+    printf "[\e[1;91mError\e[0m] An existing dotfiles configuration has been found\n"
+    exit 1
+fi
+
+#-- Download Dotfiles ------------------------------------------------------------------------------
+if [[ ! -d ${DOTFILES_DIRECTORY} ]]; then
+    printf "Downloading dotfiles..."
+    mkdir ${DOTFILES_DIRECTORY}
+
+    # Download the tarball
+    curl -fsSLo /tmp/dotfiles.tar.gz ${DOTFILES_GIT} || {
+        printf "\e[91mERROR\e[0m\n"
+        exit 1
+    }
+
+    # Extract the tarball
+    tar -zxf /tmp/dotfiles.tar.gz --strip-components 1 -C ${DOTFILES_DIRECTORY}
+
+    # Remove the tarball
+    rm -rf /tmp/dotfiles.tar.gz
+
+    printf "\e[92mOK\e[0m\n"
+fi
+
+cd ${DOTFILES_DIRECTORY}
+
+#-- Install Dotfiles -------------------------------------------------------------------------------
+source ./bin/install
