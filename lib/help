@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+function run_help() {
+    cat <<EOF
+Dotfiles - Stephen Ribich <stephen.ribich@gmail.com>
+
+Usage: $(basename "$0") [options]
+
+Options:
+    -h, --help          Print this help text
+        --no-packages   Suppress package updates
+        --no-sync       Suppress repository syncing
+
+Documentation can be found at https://github.com/nulliel/dotfiles/
+
+Copyright (c) Stephen Ribich
+Licenced under the MIT license.
+EOF
+}

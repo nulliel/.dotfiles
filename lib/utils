@@ -1,0 +1,161 @@
+#!/USSR/bin/env bash
+
+#-- Header logging ---------------------------------------------------------------------------------
+function u_header() {
+    printf "\n"
+
+    if [[ $IN_SUBHEADER ]]; then
+        printf "  "
+    fi
+
+    printf "\e[0;4m%s\e[0m\n" "$@"
+}
+function u_subheader() {
+    if [[ "$1" -eq "1" ]]; then
+        IN_SUBHEADER=1
+        return
+    fi
+
+    unset IN_SUBHEADER
+}
+
+#-- Message logging --------------------------------------------------------------------------------
+function u_print() {
+    if [[ $IN_SUBHEADER ]]; then
+       printf "  "
+    fi
+
+    printf "$@\n"
+}
+function u_show() {
+    if [[ $IN_SUBHEADER ]]; then
+        printf "  "
+    fi
+
+    printf "$@"
+}
+
+function u_error() {
+    u_print "[\e[1;91mError\e[0m] %s" "$@"
+}
+function u_warning() {
+    u_print "[\e[1;93mWarning\e[0m] %s" "$@"
+}
+
+#-- Success logging --------------------------------------------------------------------------------
+function u_pass() {
+    printf "\e[92mOK\e[0m\n"
+}
+function u_fail() {
+    printf "\e[91mERROR\e[0m\n"
+}
+function u_skip() {
+    printf "\e[93mSKIPPED\e[0m\n"
+}
+
+#-- Confirmation -----------------------------------------------------------------------------------
+function seek_confirmation() {
+    MSG="[y/n]"
+
+    if [ -n "$1" ]; then
+        MSG="$1 $MSG"
+    fi
+
+    read -p "$MSG: " -n 1
+    printf "\r\033[K"
+}
+function is_confirmed() {
+    if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
+#-- Selection --------------------------------------------------------------------------------------
+function print_selection() {
+    SELECTED_ID="$1"
+    shift
+
+    # Update List
+    LIST_ID="1"
+    for i in "$@"; do
+        if [[ "$LIST_ID" == "1" && ! $FIRST_SELECTION_RUN ]]; then
+            printf "\e[$#A"
+        fi
+
+        if [[ "$LIST_ID" == "$SELECTED_ID" ]]; then
+            printf "\e[96m"
+        fi
+
+        u_print "$i\e[0m"
+
+        LIST_ID="$(($LIST_ID+1))"
+    done
+
+    if [[ -n $FIRST_SELECTION_RUN ]]; then
+        unset FIRST_SELECTION_RUN
+    fi
+}
+function delete_selection() {
+    printf "\e[$#A"
+
+    for i in "$@"; do
+        printf "\r\e[K"
+    done
+
+    printf "\e[$#A"
+}
+function u_selection() {
+    SELECTION_LENGTH="$#"
+    CURRENT_SELECTION="1"
+
+    FIRST_SELECTION_RUN=1
+
+    print_selection $CURRENT_SELECTION $@
+
+    while read -rsn1 key; do
+        case "$key" in
+            $'\x1b')
+                read -rsn1 -t 0.1 tmp
+                if [[ "$tmp" == '[' ]]; then
+                    read -rsn1 -t 0.1 tmp
+                    case "$tmp" in
+                        "A")
+                            if [[ "$CURRENT_SELECTION" == "1" ]]; then
+                                CURRENT_SELECTION="$SELECTION_LENGTH"
+                            else
+                                CURRENT_SELECTION="$(($CURRENT_SELECTION-1))"
+                            fi
+                        ;;
+                        "B")
+                            if [[ "$CURRENT_SELECTION" == "$SELECTION_LENGTH" ]]; then
+                                CURRENT_SELECTION="1"
+                            else
+                                CURRENT_SELECTION="$(($CURRENT_SELECTION+1))"
+                            fi
+                        ;;
+                    esac
+                fi
+            ;;
+            "")
+                break;
+            ;;
+        esac
+
+        print_selection $CURRENT_SELECTION $@
+    done
+
+    delete_selection
+
+    SELECTION_VALUE="${!CURRENT_SELECTION}"
+}
+
+#-- Command existance ------------------------------------------------------------------------------
+function cmd_exists() {
+    command -v $1 >/dev/null 2>&1 && {
+        return 0
+    }
+
+    return 1
+}
