@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+u_header "sync"
+
+if [[ ! $NO_SYNC ]]; then
+    seek_confirmation "Sync dotfiles?"
+fi
+
+u_print "Syncing dotfiles..."
+
+if is_confirmed; then
+    git pull --rebase origin master >/dev/null 2>&1 || {
+        u_fail
+        exit 1
+    }
+
+    git submodule update --recursive --init --quiet
+    u_pass
+else
+    u_skip
+fi
+
+u_exit_header

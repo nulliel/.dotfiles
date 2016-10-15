@@ -41,6 +41,9 @@ fi
 for opt in $@
 do
     case $opt in
+        --defaults)
+            INSTALL_DEFAULTS=true
+            ;;
         --no-packages)
             NO_PACKAGES=true
             ;;
@@ -58,21 +61,7 @@ done
 source $DOTFILES_DIRECTORY/lib/git
 
 #-- Sync repository --------------------------------------------------------------------------------
-if [[ $NO_SYNC ]]; then
-    u_print "Skipping dotfiles sync"
-else
-    seek_confirmation "Sync dotfiles?"
-
-    if is_confirmed; then
-        u_show "Syncing dotfiles with repository..."
-
-        git pull --rebase origin master
-        git sub module update --recusrive --init --quiet
-        u_pass
-    else
-        u_print "Skipping dotfiles sync"
-    fi
-fi
+source $DOTFILES_DIRECTORY/bin/sync
 
 #-- Install packages -------------------------------------------------------------------------------
 if [[ $NO_PACKAGES ]]; then

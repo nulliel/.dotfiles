@@ -4,8 +4,8 @@
 HEADER_COLOR="92"
 LAST_HEADER_COLOR="93"
 
-SUBHEADER_COLOR="93"
-LAST_SUBHEADER_COLOR="94"
+SUBHEADER_COLOR="95"
+LAST_SUBHEADER_COLOR="96"
 
 function u_toggle_header_color() {
     if [[ "$1" == "header" ]]; then
@@ -41,12 +41,12 @@ function u_exit_subheader() {
 
 function u_print_header() {
     if [[ $IN_SUBHEADER ]]; then
-        printf "  [\e[1;${SUBHEADER_COLOR}m$SUBHEADER_TITLE\e[0m]"
+        printf "  [\e[1;${SUBHEADER_COLOR}m$SUBHEADER_TITLE\e[0m] "
         return
     fi
 
     if [[ $IN_HEADER ]]; then
-        printf "[\e[1;${HEADER_COLOR}m$HEADER_TITLE\e[0m]"
+        printf "[\e[1;${HEADER_COLOR}m$HEADER_TITLE\e[0m] "
     fi
 
 #    if [[ $IN_HEADER ]]; then
@@ -91,20 +91,22 @@ function u_skip() {
 
 #-- Confirmation -----------------------------------------------------------------------------------
 function seek_confirmation() {
-    MSG="[y/n]"
+    CONFIRM_MESSAGE="[y/N]"
 
     if [ -n "$1" ]; then
-        MSG="$1 $MSG"
+        CONFIRM_MESSAGE="[?] $1 $CONFIRM_MESSAGE"
     fi
 
-    read -p "$MSG: " -n 1
-    printf "\r\033[K"
+    read -p "$CONFIRM_MESSAGE: " -n 1
+    printf "\r\e[K"
 }
 function is_confirmed() {
-    if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    if [[ "$REPLY" =~ ^[yY]$ ]]; then
+        unset REPLY
         return 0
     fi
 
+    unset REPLY
     return 1
 }
 

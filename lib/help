@@ -8,6 +8,7 @@ Usage: $(basename "$0") [options]
 
 Options:
     -h, --help          Print this help text
+        --defaults      Install all defaults without any prompts
         --no-packages   Suppress package updates
         --no-sync       Suppress repository syncing
 
