@@ -58,16 +58,10 @@ do
 done
 
 #-- Ensure git is installed ------------------------------------------------------------------------
-source $DOTFILES_DIRECTORY/lib/git
+source $DOTFILES_DIRECTORY/package/git
 
 #-- Sync repository --------------------------------------------------------------------------------
-source $DOTFILES_DIRECTORY/bin/sync
+source $DOTFILES_DIRECTORY/lib/sync
 
 #-- Install packages -------------------------------------------------------------------------------
-if [[ $NO_PACKAGES ]]; then
-    u_print "Skipping package installation"
-else
-    u_header "Installing packages"
-
-    source $DOTFILES_DIRECTORY/lib/chrome
-fi
+source $DOTFILES_DIRECTORY/lib/packages

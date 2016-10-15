@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+u_subheader "chrome"
+
+if [[ ! $INSTALL_DEFAULTS ]]; then
+    seek_confirmation "Install chrome?"
+
+    u_print "Installing chrome..."
+
+
+
+
+
+
+#-- Ask --------------------------------------------------------------------------------------------
+seek_confirmation "Install chrome?"
+
+if ! is_confirmed; then
+    u_print "Skipping chrome installation."
+    return 0
+fi
+
+#-- Add google repository --------------------------------------------------------------------------
+u_show "Adding google-chrome repository..."
+
+if [[ -f /etc/yum.repos.d/google-chrome.repo ]]; then
+    u_pass
+else
+    REPO_CONTENTS="[google-chrome]
+name=google-chrome
+baseurl=http://dl.google.com/linux/chrome/rpm/stable/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+"
+
+    sudo bash -c "echo \"${REPO_CONTENTS}\" > /etc/yum.repos.d/google-chrome.repo"
+    u_pass
+fi
+
+#-- Release install --------------------------------------------------------------------------------
+u_selection "^Which release would you like to install?" \
+            "beta" \
+            "stable" \
+            "unstable"
+
+case $SELECTION_VALUE in
+    "beta")
+        echo "beta"
+        ;;
+    "stable")
+        echo "stable"
+        ;;
+    "unstable")
+        echo "unstable"
+        ;;
+esac
+
+u_subheader 0

@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
+u_printl ""
 u_header "sync"
 
-if [[ ! $NO_SYNC || ! $INSTALL_DEFAULTS ]]; then
+if [[ ! $NO_SYNC && ! $INSTALL_DEFAULTS ]]; then
     seek_confirmation "Sync dotfiles?"
-fi
-
-if [[ $INSTALL_DEFAULTS ]]; then
+elif [[ ! $NO_SYNC && $INSTALL_DEFAULTS ]]; then
     set_confirmed
 fi
 
