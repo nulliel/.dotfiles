@@ -16,6 +16,7 @@ The following command will bootstrap the dotfiles installation.
 
 #### Optional
 - google-chrome ```dnf | default google-chrome-stable```
+- qbittorrent ```dnf```
 
 # License
 MIT

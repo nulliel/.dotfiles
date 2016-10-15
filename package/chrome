@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-u_subheader "chrome"
+u_subheader "google-chrome"
 
 if cmd_exists google-chrome; then
     u_print "Google Chrome is already installed..."

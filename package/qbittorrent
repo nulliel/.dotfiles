@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+u_subheader "qbittorrent"
+
+if cmd_exists qbittorrent; then
+    u_print "qBittorrent is already installed..."
+    u_skip
+    return
+fi
+
+if [[ ! $INSTALL_DEFAULTS ]]; then
+    seek_confirmation "Install qBittorrent?"
+else
+    set_confirmed
+fi
+
+if ! is_confirmed; then
+    u_print "Installing qBittorrent..."
+    u_skip
+    return
+fi
+
+u_print "Installing qBittorrent..."
+
+package_install qbittorrent && u_pass || u_fail && exit
+
+u_exit_subheader

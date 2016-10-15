@@ -12,4 +12,6 @@ new_line
 
 source $DOTFILES_DIRECTORY/package/chrome
 
+source $DOTFILES_DIRECTORY/package/qbittorrent
+
 u_exit_header
