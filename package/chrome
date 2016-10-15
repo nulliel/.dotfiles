@@ -2,26 +2,26 @@
 
 u_subheader "chrome"
 
+if cmd_exists google-chrome; then
+    u_print "Google Chrome is already installed..."
+    u_skip
+    return
+fi
+
 if [[ ! $INSTALL_DEFAULTS ]]; then
-    seek_confirmation "Install chrome?"
-
-    u_print "Installing chrome..."
-
-
-
-
-
-
-#-- Ask --------------------------------------------------------------------------------------------
-seek_confirmation "Install chrome?"
+    seek_confirmation "Install Google Chrome?"
+else
+    set_confirmed
+fi
 
 if ! is_confirmed; then
-    u_print "Skipping chrome installation."
-    return 0
+    u_print "Installing Google Chrome..."
+    u_skip
+    return
 fi
 
 #-- Add google repository --------------------------------------------------------------------------
-u_show "Adding google-chrome repository..."
+u_print "Adding google-chrome repository..."
 
 if [[ -f /etc/yum.repos.d/google-chrome.repo ]]; then
     u_pass
@@ -39,21 +39,28 @@ gpgkey=https://dl.google.com/linux/linux_signing_key.pub
 fi
 
 #-- Release install --------------------------------------------------------------------------------
-u_selection "^Which release would you like to install?" \
-            "beta" \
-            "stable" \
-            "unstable"
+if [[ ! $INSTALL_DEFAULTS ]]; then
+    u_selection "^Which release would you like to install?" \
+                "#2" \
+                "beta" \
+                "stable" \
+                "unstable"
+else
+    set_selection "stable"
+fi
+
+u_print "Installing google-chrome-$SELECTION_VALUE..."
 
 case $SELECTION_VALUE in
     "beta")
-        echo "beta"
+        package_install google-chrome-beta && u_pass || u_fail && exit
         ;;
     "stable")
-        echo "stable"
+        package_install google-chrome-stable && u_pass || u_fail && exit
         ;;
     "unstable")
-        echo "unstable"
+        package_install google-chrome-unstable && u_pass || u_fail && exit
         ;;
 esac
 
-u_subheader 0
+u_exit_subheader

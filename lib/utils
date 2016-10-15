@@ -40,6 +40,19 @@ function u_exit_subheader() {
 }
 
 function u_print_header() {
+    if [[ $IS_HEADLESS ]]; then
+        [[ $IN_SUBHEADER ]] && printf "     " && HEADLESS_LENGTH=${#SUBHEADER_TITLE}
+        [[ ! $IN_HEADER && $IN_HEADER ]] && printf "   " && HEADLESS_LENGTH=${#HEADER_TITLE}
+
+        for (( c=0; c<$HEADLESS_LENGTH; c++ )); do
+            printf " "
+        done
+
+        unset IS_HEADLESS
+
+        return
+    fi
+
     if [[ $IN_SUBHEADER ]]; then
         printf "  [\e[1;${SUBHEADER_COLOR}m$SUBHEADER_TITLE\e[0m] "
         return
@@ -48,26 +61,25 @@ function u_print_header() {
     if [[ $IN_HEADER ]]; then
         printf "[\e[1;${HEADER_COLOR}m$HEADER_TITLE\e[0m] "
     fi
-
-#    if [[ $IN_HEADER ]]; then
-#        BUILT_HEADER_STRING="\e[${HEADER_COLOR}m$HEADER_TITLE\e[0m"
-#
-#        if [[ $IN_SUBHEADER ]]; then
-#            BUILT_HEADER_STRING="$BUILT_HEADER_STRING:\e[${SUBHEADER_COLOR}m$SUBHEADER_TITLE\e[0m"
-#        fi
-#
-#        printf "[$BUILT_HEADER_STRING] "
-#    fi
 }
 
 #-- Message logging --------------------------------------------------------------------------------
 function u_print() {
     u_print_header
-
     printf "$@"
 }
 function u_printl() {
     u_print "$@"
+    printf "\n"
+}
+
+function u_headless() {
+    IS_HEADLESS=1
+
+    u_print "$@"
+}
+function u_headlessl() {
+    u_headless "$@"
     printf "\n"
 }
 
@@ -76,6 +88,10 @@ function u_error() {
 }
 function u_warning() {
     u_printl "[\e[1;93mWarning\e[0m] %s" "$@"
+}
+
+function new_line() {
+    printf "\n"
 }
 
 #-- Success logging --------------------------------------------------------------------------------
@@ -94,9 +110,10 @@ function seek_confirmation() {
     CONFIRM_MESSAGE="[y/N]"
 
     if [ -n "$1" ]; then
-        CONFIRM_MESSAGE="[?] $1 $CONFIRM_MESSAGE"
+        CONFIRM_MESSAGE="$1 $CONFIRM_MESSAGE"
     fi
 
+    u_print_header
     read -p "$CONFIRM_MESSAGE: " -n 1
     printf "\r\e[K"
 }
@@ -129,7 +146,7 @@ function print_selection() {
             printf "\e[96m"
         fi
 
-        u_print "$i\e[0m"
+        u_headlessl "%s $i\e[0m" "•"
 
         LIST_ID="$(($LIST_ID+1))"
     done
@@ -152,13 +169,22 @@ function u_selection() {
     FIRST_SELECTION_RUN=1
     SELECTION_LENGTH="$#"
 
+    # Print title if exists
     if [[ "${1:0:1}" == '^' ]]; then
-        u_print "Which dank meme would you like yo\n"
+        u_printl "${1:1}"
+        shift
+    fi
+
+    # Check for a default parameter
+    if [[ "${1:0:1}" == '#' ]]; then
+        CURRENT_SELECTION="${1:1}"
+        SELECTION_LENGTH="$((SELECTION_LENGTH-1))"
         shift
     fi
 
     print_selection $CURRENT_SELECTION $@
 
+    # Selection
     while read -rsn1 key; do
         case "$key" in
             $'\x1b')
@@ -192,6 +218,16 @@ function u_selection() {
     delete_selection $SELECTION_LENGTH
     SELECTION_VALUE="${!CURRENT_SELECTION}"
 }
+function is_selection() {
+    if [[ "$1" == "$SELECTION_VALUE" ]]; then
+        return 0
+    fi
+
+    return 1
+}
+function set_selection() {
+    SELECTION_VALUE="$1"
+}
 
 #-- Cursor manipulation ----------------------------------------------------------------------------
 # From http://askubuntu.com/questions/366103/saving-more-corsor-positions-with-tput-in-bash-terminal
@@ -219,7 +255,7 @@ function place_in() {
 
 #-- Package Install --------------------------------------------------------------------------------
 function package_install() {
-    sudo dnf install $1 -qy || {
+    sudo dnf install $1 -qy >>$DOTFILES_LOG 2>&1 || {
         return 1
     }
 

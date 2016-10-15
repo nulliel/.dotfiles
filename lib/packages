@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
-u_printl ""
 u_header "package"
+u_print "Installing packages..."
 
 if [[ $NO_PACKAGES ]]; then
-    u_print "Installing packages..."
     u_skip
     return
 fi
+
+new_line
 
 source $DOTFILES_DIRECTORY/package/chrome
 

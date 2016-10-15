@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+u_header "git"
+
+u_print "Installing git..."
+
+if ! cmd_exists git; then
+    package_install git || {
+        u_fail
+        exit 1
+    }
+
+    u_pass
+else
+    u_skip
+fi
+
+u_exit_header
