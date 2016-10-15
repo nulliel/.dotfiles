@@ -55,16 +55,7 @@ do
 done
 
 #-- Ensure git is installed ------------------------------------------------------------------------
-command -v git >/dev/null 2>&1 || {
-    u_show "Installing git..."
-
-    sudo dnf install git -qy || {
-        u_fail
-        exit 1
-    }
-
-    u_pass
-}
+source $DOTFILES_DIRECTORY/lib/git
 
 #-- Sync repository --------------------------------------------------------------------------------
 if [[ $NO_SYNC ]]; then
@@ -75,17 +66,13 @@ else
     if is_confirmed; then
         u_show "Syncing dotfiles with repository..."
 
-        #    git pull --rebase origin master
-        #    git sub module update --recusrive --init --quiet
-        #    u_pass
-
+        git pull --rebase origin master
+        git sub module update --recusrive --init --quiet
         u_pass
     else
         u_print "Skipping dotfiles sync"
     fi
 fi
-
-exit
 
 #-- Install packages -------------------------------------------------------------------------------
 if [[ $NO_PACKAGES ]]; then

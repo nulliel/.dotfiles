@@ -1,45 +1,81 @@
 #!/USSR/bin/env bash
 
 #-- Header logging ---------------------------------------------------------------------------------
-function u_header() {
-    printf "\n"
+HEADER_COLOR="92"
+LAST_HEADER_COLOR="93"
 
-    if [[ $IN_SUBHEADER ]]; then
-        printf "  "
+SUBHEADER_COLOR="93"
+LAST_SUBHEADER_COLOR="94"
+
+function u_toggle_header_color() {
+    if [[ "$1" == "header" ]]; then
+        TMP_HEADER_COLOR=$HEADER_COLOR
+        HEADER_COLOR=$LAST_HEADER_COLOR
+        LAST_HEADER_COLOR=$TMP_HEADER_COLOR
+    else
+        TMP_HEADER_COLOR=$SUBHEADER_COLOR
+        SUBHEADER_COLOR=$LAST_SUBHEADER_COLOR
+        LAST_SUBHEADER_COLOR=$TMP_HEADER_COLOR
     fi
-
-    printf "\e[0;4m%s\e[0m\n" "$@"
 }
+
+function u_header() {
+    u_toggle_header_color "header"
+
+    IN_HEADER=1
+    HEADER_TITLE="$1"
+}
+function u_exit_header() {
+    unset IN_HEADER
+}
+
 function u_subheader() {
-    if [[ "$1" -eq "1" ]]; then
-        IN_SUBHEADER=1
+    u_toggle_header_color "subheader"
+
+    IN_SUBHEADER=1
+    SUBHEADER_TITLE="$1"
+}
+function u_exit_subheader() {
+    unset IN_SUBHEADER
+}
+
+function u_print_header() {
+    if [[ $IN_SUBHEADER ]]; then
+        printf "  [\e[1;${SUBHEADER_COLOR}m$SUBHEADER_TITLE\e[0m]"
         return
     fi
 
-    unset IN_SUBHEADER
+    if [[ $IN_HEADER ]]; then
+        printf "[\e[1;${HEADER_COLOR}m$HEADER_TITLE\e[0m]"
+    fi
+
+#    if [[ $IN_HEADER ]]; then
+#        BUILT_HEADER_STRING="\e[${HEADER_COLOR}m$HEADER_TITLE\e[0m"
+#
+#        if [[ $IN_SUBHEADER ]]; then
+#            BUILT_HEADER_STRING="$BUILT_HEADER_STRING:\e[${SUBHEADER_COLOR}m$SUBHEADER_TITLE\e[0m"
+#        fi
+#
+#        printf "[$BUILT_HEADER_STRING] "
+#    fi
 }
 
 #-- Message logging --------------------------------------------------------------------------------
 function u_print() {
-    if [[ $IN_SUBHEADER ]]; then
-       printf "  "
-    fi
-
-    printf "$@\n"
-}
-function u_show() {
-    if [[ $IN_SUBHEADER ]]; then
-        printf "  "
-    fi
+    u_print_header
 
     printf "$@"
 }
+function u_printl() {
+    u_print "$@"
+    printf "\n"
+}
 
 function u_error() {
-    u_print "[\e[1;91mError\e[0m] %s" "$@"
+    u_printl "[\e[1;91mError\e[0m] %s" "$@"
 }
 function u_warning() {
-    u_print "[\e[1;93mWarning\e[0m] %s" "$@"
+    u_printl "[\e[1;93mWarning\e[0m] %s" "$@"
 }
 
 #-- Success logging --------------------------------------------------------------------------------
@@ -98,19 +134,23 @@ function print_selection() {
     fi
 }
 function delete_selection() {
-    printf "\e[$#A"
+    printf "\e[$1A"
 
-    for i in "$@"; do
-        printf "\r\e[K"
+    for (( c=1; c<=$1; c++ )); do
+        printf "\r\e[K\n"
     done
 
-    printf "\e[$#A"
+    printf "\e[$1A"
 }
 function u_selection() {
-    SELECTION_LENGTH="$#"
     CURRENT_SELECTION="1"
-
     FIRST_SELECTION_RUN=1
+    SELECTION_LENGTH="$#"
+
+    if [[ "${1:0:1}" == '^' ]]; then
+        u_print "Which dank meme would you like yo\n"
+        shift
+    fi
 
     print_selection $CURRENT_SELECTION $@
 
@@ -127,28 +167,34 @@ function u_selection() {
                             else
                                 CURRENT_SELECTION="$(($CURRENT_SELECTION-1))"
                             fi
-                        ;;
+                            ;;
                         "B")
                             if [[ "$CURRENT_SELECTION" == "$SELECTION_LENGTH" ]]; then
                                 CURRENT_SELECTION="1"
                             else
                                 CURRENT_SELECTION="$(($CURRENT_SELECTION+1))"
                             fi
-                        ;;
+                            ;;
                     esac
                 fi
-            ;;
+                ;;
             "")
                 break;
-            ;;
+                ;;
         esac
-
         print_selection $CURRENT_SELECTION $@
     done
-
-    delete_selection
-
+    delete_selection $SELECTION_LENGTH
     SELECTION_VALUE="${!CURRENT_SELECTION}"
+}
+
+#-- Package Install --------------------------------------------------------------------------------
+function package_install() {
+    sudo dnf install $1 -qy || {
+        return 1
+    }
+
+    return 0
 }
 
 #-- Command existance ------------------------------------------------------------------------------
