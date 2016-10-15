@@ -5,30 +5,28 @@ DOTFILES_DIRECTORY="${HOME}/.dotfiles"
 DOTFILES_TAR_REPO="https://github.com/nulliel/dotfiles/tarball/master" # EDIT THIS WHEN FORKING
 
 #-- Check for preexisting configuration ----------------------------------------
-if [[ -d ${DOTFILES_DIRECTORY} ]]; then
-    printf "[\e[1;91mError\e[0m] An existing dotfiles configuration has been found\n"
+if [[ -d ${DOTFILES_DIRECTORY} || -f ${DOTFILES_DIRECTORY} ]]; then
+    printf "[\e[1;91mError\e[0m] An existing dotfiles configuration has been found.\n"
     exit 1
 fi
 
 #-- Download Dotfiles ------------------------------------------------------------------------------
-if [[ ! -d ${DOTFILES_DIRECTORY} ]]; then
-    printf "Downloading dotfiles..."
-    mkdir ${DOTFILES_DIRECTORY}
+printf "Downloading dotfiles..."
+mkdir ${DOTFILES_DIRECTORY}
 
-    # Download the tarball
-    curl -fsSLo /tmp/dotfiles.tar.gz ${DOTFILES_TAR_REPO} || {
-        printf "\e[91mERROR\e[0m\n"
-        exit 1
-    }
+# Download the tarball
+curl -fsSLo /tmp/dotfiles.tar.gz ${DOTFILES_TAR_REPO} || {
+    printf "\e[91mERROR\e[0m\n"
+    exit 1
+}
 
-    # Extract the tarball
-    tar -zxf /tmp/dotfiles.tar.gz --strip-components 1 -C ${DOTFILES_DIRECTORY}
+# Extract the tarball
+tar -zxf /tmp/dotfiles.tar.gz --strip-components 1 -C ${DOTFILES_DIRECTORY}
 
-    # Remove the tarball
-    rm -rf /tmp/dotfiles.tar.gz
+# Remove the tarball
+rm -rf /tmp/dotfiles.tar.gz
 
-    printf "\e[92mOK\e[0m\n"
-fi
+printf "\e[92mOK\e[0m\n"
 
 #-- Install Dotfiles -------------------------------------------------------------------------------
 source $DOTFILES_DIRECTORY/bin/dotfiles --no-sync
