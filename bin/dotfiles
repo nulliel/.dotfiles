@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 #-- Config -----------------------------------------------------------------------------------------
+DOTFILES_LOG="/tmp/dotfiles.log"
 DOTFILES_DIRECTORY="${HOME}/.dotfiles"
 DOTFILES_GIT_REPO="git@github.com:nulliel/dotfiles.git" # EDIT THIS WHEN FORKING
 
