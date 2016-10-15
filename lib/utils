@@ -109,6 +109,9 @@ function is_confirmed() {
     unset REPLY
     return 1
 }
+function set_confirmed() {
+    REPLY='y'
+}
 
 #-- Selection --------------------------------------------------------------------------------------
 function print_selection() {
