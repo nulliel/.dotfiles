@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-#-- Config -----------------------------------------------------------------------------------------
+#-- Public Config ----------------------------------------------------------------------------------
 DOTFILES_DIRECTORY="${HOME}/.dotfiles"
-DOTFILES_TAR_REPO="https://github.com/nulliel/dotfiles/tarball/master" # EDIT THIS WHEN FORKING
+DOTFILES_TAR_PATH="https://github.com/nulliel/dotfiles/tarball/master"
 
-#-- Check for preexisting configuration ----------------------------------------
+#-- Check for preexisting configuration ------------------------------------------------------------
 if [[ -d ${DOTFILES_DIRECTORY} || -f ${DOTFILES_DIRECTORY} ]]; then
     printf "[\e[1;91mError\e[0m] An existing dotfiles configuration has been found.\n"
     exit 1
@@ -14,8 +14,13 @@ fi
 printf "Downloading dotfiles..."
 mkdir ${DOTFILES_DIRECTORY}
 
-# Download the tarball
-curl -fsSLo /tmp/dotfiles.tar.gz ${DOTFILES_TAR_REPO} || {
+# Remove existing download
+if [[ -f /tmp/dotfiles.tar.gz ]]; then
+    rm /tmp/dotfiles.tar.gz
+fi
+
+# Download dotfiles tarball
+curl -fsSLo /tmp/dotfiles.tar.gz ${DOTFILES_TAR_PATH} || {
     printf "\e[91mERROR\e[0m\n"
     exit 1
 }
@@ -24,7 +29,7 @@ curl -fsSLo /tmp/dotfiles.tar.gz ${DOTFILES_TAR_REPO} || {
 tar -zxf /tmp/dotfiles.tar.gz --strip-components 1 -C ${DOTFILES_DIRECTORY}
 
 # Remove the tarball
-rm -rf /tmp/dotfiles.tar.gz
+rm /tmp/dotfiles.tar.gz
 
 printf "\e[92mOK\e[0m\n"
 
