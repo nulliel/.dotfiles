@@ -109,4 +109,10 @@ case $SELECTION_VALUE in
     ;;
 esac
 
+package_install epel-release
+package_install adobe-source-code-pro-fonts
+package_install aspell
+package_install aspell-en
+package_install the_silver_searcher
+
 u_exit_subheader
