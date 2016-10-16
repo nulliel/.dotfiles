@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+u_subheader "emacs"
+
+#-- Check for installation -------------------------------------------------------------------------
+if package_installed emacs; then
+    u_print "Emacs is already installed..."
+    u_skip
+    return
+fi
+
+#-- Confirm installation ---------------------------------------------------------------------------
+if [[ ! $INSTALL_DEFAULTS ]]; then
+    seek_confirmation "Install Emacs?"
+else
+    set_confirmed
+fi
+
+if ! is_confirmed; then
+    u_print "Installing Emacs..."
+    u_skip
+    return
+fi
+
+#-- Get install type -------------------------------------------------------------------------------
+if [[ ! $INSTALL_DEFAULTS ]]; then
+    u_selection "^Install from binary or source?" \
+                "#2" \
+                "binary" \
+                "source"
+else
+    set_selection "source"
+fi
+
+if [[ "$SELECTION_VALUE" == "source" ]]; then
+    if [[ ! $INSTALL_DEFAULTS ]]; then
+        seek_confirmation "Configure with xwidgets?"
+    else
+        set_confirmed
+    fi
+
+    if is_confirmed; then
+        CONFIGURE_WITH_XWIDGETS=true
+    fi
+fi
+
+case $SELECTION_VALUE in
+    "binary")
+        package_install emacs
+        ;;
+    "source")
+        # Dependencies
+        install_build_tools
+
+        package_install texinfo
+        package_install libXpm-devel
+        package_install libjpeg-turbo-devel
+        package_install libtiff-devel
+        package_install giflib-devel
+        package_install ncurses-devel
+
+        if [[ -n "$CONFIGURE_WITH_XWIDGETS" ]]; then
+            package_install gtk3-devel
+            package_install webkitgtk3-devel
+        fi
+
+        # Download tarball
+        cd /tmp
+
+        u_print "Downloading Emacs tarball..."
+
+        if [[ ! -f /tmp/emacs-25.1.tar.gz ]]; then
+            silent_output wget https://github.com/emacs-mirror/emacs/archive/emacs-25.1.tar.gz
+            check_success
+        else
+            u_skip
+        fi
+
+        # Extract tarball
+        u_print "Extracting tarball..."
+
+        tar -zxf /tmp/emacs-25.1.tar.gz
+        rm /tmp/emacs-25.1.tar.gz
+
+        u_pass
+
+        # Run installation scripts
+        cd /tmp/emacs-emacs-25.1
+
+        u_print "Running ./autogen.sh"
+        log_output ./autogen.sh
+        check_success
+
+        u_print "Running ./configure..."
+        if [[ -n "$CONFIGURE_WITH_XEIDGETS" ]]; then
+            log_output ./configure --with-xwidgets
+        else
+            log_output ./configure
+        fi
+        check_success
+
+        u_print "Running make..."
+        log_output make
+        check_success
+
+        u_print "Running make install..."
+        log_output sudo make install
+        check_success
+    ;;
+esac
+
+u_exit_subheader

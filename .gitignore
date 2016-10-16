@@ -9,3 +9,6 @@ emacs.d/save
 emacs.d/elpa
 emacs.d/*.desktop*
 emacs.d/session*
+
+# Deadbeef
+config/deadbeef/playlists

@@ -313,15 +313,16 @@ function install_build_tools() {
 }
 
 #-- Silent commands --------------------------------------------------------------------------------
-function run_silent() {
-    "$@" >/dev/null 2>&1
-}
-function run_log() {
+function log_output() {
     "$@" >>$DOTFILES_LOG_FILE 2>&1
+}
+function silent_output() {
+    "$@" >/dev/null 2>&1
 }
 
 #-- Command existance ------------------------------------------------------------------------------
 function cmd_exists() {
+
     command -v $1 >/dev/null 2>&1 && {
         return 0
     }

@@ -4,7 +4,7 @@ cli_add_playlist_name Default
 cli_add_to_specific_playlist 1
 close_send_to_tray 1
 deadbeef_version 0.7.2
-filechooser.lastdir file:///run/media/sribich/HDD%202
+filechooser.lastdir file:///home/sribich/Downloads
 filechooser.playlist.lastdir file:///home/sribich/Downloads
 gtkui.columns.playlist [{"title":"♫","id":"1","format":"%playstatus%","size":"50","align":"0","color_override":"0","color":"#ff000000"},{"title":"Artist / Album","id":"-1","format":"%artist% - %album%","size":"203","align":"0","color_override":"0","color":"#ff000000"},{"title":"Track No","id":"-1","format":"%tracknumber%","size":"50","align":"1","color_override":"0","color":"#ff000000"},{"title":"Title","id":"-1","format":"%title%","size":"150","align":"0","color_override":"0","color":"#ff000000"},{"title":"Duration","id":"-1","format":"%length%","size":"50","align":"0","color_override":"0","color":"#ff000000"}]
 gtkui.eq.visible 0
@@ -62,22 +62,21 @@ mainwin.geometry.y 23
 network.http_user_agent deadbeef
 network.proxy.port 8080
 network.proxy.type HTTP
-output_plugin Null output plugin
+output_plugin PulseAudio output plugin
 playback.loop 0
 playback.order 2
 playback.volume 0.0000000
 playlist.current 0
-playlist.cursor.0 2683
+playlist.cursor.0 -1
 playlist.cursor.1 0
-playlist.scroll.0 69602
+playlist.scroll.0 19214
 playlist.scroll.1 0
 playlist.scroll.cursorfollowplayback 1
 playlist.tab.00000 Default
-playlist.tab.00001 New Playlist
 prefwin.geometry.h 520
 prefwin.geometry.w 653
-prefwin.geometry.x 634
-prefwin.geometry.y 275
+prefwin.geometry.x 26
+prefwin.geometry.y 23
 replaygain_mode 0
 replaygain_scale 1
 resume.paused 0

@@ -23,27 +23,35 @@ fi
 #-- Dependencies -----------------------------------------------------------------------------------
 install_build_tools
 
-package_install libsamplerate
-package_install jansson
+package_install libsamplerate-devel
 package_install jansson-devel
-package_install alsa-lib
-package_install libvorbis
-package_install libogg
-package_install imlib2
-package_install libjpeg
-package_install libpng
-package_install flac
-package_install flac123
+package_install alsa-lib-devel
+package_install libvorbis-devel
+package_install libcurl-devel
+package_install libogg-devel
+package_install imlib2-devel
+package_install libjpeg-turbo-devel
+package_install libpng-devel
+package_install libmad-devel
+package_install mpg123
 package_install flac-devel
-package_install flac-libs
-package_install wavpack
-package_install libsndfile
-package_install libcdio
-package_install dbus
-package_install pulseaudio
-package_install zlib
-package_install libzip
-package_install yasm
+package_install wavpack-devel
+package_install libsndfile-devel
+package_install libcdio-devel
+package_install ffmpeg-devel
+package_install dbus-devel
+package_install pulseaudio-libs-devel
+package_install faad2-devel
+package_install zlib-devel
+package_install libzip-devel
+package_install yasm-devel
+package_install mesa-libGLU-devel
+package_install libcddb-devel
+package_install libICE-devel
+package_install libSM-devel
+package_install gstreamer-{ffmpeg,plugins-{good,ugly,bad{,-free,-nonfree}}}
+package_install glib-devel
+package_install glib2-devel
 
 #-- Install ----------------------------------------------------------------------------------------
 cd /tmp
@@ -52,7 +60,7 @@ cd /tmp
 u_print "Downloading DeaDBeeF tarball..."
 
 if [[ ! -f /tmp/0.7.2.tar.gz ]]; then
-    run_silent wget https://github.com/Alexey-Yakovenko/deadbeef/archive/0.7.2.tar.gz
+    silent_output wget https://github.com/Alexey-Yakovenko/deadbeef/archive/0.7.2.tar.gz
     check_success
 else
     u_skip
@@ -70,19 +78,19 @@ u_pass
 cd /tmp/deadbeef-0.7.2
 
 u_print "Running ./autogen.sh..."
-run_log ./autogen.sh
+log_output ./autogen.sh
 check_success
 
 u_print "Running ./configure..."
-run_log ./configure
+log_output ./configure
 check_success
 
 u_print "Running make..."
-run_log make
+log_output "make"
 check_success
 
 u_print "Running make install..."
-run_log sudo make install
+log_output sudo make install
 check_success
 
 u_exit_subheader

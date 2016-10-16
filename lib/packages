@@ -11,6 +11,8 @@ fi
 new_line
 
 source $DOTFILES_DIRECTORY/package/chrome
+source $DOTFILES_DIRECTORY/package/emacs
+
 
 source $DOTFILES_DIRECTORY/package/qbittorrent
 
