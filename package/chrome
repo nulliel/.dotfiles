@@ -49,17 +49,15 @@ else
     set_selection "stable"
 fi
 
-u_print "Installing google-chrome-$SELECTION_VALUE..."
-
 case $SELECTION_VALUE in
     "beta")
-        package_install google-chrome-beta && u_pass || u_fail && exit
+        package_install google-chrome-beta
         ;;
     "stable")
-        package_install google-chrome-stable && u_pass || u_fail && exit
+        package_install google-chrome-stable
         ;;
     "unstable")
-        package_install google-chrome-unstable && u_pass || u_fail && exit
+        package_install google-chrome-unstable
         ;;
 esac
 

@@ -57,11 +57,12 @@ junk.enable_shift_jis_detection 1
 mainwin.geometry.h 752
 mainwin.geometry.maximized 1
 mainwin.geometry.w 1440
-mainwin.geometry.x 199
-mainwin.geometry.y 151
+mainwin.geometry.x 26
+mainwin.geometry.y 23
 network.http_user_agent deadbeef
 network.proxy.port 8080
 network.proxy.type HTTP
+output_plugin Null output plugin
 playback.loop 0
 playback.order 2
 playback.volume 0.0000000

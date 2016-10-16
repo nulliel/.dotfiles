@@ -105,6 +105,16 @@ function u_skip() {
     printf "\e[93mSKIPPED\e[0m\n"
 }
 
+function check_success() {
+    if [[ "$?" == "0" ]]; then
+        u_pass
+        return
+    fi
+
+    u_fail
+    exit 1
+}
+
 #-- Confirmation -----------------------------------------------------------------------------------
 function seek_confirmation() {
     CONFIRM_MESSAGE="[y/N]"
@@ -255,11 +265,59 @@ function place_in() {
 
 #-- Package Install --------------------------------------------------------------------------------
 function package_install() {
-    sudo dnf install $1 -qy >>$DOTFILES_LOG 2>&1 || {
+    u_print "Installing $1..."
+
+    if package_installed $1; then
+        u_skip
+        return
+    fi
+
+    sudo dnf install $1 -qy >>$DOTFILES_LOG_FILE 2>&1 || {
+        u_fail
+        exit 1
+    }
+
+    u_pass
+}
+function package_groupinstall() {
+    u_print "Installing $1..."
+
+    sudo dnf groupinstall "$1" -qy >>$DOTFILES_LOG_FILE 2>&1 || {
+        u_fail
+        exit 1
+    }
+
+    u_pass
+}
+function package_installed() {
+    rpm -qa | grep $1 >/dev/null 2>&1 || {
+        if cmd_exists $1; then
+            return 0
+        fi
+
         return 1
     }
 
     return 0
+}
+function install_build_tools() {
+    package_groupinstall "Development Tools"
+    package_groupinstall "C Development Tools and Libraries"
+
+    package_install "autoconf"
+    package_install "automake"
+    package_install "libtool"
+    package_install "intltool"
+    package_install "gettext"
+    package_install "gettext-devel"
+}
+
+#-- Silent commands --------------------------------------------------------------------------------
+function run_silent() {
+    "$@" >/dev/null 2>&1
+}
+function run_log() {
+    "$@" >>$DOTFILES_LOG_FILE 2>&1
 }
 
 #-- Command existance ------------------------------------------------------------------------------

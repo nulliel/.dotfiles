@@ -11,12 +11,12 @@ fi
 u_print "Syncing dotfiles..."
 
 if is_confirmed; then
-    git pull --rebase origin master >>$DOTFILES_LOG 2>&1 || {
+    git pull --rebase origin master >>$DOTFILES_LOG_FILE 2>&1 || {
         u_fail
         exit 1
     }
 
-    git submodule update --recursive --init >>$DOTFILES_LOG 2>&1 || {
+    git submodule update --recursive --init >>$DOTFILES_LOG_FILE 2>&1 || {
         u_fail
         exit 1
     }

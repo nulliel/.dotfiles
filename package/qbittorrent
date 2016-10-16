@@ -15,13 +15,11 @@ else
 fi
 
 if ! is_confirmed; then
-    u_print "Installing qBittorrent..."
+    u_print "Installing qbittorrent..."
     u_skip
     return
 fi
 
-u_print "Installing qBittorrent..."
-
-package_install qbittorrent && u_pass || u_fail && exit
+package_install qbittorrent
 
 u_exit_subheader

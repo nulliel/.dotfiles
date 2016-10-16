@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 #-- Config -----------------------------------------------------------------------------------------
-DOTFILES_LOG="/tmp/dotfiles.log"
 DOTFILES_DIRECTORY="${HOME}/.dotfiles"
-DOTFILES_GIT_REPO="git@github.com:nulliel/dotfiles.git" # EDIT THIS WHEN FORKING
+DOTFILES_LOG_FILE="/tmp/dotfiles.log"
+DOTFILES_GIT_PATH="git@github.com:nulliel/dotfiles.git"
 
 #-- Banner -----------------------------------------------------------------------------------------
 clear
@@ -29,7 +29,7 @@ fi
 
 #-- Ensure sudo access -----------------------------------------------------------------------------
 sudo -n true >/dev/null 2>&1 || {
-    u_error "This script requires the use of sudo without a password" >&2
+    u_error "This script requires the use of sudo" >&2
     exit 1
 }
 
