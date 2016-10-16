@@ -14,4 +14,6 @@ source $DOTFILES_DIRECTORY/package/chrome
 
 source $DOTFILES_DIRECTORY/package/qbittorrent
 
+source $DOTFILES_DIRECTORY/package/deadbeef
+
 u_exit_header

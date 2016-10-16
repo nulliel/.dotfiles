@@ -1,4 +1,5 @@
 # Dotfiles (Stephen Ribich)
+Inspired by [necolas/dotfiles](https://github.com/necolas/dotfiles) and [eduardolundgren/dotfiles](https://github.com/eduardolundgren/dotfiles).
 
 These dotfiles are intended for use with Fedora 22+.
 
@@ -17,6 +18,7 @@ The following command will bootstrap the dotfiles installation.
 #### Optional
 - google-chrome ```dnf | default google-chrome-stable```
 - qbittorrent ```dnf```
+- deadbeef ```source```
 
 # License
 MIT
