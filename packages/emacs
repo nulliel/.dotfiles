@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+
+u_subheader "emacs"
+
+#-- Configs ----------------------------------------------------------------------------------------
+local configure_with_xwidgets=false
+
+#-- Check for existing installation ----------------------------------------------------------------
+if ! package_installed emacs; then
+  u_print "Installing emacs..."
+  u_skip
+  return
+fi
+
+#-- Confirm installation ---------------------------------------------------------------------------
+if [[ "$INSTALL_DEFAULTS" = false ]]; then
+  seek_confirmation "Install emacs?"
+else
+  set_confirmed
+fi
+
+if ! is_confirmed; then
+  u_print "Installing emacs..."
+  u_skip
+  return
+fi
+
+#-- Get install type -------------------------------------------------------------------------------
+if [[ "$INSTALL_DEFAULTS" = false ]]; then
+  u_selection "^Install from binary or source?" \
+              "#2" \
+              "binary" \
+              "source"
+else
+  set_selection "source"
+fi
+
+if [[ "$SELECTED_VALUE" = "source" ]]; then
+  if [[ "$INSTALL_DEFAULTS" = false ]]; then
+    seek_confirmation "Configure with xwidgets?"
+  else
+    set_confirmed
+  fi
+
+  if is_confirmed; then
+    configure_with_xwidgets=true
+  fi
+fi
+
+case $SELECTED_VALUE in
+  "binary")
+    package_install emacs
+    ;;
+  "source")
+    # Dependencies
+    install_build_tools
+
+    package_install "texinfo"
+    package_install "libXpm-devel"
+    package_install "libjpeg-turbo-devel"
+    package_install "libtiff-devel"
+    package_install "giflib-devel"
+    package_install "ncurses-devel"
+
+    if [[ "$configure_with_xwidgets" = true ]]; then
+      package_install "gtk3-devel"
+      package_install "webkitgtk3-devel"
+    fi
+
+    # Download tarball
+    cd /tmp
+
+    u_print "Downloading Emacs tarball..."
+
+    if [[ ! -f /tmp/emacs-25.1.tar.gz ]]; then
+      show_progress wget https://github.com/emacs-mirror/emacs/archive/emacs-25.1.tar.gz -q || {
+        u_fail
+        exit 1
+      }
+      u_pass
+    else
+      u_skip
+    fi
+
+    # Extract tarball
+    u_print "Extracting tarball..."
+
+    show_progress tar -zxf /tmp/emacs-25.1.tar.gz
+    rm /tmp/emacs-25.1.tar.gz
+
+    u_pass
+
+    # Run installation scripts
+    cd /tmp/emacs-emacs-25.1
+
+    u_print "Running ./autogen.sh..."
+    show_progress ./autogen.sh || {
+      u_fail
+      exit 1
+    }
+    u_pass
+
+    if [[ "$configure_with_xwidgets" = true ]]; then
+      u_print "Running ./configure --with-xwidgets..."
+      show_progress ./configure --with-xwidgets || { u_fail; exit 1; }
+    else
+      u_print "Running ./configure..."
+      show_progress ./configure || { u_fail; exit 1; }
+    fi
+    u_pass
+
+    u_print "Running make..."
+    show_progress make || { u_fail; exit 1; }
+    u_pass
+
+    u_print "Running make install..."
+    show_progress sudo make install || { u_fail; exit 1; }
+    u_pass
+    ;;
+esac
+
+#-- Additional packages ----------------------------------------------------------------------------
+if [[ "$INSTALL_DEFAULTS" = false ]]; then
+  seek_confirmation "Install optional packages?"
+else
+  set_confirmed
+fi
+
+if is_confirmed; then
+  package_install "epel-release"
+  package_install "adobe-source-code-pro-fonts"
+  package_install "aspell"
+  package_install "aspell-en"
+  package_install "the_silver_searcher"
+fi
+
+u_exit_subheader

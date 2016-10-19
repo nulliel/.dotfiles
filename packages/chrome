@@ -9,7 +9,7 @@ if command_exists google-chrome; then
   return
 fi
 
-#-- Confirm Installation ---------------------------------------------------------------------------
+#-- Confirm installation ---------------------------------------------------------------------------
 if [[ "$INSTALL_DEFAULTS" = false ]]; then
   seek_confirmation "Install google-chrome?"
 else

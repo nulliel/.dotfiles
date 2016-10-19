@@ -311,7 +311,7 @@ function package_install() {
 function package_groupinstall() {
     u_print "Installing $1..."
 
-    show_progress sudo dnf groupinstall -y "$1" || {
+    show_progress sudo dnf groupinstall -y "'$@'" || {
         u_fail
         exit 1
     }
@@ -344,10 +344,6 @@ function install_build_tools() {
 
     package_install "autoconf"
     package_install "automake"
-    package_install "libtool"
-    package_install "intltool"
-    package_install "gettext"
-    package_install "gettext-devel"
 }
 
 #-- Command output ---------------------------------------------------------------------------------

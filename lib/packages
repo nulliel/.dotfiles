@@ -20,7 +20,7 @@ sleep 0.1
 source $DOTFILES_DIRECTORY/packages/chrome
 
 # Editors
-#source $DOTFILES_DIRECTORY/package/emacs
+source $DOTFILES_DIRECTORY/packages/emacs
 
 # Social
 #source $DOTFILES_DIRECTORY/package/skype
