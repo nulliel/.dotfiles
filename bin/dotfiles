@@ -7,7 +7,7 @@ readonly LOCKFILE_DIR="/tmp"
 
 readonly DOTFILES_DIRECTORY="${HOME}/.dotfiles"
 readonly DOTFILES_LOG_FILE="/tmp/dotfiles.log"
-readonly DOTFILES_GIT_REPO="git@github.com:nulliel/dotfiles.git"
+readonly DOTFILES_GIT_REPO="https://github.com/nulliel/dotfiles.git"
 
 #-- Options ----------------------------------------------------------------------------------------
 set -o errexit     # Exit on most errors
@@ -53,21 +53,34 @@ function lock() {
 
 #-- Local helpers ----------------------------------------------------------------------------------
 function output_to_log() {
+  IFS=''
   while read data; do
-    printf "%b\n" "$data" | sed -r "s/\r//g" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K|A]//g" >>$DOTFILES_LOG_FILE
+    printf "%b\n" "$data" \
+      | sed -r "s/\r//g" \
+      | sed -r "s/\x1B\[\?7[l|h]//g" \
+      | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K|A]//g" \
+      >>$DOTFILES_LOG_FILE
   done
 }
 function parse_params() {
+  INSTALL_DEFAULTS=false  # Perform all default actions without prompts
+  NO_LINKS=false          # Don't create symbolic links
+  NO_PACKAGES=false       # Don't install packages (OVERRIDES DEFAULTS)
+  NO_SYNC=false           # Don't sync dotfiles (OVERRIDES DEFAULTS)
+
   for opt in "$@"; do
     case "$opt" in
       --defaults)
-        readonly INSTALL_DEFAULTS=true
+        INSTALL_DEFAULTS=true
+        ;;
+      --no-links)
+        NO_LINKS=true
         ;;
       --no-packages)
-        readonly NO_PACKAGES=true
+        NO_PACKAGES=true
         ;;
       --no-sync)
-        readonly NO_SYNC=true
+        NO_SYNC=true
         ;;
       -h|--help)
         show_usage
@@ -79,6 +92,11 @@ function parse_params() {
         ;;
     esac
   done
+
+  readonly INSTALL_DEFAULTS
+  readonly NO_LINKS
+  readonly NO_PACKAGES
+  readonly NO_SYNC
 }
 function show_banner() {
   clear
@@ -99,6 +117,7 @@ Usage: $SCRIPT_NAME [options]
 Options:
         --defaults      Install all defaults without any prompts
     -h, --help          Print this help text
+        --no-links      Suppress linking of dotfiles
         --no-packages   Suppress package updates
         --no-sync       Suppress repository syncing
 
@@ -113,8 +132,11 @@ function main() {
   show_banner
   parse_params "$@"
 
+  #-- Make sure we're in the right directory -------------------------------------------------------
+  cd "${DOTFILES_DIRECTORY}"
+
   #-- Empty the log file ---------------------------------------------------------------------------
-  printf "" >$DOTFILES_LOG_FILE
+  printf "" >"$DOTFILES_LOG_FILE"
 
   #-- Log everything -------------------------------------------------------------------------------
   # fd1 - $DOTFILES_LOG_FILE
@@ -150,6 +172,9 @@ function main() {
 
   #-- Install packages -----------------------------------------------------------------------------
   source $DOTFILES_DIRECTORY/lib/packages
+
+  #-- Create links ---------------------------------------------------------------------------------
+  # source $DOTFILES_DIRECTORY/lib/links
 }
 
 main "$@"
