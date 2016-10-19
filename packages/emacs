@@ -6,7 +6,7 @@ u_subheader "emacs"
 local configure_with_xwidgets=false
 
 #-- Check for existing installation ----------------------------------------------------------------
-if ! package_installed emacs; then
+if package_installed emacs; then
   u_print "Installing emacs..."
   u_skip
   return
