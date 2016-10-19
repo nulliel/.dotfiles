@@ -2,3 +2,5 @@
 
 * TODO Upgrade emacs on newer version
 * TODO Update optional dependencies easier
+
+* TODO deadbeef-gnome-mm-keys package

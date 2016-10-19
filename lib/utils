@@ -168,6 +168,14 @@ function set_confirmed() {
   REPLY='y'
 }
 
+#-- Default ----------------------------------------------------------------------------------------
+function is_default() {
+  if [[ "$INSTALL_DEFAULTS" = true ]]; then
+    return 0
+  fi
+  return 1
+}
+
 #-- Selection --------------------------------------------------------------------------------------
 declare first_selection_run=false
 
@@ -294,7 +302,9 @@ function restore_cursor() {
 
 #-- Package Install --------------------------------------------------------------------------------
 function package_install() {
+  tput rmam 1>&3 2>&1
   u_print "Installing $1..."
+  tput smam 1>&3 2>&1
 
   if package_installed "$1"; then
     u_skip
@@ -391,6 +401,22 @@ function show_progress() {
 
   # Save cursor position
   save_cursor test
+
+  if [[ "${test[0]}" -ge "$(($SCRIPT_HEIGHT-6))" ]]; then
+    local lines_under="$(($SCRIPT_HEIGHT-${test[0]}))"
+
+    for (( i=0; i<$lines_under; i++ )); do
+      printf "\n" 1>&3 2>&1
+    done
+
+    for (( i=0; i<"$((6-$lines_under))"; i++ )); do
+      test[0]="$((${test[0]}-1))"
+      printf "\n" 1>&3 2>&1
+    done
+
+    test[0]="$((${test[0]}-1))"
+    restore_cursor test
+  fi
 
   # Run the command
   eval "$@; echo '.'" 2>&1 | progress_print && progress_done

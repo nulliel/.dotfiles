@@ -11,10 +11,6 @@ fi
 
 new_line 3>&5 4>&6
 
-#-- Check for existing installation ----------------------------------------------------------------
-
-#-- Confirm Installation ---------------------------------------------------------------------------
-
 # Browsers
 sleep 0.1
 source $DOTFILES_DIRECTORY/packages/chrome
@@ -27,8 +23,7 @@ source $DOTFILES_DIRECTORY/packages/emacs
 #source $DOTFILES_DIRECTORY/package/slack
 
 # Utility
-#source $DOTFILES_DIRECTORY/package/qbittorrent
-
-#source $DOTFILES_DIRECTORY/package/deadbeef
+source $DOTFILES_DIRECTORY/packages/qbittorrent  # A torrent client
+source $DOTFILES_DIRECTORY/packages/deadbeef     # An audio player
 
 u_exit_header

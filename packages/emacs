@@ -73,7 +73,7 @@ case $SELECTED_VALUE in
     u_print "Downloading Emacs tarball..."
 
     if [[ ! -f /tmp/emacs-25.1.tar.gz ]]; then
-      show_progress wget https://github.com/emacs-mirror/emacs/archive/emacs-25.1.tar.gz -q || {
+      wget https://github.com/emacs-mirror/emacs/archive/emacs-25.1.tar.gz -q || {
         u_fail
         exit 1
       }
@@ -85,7 +85,7 @@ case $SELECTED_VALUE in
     # Extract tarball
     u_print "Extracting tarball..."
 
-    show_progress tar -zxf /tmp/emacs-25.1.tar.gz
+    tar -zxf /tmp/emacs-25.1.tar.gz
     rm /tmp/emacs-25.1.tar.gz
 
     u_pass

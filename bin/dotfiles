@@ -9,6 +9,8 @@ readonly DOTFILES_DIRECTORY="${HOME}/.dotfiles"
 readonly DOTFILES_LOG_FILE="/tmp/dotfiles.log"
 readonly DOTFILES_GIT_REPO="https://github.com/nulliel/dotfiles.git"
 
+declare -i SCRIPT_HEIGHT="$(tput lines)"
+
 #-- Options ----------------------------------------------------------------------------------------
 set -o errexit     # Exit on most errors
 set -o errtrace    # Inherit error traps
@@ -26,7 +28,7 @@ function trap_err() {
   set +o errexit
 
   # Print fatal error
-  printf "[\e[1;91mFatal\e[0m] Check the logfile at ${DOTFILES_LOG_FILE} for more information."
+  printf "\n[\e[1;91mFatal\e[0m] Check the logfile at ${DOTFILES_LOG_FILE} for more information."
 
   # Exit with failure status
   if [[ "$#" -eq 1 && "$1" =~ ^[0-9]+$ ]]; then
@@ -60,6 +62,9 @@ function output_to_log() {
       | sed -r "s/\x1B\[\?7[l|h]//g" \
       | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K|A]//g" \
       >>$DOTFILES_LOG_FILE
+
+    # Hack to maintain a copy of the actual height
+    SCRIPT_HEIGHT="$(tput lines)"
   done
 }
 function parse_params() {
@@ -145,7 +150,7 @@ function main() {
   # fd4 - stderr
   # fd5 - $DOTFILES_LOG_FILE && stdout
   # fd6 - $FOTFILES_LOG_FILE && stderr
-  exec 3>&1 4>&2 > >(output_to_log) 2>&1 5> >(tee /dev/fd/3) 6> >(tee /dev/fd/4)
+  exec 3>&1 4>&2 1> >(output_to_log) 2>&1 5> >(tee /dev/fd/3) 6> >(tee /dev/fd/4)
 
   #-- Source helpers -------------------------------------------------------------------------------
   source $DOTFILES_DIRECTORY/lib/utils

@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+u_subheader "deadbeef"
+
+#-- Check for existing installation ----------------------------------------------------------------
+if command_exists deadbeef; then
+  u_print "Installing deadbeef..."
+  u_skip
+  return
+fi
+
+#-- Confirm installation ---------------------------------------------------------------------------
+if ! is_default; then
+  seek_confirmation "Install deadbeef?"
+else
+  set_confirmed
+fi
+
+if ! is_confirmed; then
+  u_print "Installing deadbeef..."
+  u_skip
+  return
+fi
+
+#-- Dependencies -----------------------------------------------------------------------------------
+install_build_tools
+
+package_install "libtool"
+package_install "intltool"
+package_install "gettext"
+package_install "gettext-devel"
+
+package_install "libsamplerate-devel"
+package_install "jansson-devel"
+package_install "alsa-lib-devel"
+package_install "libvorbis-devel"
+package_install "libcurl-devel"
+package_install "libogg-devel"
+package_install "imlib2-devel"
+package_install "libjpeg-turbo-devel"
+package_install "libpng-devel"
+package_install "libmad-devel"
+package_install "mpg123"
+package_install "flac-devel"
+package_install "wavpack-devel"
+package_install "libsndfile-devel"
+package_install "libcdio-devel"
+package_install "ffmpeg-devel"
+package_install "dbus-devel"
+package_install "pulseaudio-libs-devel"
+package_install "faad2-devel"
+package_install "zlib-devel"
+package_install "libzip-devel"
+package_install "yasm-devel"
+package_install "mesa-libGLU-devel"
+package_install "libcddb-devel"
+package_install "libICE-devel"
+package_install "libSM-devel"
+package_install "gstreamer-{ffmpeg,plugins-{good,ugly,bad{,-free,-nonfree}}}"
+package_install "glib-devel"
+package_install "glib2-devel"
+
+#-- Install ----------------------------------------------------------------------------------------
+cd /tmp
+
+# Download tarball
+u_print "Downloading DeaDBeeF tarball..."
+
+if [[ ! -f /tmp/0.7.2.tar.gz ]]; then
+  wget https://github.com/Alexey-Yakovenko/deadbeef/archive/0.7.2.tar.gz -q || {
+    u_fail
+    exit 1
+  }
+  u_pass
+else
+  u_skip
+fi
+
+# Extract tarball
+u_print "Extracting tarball..."
+
+tar -zxf /tmp/0.7.2.tar.gz
+rm /tmp/0.7.2.tar.gz
+
+u_pass
+
+# Run installation scripts
+cd /tmp/deadbeef-0.7.2
+
+u_print "Running ./autogen.sh..."
+show_progress ./autogen.sh || { u_fail; exit 1; }
+u_pass
+
+u_print "Running ./configure..."
+show_progress ./configure || { u_fail; exit 1; }
+u_pass
+
+u_print "Running make..."
+show_progress "make" || { u_fail; exit 1; }
+u_pass
+
+u_print "Running make install..."
+show_progress sudo make install || { u_fail; exit 1; }
+u_pass
+
+u_exit_subheader
