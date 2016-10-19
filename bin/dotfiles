@@ -164,17 +164,24 @@ function main() {
     die "This script requires the use of sudo"
   }
 
+  # All sleeps after this point are a bit of a hack to help prevent issues with writing to
+  # stderr/stdout.
+
   #-- Ensure git is installed ----------------------------------------------------------------------
-  source $DOTFILES_DIRECTORY/package/git
+  sleep 0.1
+  source $DOTFILES_DIRECTORY/packages/git
 
   #-- Sync repository ------------------------------------------------------------------------------
+  sleep 0.1
   source $DOTFILES_DIRECTORY/lib/sync
 
   #-- Install packages -----------------------------------------------------------------------------
+  sleep 0.1
   source $DOTFILES_DIRECTORY/lib/packages
 
   #-- Create links ---------------------------------------------------------------------------------
-  # source $DOTFILES_DIRECTORY/lib/links
+  sleep 0.1
+  source $DOTFILES_DIRECTORY/lib/links
 }
 
 main "$@"

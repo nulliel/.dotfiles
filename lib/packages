@@ -1,21 +1,34 @@
 #!/usr/bin/env bash
 
 u_header "package"
+
 u_print "Installing packages..."
 
-if [[ $NO_PACKAGES ]]; then
-    u_skip
-    return
+if [[ "$NO_PACKAGES" = true ]]; then
+  u_skip
+  return
 fi
 
-new_line
+new_line 3>&5 4>&6
 
-source $DOTFILES_DIRECTORY/package/chrome
-source $DOTFILES_DIRECTORY/package/emacs
+#-- Check for existing installation ----------------------------------------------------------------
 
+#-- Confirm Installation ---------------------------------------------------------------------------
 
-source $DOTFILES_DIRECTORY/package/qbittorrent
+# Browsers
+sleep 0.1
+source $DOTFILES_DIRECTORY/packages/chrome
 
-source $DOTFILES_DIRECTORY/package/deadbeef
+# Editors
+#source $DOTFILES_DIRECTORY/package/emacs
+
+# Social
+#source $DOTFILES_DIRECTORY/package/skype
+#source $DOTFILES_DIRECTORY/package/slack
+
+# Utility
+#source $DOTFILES_DIRECTORY/package/qbittorrent
+
+#source $DOTFILES_DIRECTORY/package/deadbeef
 
 u_exit_header

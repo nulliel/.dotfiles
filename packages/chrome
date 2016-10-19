@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+u_subheader "google-chrome"
+
+#-- Check for existing installation ----------------------------------------------------------------
+if command_exists google-chrome; then
+  u_print "Installing google-chrome..."
+  u_skip
+  return
+fi
+
+#-- Confirm Installation ---------------------------------------------------------------------------
+if [[ "$INSTALL_DEFAULTS" = false ]]; then
+  seek_confirmation "Install google-chrome?"
+else
+  set_confirmed
+fi
+
+if ! is_confirmed; then
+  u_print "Installing google-chrome..."
+  u_skip
+  return
+fi
+
+#-- Add google-chrome repository -------------------------------------------------------------------
+u_print "Adding google-chrome repository..."
+
+if [[ -f /etc/yum.repos.d/google-chrome.repo ]]; then
+  u_pass
+else
+  local repo_contents="[google-chrome]
+name=google-chrome
+baseurl=http://dl.google.com/linux/chrome/rpm/stable/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+"
+
+  sudo bash -c "echo \"${REPO_CONTENTS}\" > /etc/yum.repos.d/google-chrome.repo"
+  u_pass
+fi
+
+#-- Release install --------------------------------------------------------------------------------
+if [[ "$INSTALL_DEFAULTS" = false ]]; then
+  u_selection "^Which release would you like to install?" \
+              "#2" \
+              "beta" \
+              "stable" \
+              "unstable"
+else
+  set_selection "stable"
+fi
+
+case $SELECTED_VALUE in
+  "beta")
+    package_install google-chrome-beta
+    ;;
+  "stable")
+    package_install google-chrome-stable
+    ;;
+  "unstable")
+    package_install google-chrome-unstable
+    ;;
+esac
+
+u_exit_subheader
