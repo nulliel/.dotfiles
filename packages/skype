@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+u_subheader "skypeforlinux"
+
+#-- Check for existing installation ----------------------------------------------------------------
+if command_exists skypeforlinux; then
+    u_print "installing skypeforlinux..."
+    u_skip
+    return
+fi
+
+#-- Confirm installation ---------------------------------------------------------------------------
+if ! is_default; then
+  seek_confirmation "Install skypeforlinux?"
+else
+  set_confirmed
+fi
+
+if ! is_confirmed; then
+  u_print "Installing skypeforlinux..."
+  u_skip
+  return
+fi
+
+#-- Dependencies -----------------------------------------------------------------------------------
+package_install "libXv.i686"
+package_install "libXScrnSaver.i686"
+package_install "qt.i686"
+package_install "qt-x11.i686"
+package_install "pulseaudio-libs.i686"
+package_install "pulseaudio-libs-glib2.i686"
+package_install "alsa-plugins-pulseaudio.i686"
+package_install "qtwebkit.i686"
+
+#-- Install ----------------------------------------------------------------------------------------
+cd /tmp
+
+u_print "Downloading skypeforlinux rpm..."
+wget https://go.skype.com/skypeforlinux-64-alpha.rpm -q || { u_fail; exit 1; }
+u_pass
+
+u_print "Installing skypeforlinux.rpm..."
+show_progress sudo rpm -ivh skypeforlinux-64-alpha.rpm || { u_fail; exit 1; }
+u_pass
+
+rm skypeforlinux-64-alpha.rpm
+
+u_exit_subheader

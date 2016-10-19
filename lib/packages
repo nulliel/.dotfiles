@@ -19,7 +19,7 @@ source $DOTFILES_DIRECTORY/packages/chrome
 source $DOTFILES_DIRECTORY/packages/emacs
 
 # Social
-#source $DOTFILES_DIRECTORY/package/skype
+source $DOTFILES_DIRECTORY/packages/skype
 #source $DOTFILES_DIRECTORY/package/slack
 
 # Utility

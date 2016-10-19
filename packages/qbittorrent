@@ -3,7 +3,7 @@
 u_subheader "qbittorrent"
 
 #-- Check for existing installation ----------------------------------------------------------------
-if cmd_exists qbittorrent; then
+if command_exists qbittorrent; then
     u_print "installing qbittorrent..."
     u_skip
     return
