@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+u_subheader "slack"
+
+#-- Check for existing installation ----------------------------------------------------------------
+if command_exists slack; then
+    u_print "installing slack..."
+    u_skip
+    return
+fi
+
+#-- Confirm installation ---------------------------------------------------------------------------
+if ! is_default; then
+  seek_confirmation "Install slack?"
+else
+  set_confirmed
+fi
+
+if ! is_confirmed; then
+  u_print "Installing slack..."
+  u_skip
+  return
+fi
+
+#-- Dependencies -----------------------------------------------------------------------------------
+package_install "libappindicator"
+
+#-- Install ----------------------------------------------------------------------------------------
+cd /tmp
+
+u_print "Downloading slack..."
+wget https://downloads.slack-edge.com/linux_releases/slack-2.2.1-0.1.fc21.x86_64.rpm -q \
+  || { u_fail; exit 1; }
+u_pass
+
+u_print "Installing slack..."
+show_progress sudo rpm -ivh slack-2.2.1-0.1.fc21.x86_64.rpm || { u_fail; exit 1; }
+u_pass
+
+rm slack-2.2.1-0.1.fc21.x86_64.rpm
+
+u_exit_subheader

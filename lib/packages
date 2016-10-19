@@ -20,7 +20,7 @@ source $DOTFILES_DIRECTORY/packages/emacs
 
 # Social
 source $DOTFILES_DIRECTORY/packages/skype
-#source $DOTFILES_DIRECTORY/package/slack
+source $DOTFILES_DIRECTORY/packages/slack
 
 # Utility
 source $DOTFILES_DIRECTORY/packages/qbittorrent  # A torrent client

@@ -31,15 +31,16 @@ package_install "pulseaudio-libs.i686"
 package_install "pulseaudio-libs-glib2.i686"
 package_install "alsa-plugins-pulseaudio.i686"
 package_install "qtwebkit.i686"
+package_install "libappindicator"
 
 #-- Install ----------------------------------------------------------------------------------------
 cd /tmp
 
-u_print "Downloading skypeforlinux rpm..."
+u_print "Downloading skypeforlinux..."
 wget https://go.skype.com/skypeforlinux-64-alpha.rpm -q || { u_fail; exit 1; }
 u_pass
 
-u_print "Installing skypeforlinux.rpm..."
+u_print "Installing skypeforlinux..."
 show_progress sudo rpm -ivh skypeforlinux-64-alpha.rpm || { u_fail; exit 1; }
 u_pass
 
