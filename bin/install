@@ -34,4 +34,4 @@ rm /tmp/dotfiles.tar.gz
 printf "\e[92mOK\e[0m\n"
 
 #-- Install Dotfiles -------------------------------------------------------------------------------
-source $DOTFILES_DIRECTORY/bin/dotfiles --no-sync
+source $DOTFILES_DIRECTORY/bin/dotfiles
