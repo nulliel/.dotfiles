@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+u_subheader "mpv"
+
+#-- Check for existing installation ----------------------------------------------------------------
+if command_exists mpv; then
+  u_print "Installing mpv..."
+  u_skip
+  return
+fi
+
+#-- Confirm installation ---------------------------------------------------------------------------
+if ! is_default; then
+  seek_confirmation "Install mpv?"
+else
+  set_confirmed
+fi
+
+if ! is_confirmed; then
+  u_print "Installing mpv..."
+  u_skip
+  return
+fi
+
+#-- Dependencies -----------------------------------------------------------------------------------
+install_build_tools
+
+package_install "python"
+package_install "python-docutils"
+package_install "rst2pdf"
+package_install "mesa-libgbm-devel"
+package_install "ffmpeg-devel"
+package_install "zlib"
+package_install "libass-devel"
+package_install "lua-devel"
+package_install "clang"
+package_install "libsmbclient-devel"
+package_install "luajit-devel"
+package_install "libbluray-devel"
+package_install "libdvdread-devel"
+package_install "libdvdnav-devel"
+package_install "enca-devel"
+package_install "libcdio-paranoia-devel"
+package_install "libguess-devel"
+package_install "uchardet-devel"
+package_install "rubberband-devel"
+package_install "lcms2-devel"
+package_install "libXScrnSaver-devel"
+package_install "libXv-devel"
+package_install "libvdpau-devel"
+package_install "libva-devel"
+package_install "gstreamer1-vaapi"
+package_install "libcaca-devel"
+package_install "libv4l-devel"
+package_install "perl-Math-BigRat"
+
+#-- Install ----------------------------------------------------------------------------------------
+cd /tmp
+
+# Download tarball
+u_print "Downloading mpv tarball..."
+
+if [[ ! -f /tmp/v0.21.0.tar.gz ]]; then
+  wget https://github.com/mpv-player/mpv/archive/v0.21.0.tar.gz -q || {
+    u_fail
+    exit 1
+  }
+  u_pass
+else
+  u_skip
+fi
+
+# Extract tarball
+u_print "Extracting tarball..."
+
+tar -zxf /tmp/v0.21.0.tar.gz
+rm /tmp/v0.21.0.tar.gz
+
+u_pass
+
+# Run installation scripts
+cd /tmp/mpv-0.21.0
+
+u_print "Running ./bootstrap.py..."
+show_progress ./bootstrap.py || { u_fail; exit 1; }
+u_pass
+
+u_print "Running ./waf configure..."
+show_progress ./waf configure || { u_fail; exit 1; }
+u_pass
+
+u_print "Running ./waf build..."
+show_progress ./waf build || { u_fail; exit 1; }
+u_pass
+
+u_print "Running ./waf install..."
+show_progress sudo ./waf install || { u_fail; exit 1; }
+u_pass
+
+u_exit_subheader

@@ -12,18 +12,18 @@ fi
 new_line 3>&5 4>&6
 
 # Browsers
-sleep 0.1
-source $DOTFILES_DIRECTORY/packages/chrome
+sleep 0.1 && source $DOTFILES_DIRECTORY/packages/chrome
 
 # Editors
-source $DOTFILES_DIRECTORY/packages/emacs
+sleep 0.1 && source $DOTFILES_DIRECTORY/packages/emacs
 
 # Social
-source $DOTFILES_DIRECTORY/packages/skype
-source $DOTFILES_DIRECTORY/packages/slack
+sleep 0.1 && source $DOTFILES_DIRECTORY/packages/skype
+sleep 0.1 && source $DOTFILES_DIRECTORY/packages/slack
 
 # Utility
-source $DOTFILES_DIRECTORY/packages/qbittorrent  # A torrent client
-source $DOTFILES_DIRECTORY/packages/deadbeef     # An audio player
+sleep 0.1 && source $DOTFILES_DIRECTORY/packages/qbittorrent  # A torrent client
+sleep 0.1 && source $DOTFILES_DIRECTORY/packages/deadbeef     # An audio player
+sleep 0.1 && source $DOTFILES_DIRECTORY/packages/mpv          # A video player
 
 u_exit_header
