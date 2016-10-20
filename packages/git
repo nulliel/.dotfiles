@@ -2,6 +2,6 @@
 
 u_header "git"
 
-package_install git
+package_install "git"
 
 u_exit_header

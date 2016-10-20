@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+u_header "link"
+
 function create_link() {
   local link_from="${DOTFILES_DIRECTORY}/$1"
   local link_to="${HOME}/$2"
@@ -37,3 +39,5 @@ create_link "emacs.d"              ".emacs.d"
 create_link "git/gitconfig"        ".gitconfig"
 create_link "git/gitignore"        ".gitignore"
 create_link "config/npmrc"         ".npmrc"
+
+u_exit_header

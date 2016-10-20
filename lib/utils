@@ -124,7 +124,19 @@ function u_fail() {
   printf "\n"
 }
 function u_skip() {
+  if [[ "$#" -eq 1 ]]; then
+    u_print "$1"
+  fi
+
   printf "\e[93mSKIPPED\e[0m\n" 1>&5 2>&1
+}
+
+function do_fail() {
+  u_fail
+  exit 1
+}
+function u_return() {
+  "$@" && u_pass || do_fail
 }
 
 # Exits --------------------------------------------------------------------------------------------
@@ -166,6 +178,25 @@ function is_confirmed() {
 }
 function set_confirmed() {
   REPLY='y'
+}
+function poll_confirm() {
+  if [[ "$#" -ne "2" ]]; then
+    u_error "poll_package requires 2 arguments"
+  fi
+
+  if is_default && [[ "$2" = true ]]; then
+    return 0
+  elif is_default && [[ "$2" = false ]]; then
+    return 1
+  fi
+
+  seek_confirmation "$1"
+
+  if is_confirmed; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 #-- Default ----------------------------------------------------------------------------------------
@@ -392,6 +423,7 @@ function progress_done() {
 function show_progress() {
   local progress_init=true
   local progress_list=(+ + + + +)
+  local did_error=false
 
   # Print a newline for the log
   printf "\n\n"
@@ -419,11 +451,19 @@ function show_progress() {
   fi
 
   # Run the command
-  eval "$@; echo '.'" 2>&1 | progress_print && progress_done
+  eval "$@; echo '.'" 2>&1 | progress_print && progress_done || {
+      did_error=true
+  }
 
   # Restore Cursor position
   restore_cursor test
 
   # Enable line wrapping
   tput smam 1>&3 2>&1
+
+  if [[ "$did_error" = true ]]; then
+    return 1
+  else
+    return 0
+  fi
 }

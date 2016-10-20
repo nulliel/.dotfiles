@@ -4,22 +4,14 @@ u_subheader "google-chrome"
 
 #-- Check for existing installation ----------------------------------------------------------------
 if command_exists google-chrome; then
-  u_print "Installing google-chrome..."
-  u_skip
-  return
+  u_skip "Installing google-chrome..."
+  u_exit_subheader && return
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if [[ "$INSTALL_DEFAULTS" = false ]]; then
-  seek_confirmation "Install google-chrome?"
-else
-  set_confirmed
-fi
-
-if ! is_confirmed; then
-  u_print "Installing google-chrome..."
-  u_skip
-  return
+if ! poll_confirm "Install google-chrome?" true; then
+  u_skip "Installing google-chrome..."
+  u_exit_subheader && return
 fi
 
 #-- Add google-chrome repository -------------------------------------------------------------------
@@ -41,7 +33,7 @@ gpgkey=https://dl.google.com/linux/linux_signing_key.pub
 fi
 
 #-- Release install --------------------------------------------------------------------------------
-if [[ "$INSTALL_DEFAULTS" = false ]]; then
+if ! is_default; then
   u_selection "^Which release would you like to install?" \
               "#2" \
               "beta" \

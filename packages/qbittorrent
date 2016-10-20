@@ -4,25 +4,17 @@ u_subheader "qbittorrent"
 
 #-- Check for existing installation ----------------------------------------------------------------
 if command_exists qbittorrent; then
-    u_print "installing qbittorrent..."
-    u_skip
-    return
+  u_skip "Installing qbittorrent..."
+  u_exit_subheader && return
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if ! is_default; then
-  seek_confirmation "Install qbittorrent?"
-else
-  set_confirmed
-fi
-
-if ! is_confirmed; then
-  u_print "Installing qbittorrent..."
-  u_skip
-  return
+if ! poll_confirm "Install qbittorrent?" true; then
+  u_skip "Installing qbittorrent..."
+  u_exit_subheader && return
 fi
 
 #-- Install ----------------------------------------------------------------------------------------
-package_install qbittorrent
+package_install "qbittorrent"
 
 u_exit_subheader

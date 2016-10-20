@@ -2,31 +2,39 @@
 
 u_header "package"
 
+#-- Utilities --------------------------------------------------------------------------------------
+function load_package() {
+  sleep 0.1
+  source "$DOTFILES_DIRECTORY/packages/$1"
+}
+
+#-- Poll confirmation ------------------------------------------------------------------------------
 u_print "Installing packages..."
 
 if [[ "$NO_PACKAGES" = true ]]; then
-  u_skip
-  return
+  u_skip && return
 fi
 
 new_line 3>&5 4>&6
 
+#-- Packages ---------------------------------------------------------------------------------------
+
 # Browsers
-sleep 0.1 && source $DOTFILES_DIRECTORY/packages/chrome
+load_package "chrome"
 
 # Editors
-sleep 0.1 && source $DOTFILES_DIRECTORY/packages/emacs
+load_package "emacs"
 
 # Scripts
-sleep 0.1 && source $DOTFILES_DIRECTORY/packages/nvm
+load_package "nvm"
 
 # Social
-sleep 0.1 && source $DOTFILES_DIRECTORY/packages/skype
-sleep 0.1 && source $DOTFILES_DIRECTORY/packages/slack
+load_package "skype"
+load_package "slack"
 
 # Utility
-sleep 0.1 && source $DOTFILES_DIRECTORY/packages/qbittorrent  # A torrent client
-sleep 0.1 && source $DOTFILES_DIRECTORY/packages/deadbeef     # An audio player
-sleep 0.1 && source $DOTFILES_DIRECTORY/packages/mpv          # A video player
+load_package "qbittorrent"  # A torrent client
+load_package "deadbeef"     # An audio player
+load_package "mpv"          # A video player
 
 u_exit_header

@@ -2,44 +2,36 @@
 
 u_header "sync"
 
-#-- Confirm Sync -----------------------------------------------------------------------------------
-if [[ "$NO_SYNC" = false && "$INSTALL_DEFAULTS" = false ]]; then
-  seek_confirmation "Sync dotfiles?"
-elif [[ "$NO_SYNC" = false && "$INSTALL_DEFAULTS" = true ]]; then
-  set_confirmed
+#-- Check flags ------------------------------------------------------------------------------------
+if [[ "$NO_SYNC" = true ]]; then
+  u_skip "Syncing dotfiles..."
+  u_exit_header && return
 fi
 
-if is_confirmed; then
-  #-- Initialize the git repository ----------------------------------------------------------------
-  u_print "Initializing git repository..."
+#-- Confirm Sync -----------------------------------------------------------------------------------
+if ! poll_confirm "Sync dotfiles?" true; then
+  u_skip "Syncing dotfiles..."
+  u_exit_header && return
+fi
 
-  if [[ "$(git rev-parse --is-inside-work-tree 1>/dev/null 2>&1)" = "false" ]]; then
-    git init || { u_fail; exit 1; }
-    git remote add origin "${DOTFILES_GIT_REMOTE}" || { u_fail; exit 1; }
+#-- Initialize the git repository ------------------------------------------------------------------
+u_print "Initializing git repository..."
 
-    u_pass
-  else
-    u_skip
-  fi
+if [[ "$(git rev-parse --is-inside-work-tree 1>/dev/null 2>&1)" = "false" ]]; then
+  git init || do_fail
+  git remote add origin "${DOTFILES_GIT_REMOTE}" || do_fail
 
-  #-- Sync the repository --------------------------------------------------------------------------
-  u_print "Syncing dotfiles..."
-  show_progress git pull --rebase origin master || {
-    u_fail
-    exit 1
-  }
-  u_pass
-
-  #-- Update modules -------------------------------------------------------------------------------
-  u_print "Updating submodules..."
-  show_progress git submodule update --recursive --init || {
-    u_fail
-    exit 1
-  }
   u_pass
 else
-  u_print "Syncing dotfiles..."
   u_skip
 fi
+
+#-- Sync the repository ----------------------------------------------------------------------------
+u_print "Syncing dotfiles..."
+u_return show_progress git pull --rebase origin master
+
+#-- Update modules ---------------------------------------------------------------------------------
+u_print "Updating submodules..."
+u_return show_progress git submodule update --recursive --init
 
 u_exit_header

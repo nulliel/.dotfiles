@@ -3,38 +3,68 @@
 u_subheader "nvm"
 
 #-- Config -----------------------------------------------------------------------------------------
-export NVM_DIR="$HOME/.nvm"
+local nvm_dir="$HOME/.nvm"
+local nvm_sh="$nvm_dir/nvm.sh"
+
+local node_version="v6.9.1"
 
 #-- Check for existing installation ----------------------------------------------------------------
+if [[ -f "$nvm_sh" ]]; then
+  source "$nvm_sh"
+fi
+
 if command_exists nvm; then
-    u_print "installing nvm..."
-    u_skip
-    return
+  u_skip "Installing nvm..."
+  u_exit_subheader && return
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if ! is_default; then
-  seek_confirmation "Install nvm?"
-else
-  set_confirmed
-fi
-
-if ! is_confirmed; then
-  u_print "Installing nvm..."
-  u_skip
-  return
+if ! poll_confirm "Install nvm?" true; then
+  u_skip "Installing nvm..."
+  u_exit_subheader && return
 fi
 
 #-- Install ----------------------------------------------------------------------------------------
 u_print "Downloading nvm..."
+u_return git clone https://github.com/creationix/nvm.git "$NVM_DIR"
 
-show_progress git clone https://github.com/creationix/nvm.git "$NVM_DIR" || { u_fail; exit 1; }
-cd "$NVM_DIR"
-show_progress git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin` || { u_fail; exit 1; }
-u_pass
+cd "$nvm_dir"
 
-u_print "Activating nvm..."
-source "$NVM_DIR/nvm.sh"
-u_pass
+u_print "Updating nvm..."
+u_return show_progress git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin`
+
+u_print "Sourcing nvm..."
+source "$nvm_sh" && u_pass
+
+#-- Install node -----------------------------------------------------------------------------------
+if ! poll_confirm "Install node ${node_version}?" true; then
+  u_skip "Installing node..."
+  u_exit_subheader && return
+fi
+
+if ! is_default; then
+  u_selection "^Install from binary or source?" \
+              "#2" \
+              "binary" \
+              "source"
+else
+  set_selection "source"
+fi
+
+u_print "Installing node..."
+
+# NVM uses unset variables
+set +o nounset
+
+case "$SELECTED_VALUE" in
+  "binary")
+    u_return show_progress nvm install "$node_version"
+    ;;
+  "source")
+    u_return show_progress nvm install -s "$node_version"
+    ;;
+esac
+
+set -o nounset
 
 u_exit_subheader

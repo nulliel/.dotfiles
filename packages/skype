@@ -2,24 +2,22 @@
 
 u_subheader "skypeforlinux"
 
+#-- Config -----------------------------------------------------------------------------------------
+local tmp_dir="/tmp"
+
+local rpm_source="https://go.skype.com/skypeforlinux-64-alpha.rpm"
+local rpm_path="${tmp_dir}/skypeforlinux-64-alpha.rpm"
+
 #-- Check for existing installation ----------------------------------------------------------------
 if command_exists skypeforlinux; then
-    u_print "installing skypeforlinux..."
-    u_skip
-    return
+    u_skip "Installing skypeforlinux..."
+    u_exit_subheader && return
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if ! is_default; then
-  seek_confirmation "Install skypeforlinux?"
-else
-  set_confirmed
-fi
-
-if ! is_confirmed; then
-  u_print "Installing skypeforlinux..."
-  u_skip
-  return
+if ! poll_confirm "Install skypeforlinux?" true; then
+  u_skip "Installing skypeforlinux..."
+  u_exit_subheader && return
 fi
 
 #-- Dependencies -----------------------------------------------------------------------------------
@@ -34,16 +32,25 @@ package_install "qtwebkit.i686"
 package_install "libappindicator"
 
 #-- Install ----------------------------------------------------------------------------------------
-cd /tmp
+cd "$tmp_dir"
 
-u_print "Downloading skypeforlinux..."
-wget https://go.skype.com/skypeforlinux-64-alpha.rpm -q || { u_fail; exit 1; }
-u_pass
+function download() {
+  u_print "Downloading skypeforlinux..."
 
-u_print "Installing skypeforlinux..."
-show_progress sudo rpm -ivh skypeforlinux-64-alpha.rpm || { u_fail; exit 1; }
-u_pass
+  if [[ -f "$rpm_path" ]]; then
+    cleanup
+  fi
 
-rm skypeforlinux-64-alpha.rpm
+  u_return wget -q "$rpm_source"
+}
+function install() {
+  u_print "Installing skypeforlinux..."
+  u_return show_progress sudo rpm -ivh "$rpm_path"
+}
+function cleanup() {
+  rm "$rpm_path"
+}
+
+download && install && cleanup
 
 u_exit_subheader

@@ -1,133 +1,87 @@
 #!/usr/bin/env bash
 
 u_subheader "emacs"
+cd /tmp
+#-- Config -----------------------------------------------------------------------------------------
+local tmp_dir="/tmp"
 
-#-- Configs ----------------------------------------------------------------------------------------
-local configure_with_xwidgets=false
+local tar_gz_source="https://github.com/emacs-mirror/emacs/archive/emacs-25.1.tar.gz"
+local tar_gz_path="${tmp_dir}/emacs-25.1.tar.gz"
+local folder_path="${tmp_dir}/emacs-emacs-25.1"
 
 #-- Check for existing installation ----------------------------------------------------------------
 if package_installed emacs; then
-  u_print "Installing emacs..."
-  u_skip
-  return
+  u_skip "Installing emacs..."
+  u_exit_subheader && return
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if [[ "$INSTALL_DEFAULTS" = false ]]; then
-  seek_confirmation "Install emacs?"
-else
-  set_confirmed
+if ! poll_confirm "Install emacs?" true; then
+  u_skip "Installing emacs..."
+  u_exit_subheader && return
 fi
 
-if ! is_confirmed; then
-  u_print "Installing emacs..."
-  u_skip
-  return
-fi
+#-- Dependencies -----------------------------------------------------------------------------------
+install_build_tools
 
-#-- Get install type -------------------------------------------------------------------------------
-if [[ "$INSTALL_DEFAULTS" = false ]]; then
-  u_selection "^Install from binary or source?" \
-              "#2" \
-              "binary" \
-              "source"
-else
-  set_selection "source"
-fi
+package_install "texinfo"
+package_install "libXpm-devel"
+package_install "libjpeg-turbo-devel"
+package_install "libtiff-devel"
+package_install "giflib-devel"
+package_install "ncurses-devel"
 
-if [[ "$SELECTED_VALUE" = "source" ]]; then
-  if [[ "$INSTALL_DEFAULTS" = false ]]; then
-    seek_confirmation "Configure with xwidgets?"
-  else
-    set_confirmed
+package_install "gtk3-devel"
+package_install "webkitgtk3-devel"
+
+#-- Installation -----------------------------------------------------------------------------------
+cd "$tmp_dir"
+
+function download() {
+  u_print "Downloading tarball..."
+
+  if [[ -f "$tar_gz_path" ]]; then
+    rm "$tar_gz_path"
   fi
 
-  if is_confirmed; then
-    configure_with_xwidgets=true
+  u_return wget "$tar_gz_source" -q
+}
+function extract() {
+  u_print "Extracting tarball..."
+
+  if [[ -d "$folder_path" ]]; then
+    rm -r "$folder_path"
   fi
-fi
 
-case $SELECTED_VALUE in
-  "binary")
-    package_install emacs
-    ;;
-  "source")
-    # Dependencies
-    install_build_tools
+  tar -zxf "$tar_gz_path"
+  rm "$tar_gz_path"
 
-    package_install "texinfo"
-    package_install "libXpm-devel"
-    package_install "libjpeg-turbo-devel"
-    package_install "libtiff-devel"
-    package_install "giflib-devel"
-    package_install "ncurses-devel"
+  u_pass
+}
+function configure() {
+  u_print "Running ./autogen.sh..."
+  u_return show_progress ./autogen.sh
 
-    if [[ "$configure_with_xwidgets" = true ]]; then
-      package_install "gtk3-devel"
-      package_install "webkitgtk3-devel"
-    fi
+  u_print "Running ./configure --with-xwidgets..."
+  u_return show_progress ./configure --with-xwidgets
+}
+function build() {
+  u_print "Running make..."
+  u_return show_progress make
+}
+function install() {
+  u_print "Running make install..."
+  sudo make install
+}
 
-    # Download tarball
-    cd /tmp
+download && extract
 
-    u_print "Downloading Emacs tarball..."
+cd "$folder_path"
 
-    if [[ ! -f /tmp/emacs-25.1.tar.gz ]]; then
-      wget https://github.com/emacs-mirror/emacs/archive/emacs-25.1.tar.gz -q || {
-        u_fail
-        exit 1
-      }
-      u_pass
-    else
-      u_skip
-    fi
-
-    # Extract tarball
-    u_print "Extracting tarball..."
-
-    tar -zxf /tmp/emacs-25.1.tar.gz
-    rm /tmp/emacs-25.1.tar.gz
-
-    u_pass
-
-    # Run installation scripts
-    cd /tmp/emacs-emacs-25.1
-
-    u_print "Running ./autogen.sh..."
-    show_progress ./autogen.sh || {
-      u_fail
-      exit 1
-    }
-    u_pass
-
-    if [[ "$configure_with_xwidgets" = true ]]; then
-      u_print "Running ./configure --with-xwidgets..."
-      show_progress ./configure --with-xwidgets || { u_fail; exit 1; }
-    else
-      u_print "Running ./configure..."
-      show_progress ./configure || { u_fail; exit 1; }
-    fi
-    u_pass
-
-    u_print "Running make..."
-    show_progress make || { u_fail; exit 1; }
-    u_pass
-
-    u_print "Running make install..."
-    show_progress sudo make install || { u_fail; exit 1; }
-    u_pass
-    ;;
-esac
+configure && build && install
 
 #-- Additional packages ----------------------------------------------------------------------------
-if [[ "$INSTALL_DEFAULTS" = false ]]; then
-  seek_confirmation "Install optional packages?"
-else
-  set_confirmed
-fi
-
-if is_confirmed; then
-  package_install "epel-release"
+if poll_confirm "optional packages" true; then
   package_install "adobe-source-code-pro-fonts"
   package_install "aspell"
   package_install "aspell-en"

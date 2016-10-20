@@ -14,3 +14,7 @@
 * TODO ssh-agent, gpg-agent
 * TODO only make links of installed programs
 * TODO ask user if they want certain things, in npmrc for example
+* TODO redo nvm installation
+* TODO Upgrade node on newer version
+
+* TODO Eventually correctly load dependencies. Might be missing a couple due to already having them.

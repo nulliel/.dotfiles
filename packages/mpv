@@ -2,24 +2,23 @@
 
 u_subheader "mpv"
 
+#-- Config -----------------------------------------------------------------------------------------
+local tmp_dir="/tmp"
+
+local tar_gz_source="https://github.com/mpv-player/mpv/archive/v0.21.0.tar.gz"
+local tar_gz_path="${tmp_dir}/v0.21.0.tar.gz"
+local folder_path="${tmp_dir}/mpv-0.21.0"
+
 #-- Check for existing installation ----------------------------------------------------------------
 if command_exists mpv; then
-  u_print "Installing mpv..."
-  u_skip
-  return
+  u_skip "Installing mpv..."
+  u_exit_subheader && return
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if ! is_default; then
-  seek_confirmation "Install mpv?"
-else
-  set_confirmed
-fi
-
-if ! is_confirmed; then
-  u_print "Installing mpv..."
-  u_skip
-  return
+if ! poll_confirm "Install mpv?" true; then
+  u_skip "Installing mpv..."
+  u_exit_subheader && return
 fi
 
 #-- Dependencies -----------------------------------------------------------------------------------
@@ -55,46 +54,56 @@ package_install "libv4l-devel"
 package_install "perl-Math-BigRat"
 
 #-- Install ----------------------------------------------------------------------------------------
-cd /tmp
+cd "$tmp_dir"
 
-# Download tarball
-u_print "Downloading mpv tarball..."
+function download() {
+  u_print "Downloading tarball..."
 
-if [[ ! -f /tmp/v0.21.0.tar.gz ]]; then
-  wget https://github.com/mpv-player/mpv/archive/v0.21.0.tar.gz -q || {
-    u_fail
-    exit 1
-  }
-  u_pass
-else
-  u_skip
-fi
+  if [[ -f "$tar_gz_path" ]]; then
+    rm "$tar_gz_path"
+  fi
 
-# Extract tarball
-u_print "Extracting tarball..."
+  u_return wget -q "$tar_gz_source"
+}
+function extract() {
+  u_print "Extracting tarball..."
 
-tar -zxf /tmp/v0.21.0.tar.gz
-rm /tmp/v0.21.0.tar.gz
+  if [[ -d "$folder_path" ]]; then
+    rm -r "$folder_path"
+  fi
 
-u_pass
+  u_return tar -zxf "$tar_gz_path"
+}
+function configure() {
+  u_print "Running ./bootstrap.py..."
+  u_return show_progress ./bootstrap.py
 
-# Run installation scripts
-cd /tmp/mpv-0.21.0
+  u_print "Running ./waf configure..."
+  u_return show_progress ./waf configure
+}
+function build() {
+  u_print "Running ./waf build..."
+  u_return show_progress ./waf build
 
-u_print "Running ./bootstrap.py..."
-show_progress ./bootstrap.py || { u_fail; exit 1; }
-u_pass
+}
+function install() {
+  u_print "Running ./waf install..."
+  u_return show_progress sudo ./waf install
+}
+function cleanup() {
+  if [[ -f "$tar_gz_path" ]]; then
+    rm "$tar_gz_path"
+  fi
 
-u_print "Running ./waf configure..."
-show_progress ./waf configure || { u_fail; exit 1; }
-u_pass
+  if [[ -d "$folder_path" ]]; then
+    rm -r "$folder_path"
+  fi
+}
 
-u_print "Running ./waf build..."
-show_progress ./waf build || { u_fail; exit 1; }
-u_pass
+download && extract
 
-u_print "Running ./waf install..."
-show_progress sudo ./waf install || { u_fail; exit 1; }
-u_pass
+cd "$folder_path"
+
+configure && build && install && cleanup
 
 u_exit_subheader

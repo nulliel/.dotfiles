@@ -2,24 +2,23 @@
 
 u_subheader "deadbeef"
 
+#-- Config -----------------------------------------------------------------------------------------
+local tmp_dir="/tmp"
+
+local tar_gz_source="https://github.com/Alexey-Yakovenko/deadbeef/archive/0.7.2.tar.gz"
+local tar_gz_path="${tmp_dir}/0.7.2.tar.gz"
+local folder_path="${tmp_dir}/deadbeef-0.7.2"
+
 #-- Check for existing installation ----------------------------------------------------------------
 if command_exists deadbeef; then
-  u_print "Installing deadbeef..."
-  u_skip
-  return
+  u_skip "Installing deadbeef..."
+  u_exit_subheader && return
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if ! is_default; then
-  seek_confirmation "Install deadbeef?"
-else
-  set_confirmed
-fi
-
-if ! is_confirmed; then
-  u_print "Installing deadbeef..."
-  u_skip
-  return
+if ! poll_confirm "Install deadbeef?" true; then
+  u_skip "Installing deadbeef..."
+  u_exit_subheader && return
 fi
 
 #-- Dependencies -----------------------------------------------------------------------------------
@@ -61,46 +60,55 @@ package_install "glib-devel"
 package_install "glib2-devel"
 
 #-- Install ----------------------------------------------------------------------------------------
-cd /tmp
+cd "$tmp_dir"
 
-# Download tarball
-u_print "Downloading DeaDBeeF tarball..."
+function download() {
+  u_print "Downloading tarball..."
 
-if [[ ! -f /tmp/0.7.2.tar.gz ]]; then
-  wget https://github.com/Alexey-Yakovenko/deadbeef/archive/0.7.2.tar.gz -q || {
-    u_fail
-    exit 1
-  }
-  u_pass
-else
-  u_skip
-fi
+  if [[ -f "$tar_gz_path" ]]; then
+    rm "$tar_gz_path"
+  fi
 
-# Extract tarball
-u_print "Extracting tarball..."
+  u_return wget -q "$tar_gz_source"
+}
+function extract() {
+  u_print "Extracting tarball..."
 
-tar -zxf /tmp/0.7.2.tar.gz
-rm /tmp/0.7.2.tar.gz
+  if [[ -d "$folder_path" ]]; then
+    rm -r "$folder_path"
+  fi
 
-u_pass
+  u_return tar -zxf "$tar_gz_path"
+}
+function configure() {
+  u_print "Running ./autogen.sh..."
+  u_return show_progress ./autogen.sh
 
-# Run installation scripts
-cd /tmp/deadbeef-0.7.2
+  u_print "Running ./configure..."
+  u_return show_progress ./configure
+}
+function build() {
+  u_print "Running make..."
+  u_return show_progress make
+}
+function install() {
+  u_print "Running make install..."
+  u_return show_progress sudo make install
+}
+function cleanup() {
+  if [[ -f "$tar_gz_path" ]]; then
+    rm "$tar_gz_path"
+  fi
 
-u_print "Running ./autogen.sh..."
-show_progress ./autogen.sh || { u_fail; exit 1; }
-u_pass
+  if [[ -d "$folder_path" ]]; then
+    rm -r "$folder_path"
+  fi
+}
 
-u_print "Running ./configure..."
-show_progress ./configure || { u_fail; exit 1; }
-u_pass
+download && extract
 
-u_print "Running make..."
-show_progress "make" || { u_fail; exit 1; }
-u_pass
+cd "$folder_path"
 
-u_print "Running make install..."
-show_progress sudo make install || { u_fail; exit 1; }
-u_pass
+configure && build && install && cleanup
 
 u_exit_subheader

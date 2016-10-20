@@ -2,41 +2,47 @@
 
 u_subheader "slack"
 
+#-- Config -----------------------------------------------------------------------------------------
+local tmp_dir="/tmp"
+
+local rpm_source="https://downloads.slack-edge.com/linux_releases/slack-2.2.1-0.1.fc21.x86_64.rpm"
+local rpm_path="${tmp_dir}/slack-2.2.1-0.1.fc21.x86_64.rpm"
+
 #-- Check for existing installation ----------------------------------------------------------------
 if command_exists slack; then
-    u_print "installing slack..."
-    u_skip
-    return
+  u_skip "Installing slack..."
+  u_exit_subheader && return
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if ! is_default; then
-  seek_confirmation "Install slack?"
-else
-  set_confirmed
-fi
-
-if ! is_confirmed; then
-  u_print "Installing slack..."
-  u_skip
-  return
+if ! poll_confirm "Install slack?" true; then
+  u_skip "Installing slack..."
+  u_exit_subheader && return
 fi
 
 #-- Dependencies -----------------------------------------------------------------------------------
 package_install "libappindicator"
 
 #-- Install ----------------------------------------------------------------------------------------
-cd /tmp
+cd "$tmp_dir"
 
-u_print "Downloading slack..."
-wget https://downloads.slack-edge.com/linux_releases/slack-2.2.1-0.1.fc21.x86_64.rpm -q \
-  || { u_fail; exit 1; }
-u_pass
+function download() {
+  u_print "Downloading slack..."
 
-u_print "Installing slack..."
-show_progress sudo rpm -ivh slack-2.2.1-0.1.fc21.x86_64.rpm || { u_fail; exit 1; }
-u_pass
+  if [[ -f "$rpm_path" ]]; then
+    cleanup
+  fi
 
-rm slack-2.2.1-0.1.fc21.x86_64.rpm
+  u_return wget -q "$rpm_source"
+}
+function install() {
+  u_print "Installing slack..."
+  u_return show_progress sudo rpm -ivh "$rpm_path"
+}
+function cleanup() {
+  rm "$rpm_path"
+}
+
+download && install && cleanup
 
 u_exit_subheader
