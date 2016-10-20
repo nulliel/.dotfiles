@@ -4,3 +4,13 @@
 * TODO Update optional dependencies easier
 
 * TODO deadbeef-gnome-mm-keys package
+* TODO add ~/.dotfiles/bin to the path
+* TODO add global node modules
+* TODO automatically download latest node version
+* TODO Install required bash dependencies
+* TODO Ask for name/email to add git config options
+* TODO ZSH? (default shell)
+* TODO Scripts (backup)
+* TODO ssh-agent, gpg-agent
+* TODO only make links of installed programs
+* TODO ask user if they want certain things, in npmrc for example
