@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+u_subheader "nvm"
+
+#-- Config -----------------------------------------------------------------------------------------
+export NVM_DIR="$HOME/.nvm"
+
+#-- Check for existing installation ----------------------------------------------------------------
+if command_exists nvm; then
+    u_print "installing nvm..."
+    u_skip
+    return
+fi
+
+#-- Confirm installation ---------------------------------------------------------------------------
+if ! is_default; then
+  seek_confirmation "Install nvm?"
+else
+  set_confirmed
+fi
+
+if ! is_confirmed; then
+  u_print "Installing nvm..."
+  u_skip
+  return
+fi
+
+#-- Install ----------------------------------------------------------------------------------------
+u_print "Downloading nvm..."
+
+show_progress git clone https://github.com/creationix/nvm.git "$NVM_DIR" || { u_fail; exit 1; }
+cd "$NVM_DIR"
+show_progress git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin` || { u_fail; exit 1; }
+u_pass
+
+u_print "Activating nvm..."
+source "$NVM_DIR/nvm.sh"
+u_pass
+
+u_exit_subheader

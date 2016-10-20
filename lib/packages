@@ -17,6 +17,9 @@ sleep 0.1 && source $DOTFILES_DIRECTORY/packages/chrome
 # Editors
 sleep 0.1 && source $DOTFILES_DIRECTORY/packages/emacs
 
+# Scripts
+sleep 0.1 && source $DOTFILES_DIRECTORY/packages/nvm
+
 # Social
 sleep 0.1 && source $DOTFILES_DIRECTORY/packages/skype
 sleep 0.1 && source $DOTFILES_DIRECTORY/packages/slack
