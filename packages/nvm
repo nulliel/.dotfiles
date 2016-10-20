@@ -65,6 +65,9 @@ case "$SELECTED_VALUE" in
     ;;
 esac
 
+u_print "Switching to $node_version"
+u_return nvm use "$node_version"
+
 set -o nounset
 
 u_exit_subheader
