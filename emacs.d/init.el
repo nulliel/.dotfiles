@@ -28,4 +28,5 @@
 (require 'core-automodes)
 
 (require 'mode-js)
+(require 'mode-bash)
 (require 'mode-org)
