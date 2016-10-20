@@ -1,1 +1,39 @@
 #!/usr/bin/env bash
+
+function create_link() {
+  local link_from="${DOTFILES_DIRECTORY}/$1"
+  local link_to="${HOME}/$2"
+
+  u_print "Linking $link_to..."
+
+  if [[ -f "$link_to" || -d "$link_to" ]]; then
+    if [[ "$(readlink -f $link_to)" = "$link_from" ]]; then
+      u_skip
+      return
+    fi
+
+    u_fail
+    u_error "File $link_to already exists and is not linked."
+  fi
+
+  ln -s "$link_from" "$link_to" || {
+    u_fail
+    exit 1
+  }
+  u_pass
+}
+
+create_link "shell/bash_aliases"   ".bash_aliases"
+create_link "shell/bash_exports"   ".bash_exports"
+create_link "shell/bash_functions" ".bash_functions"
+create_link "shell/bash_nocommit"  ".bash_nocommit"
+create_link "shell/bash_options"   ".bash_options"
+create_link "shell/bash_paths"     ".bash_paths"
+create_link "shell/bash_profile"   ".bash_profile"
+create_link "shell/bashrc"         ".bashrc"
+create_link "config/deadbeef"      ".config/deadbeef"
+create_link "config/mpv"           ".config/mpv"
+create_link "emacs.d"              ".emacs.d"
+create_link "git/gitconfig"        ".gitconfig"
+create_link "git/gitignore"        ".gitignore"
+create_link "config/npmrc"         ".npmrc"
