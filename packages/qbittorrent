@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
-u_subheader "qbittorrent"
+subheader "qbittorrent"
 
 #-- Check for existing installation ----------------------------------------------------------------
 if command_exists qbittorrent; then
-  u_skip "Installing qbittorrent..."
-  u_exit_subheader && return
+  skip "Installing qbittorrent..."
+  exit_subheader && return
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if ! poll_confirm "Install qbittorrent?" true; then
-  u_skip "Installing qbittorrent..."
-  u_exit_subheader && return
+if ! confirm_default "Install qbittorrent?"; then
+  skip "Installing qbittorrent..."
+  exit_subheader && return
 fi
 
 #-- Install ----------------------------------------------------------------------------------------
 package_install "qbittorrent"
 
-u_exit_subheader
+exit_subheader

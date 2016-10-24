@@ -32,7 +32,7 @@ load_package "skype"
 load_package "slack"
 
 # Utility
-#load_package "qbittorrent"  # A torrent client
+load_package "qbittorrent"  # A torrent client
 #load_package "deadbeef"     # An audio player
 #load_package "mpv"          # A video player
 
