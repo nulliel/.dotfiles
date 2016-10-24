@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+
+#-- Properties -------------------------------------------------------------------------------------
+declare -i _header_color="92"        # Main header color
+declare -i _header_color_alt="93"    # Alternate header color
+
+declare -i _subheader_color="95"        # Main subheader color
+declare -i _subheader_color_alt="96"    # Alternate header color
+
+declare _headless=false    # Flag to ignore header printing
+
+declare _header_value=false       # Header title
+declare _subheader_value=false    # Subheader title
+
+#-- Color ------------------------------------------------------------------------------------------
+_toggle_header () {
+  read _header_color _header_color_alt<<<"$_header_color_alt $_header_color"
+}
+_toggle_subheader () {
+  read _subheader_color _subheader_color_alt<<<"$_subheader_color_alt $_subheader_color"
+}
+
+header () {
+  _toggle_header
+
+  _header_value="$1"
+}
+exit_header () {
+  _header_value=false
+}
+
+subheader () {
+  _toggle_subheader
+
+  _subheader_value="$1"
+}
+exit_subheader () {
+  _subheader_value=false
+}
+
+#-- Messaging --------------------------------------------------------------------------------------
+_print_header () {
+  local headless_length=0
+
+  if [[ "$_headless" = true ]]; then
+    if [[ "$_subheader_value" != false ]]; then
+      headless_length=$(( ${#_subheader_value} + 5 ))
+    elif [[ "$_header_value" != false ]]; then
+      headless_length=$(( ${#_header_value} + 3 ))
+    fi
+
+    for (( i=0; i<$headless_length; i++ )); do
+      printf " "
+    done
+
+    _headless=false
+    return
+  fi
+
+  if [[ "$_subheader_value" != false ]]; then
+    printf "  [\033[1;${_subheader_color}m${_subheader_value}\033[0m] "
+  elif [[ "$_header_value" != false ]]; then
+    printf "[\033[1;${_header_color}m${_header_value}\033[0m] "
+  fi
+}
+
+console () {
+  _print_header 1>&3 2>&1
+  printf "%b" "$@" 1>&3 2>&1
+}
+consolel () {
+  console "$@\n"
+}
+consoleh () {
+  _headless=true
+  console "$@"
+}
+consolehl () {
+  consoleh "$@\n"
+}
+
+log () {
+  _print_header 1>&5 2>&1
+  printf "%b" "$@" 1>&5 2>&1
+}
+logl () {
+  log "$@\n"
+}
+logh () {
+  _headless=true
+  log "$@"
+}
+loghl () {
+  logh "$@\n"
+}
+
+error () {
+  printf "[\033[1;91mError\033[0m] %b\n" "$@" 1>&5 2>&1
+}
+warning () {
+  printf "[\0ee[1;93mWarning\033[0m] %b\n" "$@" 1>&5 2>&1
+}
+
+new_line () {
+  printf "\n" 1>&3 2>&1
+}
+clear_line () {
+  printf "\r\033[K" 1>&3 2>&1
+}
+
+#-- Success ----------------------------------------------------------------------------------------
+pass () {
+  printf "\033[1;92mOK\033[0m\n" 1>&3 2>&1
+  printf "\n"    # Print a new line to the log
+}
+fail () {
+  printf "\033[1;91mERROR\033[0m\n" 1>&3 2>&1
+  printf "\n"    # Print a new line to the log
+}
+skip () {
+  if [[ "$#" -eq 1 ]]; then
+    log "$1" && sleep "0.05"
+  fi
+
+  printf "\033[1;93mSKIPPED\033[0m\n" 1>&3 2>&1
+}
+
+check_success () {
+  "$@" \
+    || fail \
+    && exit 1
+
+  pass
+}
+
+#-- Progress ---------------------------------------------------------------------------------------
+_print_progress () {
+  new_line
+
+  while read data; do
+    progress_list=("${progress_list[@]:1}")             # Pop the first object off the list
+    progress_list[5]=$(echo "$data" | tr -d '\n' )    # Move the new data to the end of the list
+
+    consolehl "${progress_list[5]}" 3>&1
+
+    if [[ "$progress_init" = false ]]; then
+      printf "\033[${#progress_list[@]}A" 1>&3 2>&1
+    fi
+    progress_init=false
+
+    for item in "${progress_list[@]}"; do
+      if [[ "$item" = "+" ]]; then
+        item=""
+      fi
+
+      clear_line
+      consolehl "| $item"
+    done
+  done
+}
+_clear_progress () {
+  printf "${#progress_list[@]}" 1>&3 2>&1
+
+  for item in "${progress_list[@]}"; do
+    printf "\r\033[K\033[A" 1>&3 2>&1
+  done
+
+  printf "\r\033[K" 1>&3 2>&1
+}
+
+show_progress () {
+  local progress_init=true           # Suppress initial render
+  local progress_list=(+ + + + +)    # Initial progress list
+  local set_return=0
+
+  # Don't show progress on a small console
+  if [[ "$(($SCRIPT_HEIGHT))" -le "8" ]]; then
+    "$@" && return 0 || return 1
+  fi
+
+  printf "\n\n" # Print a newline to the log
+
+  save_cursor progress_cursor
+
+  # Pad the bottom of the console by 6 lines
+  if [[ "${progress_cursor[0]}" -ge "$(($SCRIPT_HEIGHT-6))" ]]; then
+    local lines_under="$(($SCRIPT_HEIGHT-${progress_cursor[0]}))"
+
+    for (( i=0; i<$lines_under; i++ )); do
+      printf "\n" 1>&3 2>&1
+    done
+
+    for (( i=0; i<"$((6-$lines_under))"; i++ )); do
+      progress_cursor[0]="$((${progress_cursor[0]}-1))"
+      printf "\n" 1>&3 2>&1
+    done
+
+    progress_cursor[0]="$((${progress_cursor[0]}-1))"
+    restore_cursor progress_cursor
+  fi
+
+  "$@" 2>&1 | _print_progress
+
+  if [[ "${PIPESTATUS[0]}" != "0" ]]; then
+    set_return=1
+  fi
+
+  _clear_progress
+  restore_cursor progress_cursor
+
+  return $set_return
+}

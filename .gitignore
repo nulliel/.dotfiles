@@ -1,3 +1,7 @@
+# Dotfiles stuff
+tmp
+dotfiles.log
+
 #Shell
 bash_nocommit
 

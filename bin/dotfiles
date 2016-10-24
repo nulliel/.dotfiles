@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 
+
 #-- Config -----------------------------------------------------------------------------------------
 readonly SCRIPT_NAME="$(basename "$0")"
 
-readonly LOCKFILE_DIR="/tmp"
+readonly DOTFILES_DIR="${HOME}/.dotfiles"
+readonly DOTFILES_TMP="${DOTFILES_DIR}/tmp"
+readonly DOTFILES_LOG="${DOTFILES_DIR}/dotfiles.log"
 
-readonly DOTFILES_DIRECTORY="${HOME}/.dotfiles"
-readonly DOTFILES_LOG_FILE="/tmp/dotfiles.log"
 readonly DOTFILES_GIT_REPO="https://github.com/nulliel/dotfiles.git"
 
+#-- Don't modify this ------------------------------------------------------------------------------
 declare -i SCRIPT_HEIGHT="$(tput lines)"
 
 #-- Options ----------------------------------------------------------------------------------------
@@ -16,19 +18,21 @@ set -o errexit     # Exit on most errors
 set -o errtrace    # Inherit error traps
 set -o nounset     # Disallow expansion of unset variables
 
-#-- Trap functions ---------------------------------------------------------------------------------
-function trap_err() {
-  # Disable the trap to prevent recursion
+#-- Traps ------------------------------------------------------------------------------------------
+trap_err () {
+  # Disable trap to prevent possible recursion
   trap - ERR
 
   # Undo logging
-  exec 1>&3 2>&4 3>&- 4>&- 5>&- 6>&-
+  if { true 1>&3; } 2>/dev/null; then
+    exec 1>&3 2>&4 3>&- 4>&- 5>&- 6>&-
+  fi
 
   # Consider further errors nonfatal so we can run to completion
   set +o errexit
 
   # Print fatal error
-  printf "\n[\e[1;91mFatal\e[0m] Check the logfile at ${DOTFILES_LOG_FILE} for more information."
+  printf "\n[\e[1;91mFatal\e[0m] Check the logfile at %s for more information." "$DOTFILES_LOG"
 
   # Exit with failure status
   if [[ "$#" -eq 1 && "$1" =~ ^[0-9]+$ ]]; then
@@ -37,40 +41,55 @@ function trap_err() {
     exit 1
   fi
 }
+trap_exit () {
+  # Undo logging
+  if { true 1>&3; } 2>/dev/null; then
+    exec 1>&3 2>&4 3>&- 4>&- 5>&- 6>&-
+  fi
 
-#-- Lock function ----------------------------------------------------------------------------------
-function lock() {
+  # Empty tmp directory
+  if [[ -d "$DOTFILES_TMP" ]]; then
+    rm -r "$DOTFILES_TMP"
+  fi
+
+  # Restore line wrapping
+  tput smam
+}
+
+#-- Lockfile ---------------------------------------------------------------------------------------
+acquire_lock () {
   local prefix="$1"
   local fd="${2:-200}"
-  local lock_file="$LOCKFILE_DIR/$prefix.lock"
+  local lock_file="${DOTFILES_TMP}/$prefix.lock"
 
   # Create the lock
   eval "exec $fd>$lock_file"
 
-  # Acquirer the lock
-  flock -n 200 \
+  # Acquire the lock
+  flock -n "${fd}" \
     && return 0 \
     || return 1
 }
 
 #-- Local helpers ----------------------------------------------------------------------------------
-function output_to_log() {
+output_to_log () {
   IFS=''
-  while read data; do
+  while read -r data; do
     printf "%b\n" "$data" \
       | sed -r "s/\r//g" \
       | sed -r "s/\x1B\[\?7[l|h]//g" \
       | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K|A]//g" \
-      >>$DOTFILES_LOG_FILE
+      >>"$DOTFILES_LOG"
 
     # Hack to maintain a copy of the actual height
     SCRIPT_HEIGHT="$(tput lines)"
   done
 }
-function parse_params() {
+parse_params () {
   INSTALL_DEFAULTS=false  # Perform all default actions without prompts
   NO_LINKS=false          # Don't create symbolic links
   NO_PACKAGES=false       # Don't install packages (OVERRIDES DEFAULTS)
+  NO_SCRIPTS=false        # Don't load scripts
   NO_SYNC=false           # Don't sync dotfiles (OVERRIDES DEFAULTS)
 
   for opt in "$@"; do
@@ -83,6 +102,9 @@ function parse_params() {
         ;;
       --no-packages)
         NO_PACKAGES=true
+        ;;
+      --no-scripts)
+        NO_SCRIPTS=true
         ;;
       --no-sync)
         NO_SYNC=true
@@ -101,9 +123,10 @@ function parse_params() {
   readonly INSTALL_DEFAULTS
   readonly NO_LINKS
   readonly NO_PACKAGES
+  readonly NO_SCRIPTS
   readonly NO_SYNC
 }
-function show_banner() {
+show_banner () {
   clear
   printf '\e[1m'
   printf '          888          888     .d888 d8b 888                  \n'
@@ -115,7 +138,7 @@ function show_banner() {
   printf '     Y88b 888 Y88..88P Y88b.  888    888 888 Y8b.          X88\n'
   printf '      "Y88888  "Y88P"   "Y888 888    888 888  "Y8888   88888P" \e[0m\n\n'
 }
-function show_usage() {
+show_usage () {
   cat <<EOF
 Usage: $SCRIPT_NAME [options]
 
@@ -124,6 +147,7 @@ Options:
     -h, --help          Print this help text
         --no-links      Suppress linking of dotfiles
         --no-packages   Suppress package updates
+        --no-scripts    Suppress loading of scripts
         --no-sync       Suppress repository syncing
 
 Documentation can be found at https://github.com/nulliel/dotfiles/
@@ -131,17 +155,34 @@ EOF
 }
 
 #-- Main function ----------------------------------------------------------------------------------
-function main() {
+main () {
   trap "trap_err" ERR
+  trap "trap_exit" EXIT SIGINT SIGTERM SIGTSTP
 
+  # Disable word wrapping
+  tput rmam
+
+  #-- Setup script ---------------------------------------------------------------------------------
   show_banner
   parse_params "$@"
 
   #-- Make sure we're in the right directory -------------------------------------------------------
-  cd "${DOTFILES_DIRECTORY}"
+  cd "${DOTFILES_DIR}" 2>/dev/null || {
+    printf "[\033[1;91mError\033[0m] Dotfiles not found at %b\n" "${DOTFILES_DIR}"
+    exit 10
+  }
+
+  #-- Create tmp folder ----------------------------------------------------------------------------
+  [[ ! -d "$DOTFILES_TMP" ]] && mkdir "$DOTFILES_TMP"
+
+  #-- Acquire the lock -----------------------------------------------------------------------------
+  acquire_lock $SCRIPT_NAME || {
+    printf "[\e[1;91mError\e[0m] Only one instance of %b can run at a time.\n" "${SCRIPT_NAME}"
+    exit 11
+  }
 
   #-- Empty the log file ---------------------------------------------------------------------------
-  printf "" >"$DOTFILES_LOG_FILE"
+  printf "" >"$DOTFILES_LOG"
 
   #-- Log everything -------------------------------------------------------------------------------
   # fd1 - $DOTFILES_LOG_FILE
@@ -153,40 +194,39 @@ function main() {
   exec 3>&1 4>&2 1> >(output_to_log) 2>&1 5> >(tee /dev/fd/3) 6> >(tee /dev/fd/4)
 
   #-- Source helpers -------------------------------------------------------------------------------
-  source $DOTFILES_DIRECTORY/lib/utils
-
-  #-- Acquire the lock -----------------------------------------------------------------------------
-  lock $SCRIPT_NAME || {
-    die "Only one instance of $SCRIPT_NAME can run at a time."
-  }
+  source "${DOTFILES_DIR}/lib/utils"
+  source "${DOTFILES_DIR}/lib/utils-screen"
+  source "${DOTFILES_DIR}/lib/utils-package"
+  source "${DOTFILES_DIR}/lib/utils-interactive"
+  source "${DOTFILES_DIR}/lib/utils-build"
 
   #-- Check privileges -----------------------------------------------------------------------------
-  if [[ "$EUID" -eq 0 ]]; then
-    die "This script should not be run using sudo or as the root user"
+  if is_super_user; then
+    die "This script should not be run using sudo or as the root user" 12
   fi
 
-  sudo -n true || {
-    die "This script requires the use of sudo"
-  }
+  if ! can_use_sudo; then
+    die "This script requires the use of sudo" 13
+  fi
 
   # All sleeps after this point are a bit of a hack to help prevent issues with writing to
   # stderr/stdout.
 
   #-- Ensure git is installed ----------------------------------------------------------------------
   sleep 0.1
-  source $DOTFILES_DIRECTORY/packages/git
+  source $DOTFILES_DIR/packages/git
 
   #-- Sync repository ------------------------------------------------------------------------------
   sleep 0.1
-  source $DOTFILES_DIRECTORY/lib/sync
+  source $DOTFILES_DIR/lib/sync
 
   #-- Install packages -----------------------------------------------------------------------------
   sleep 0.1
-  source $DOTFILES_DIRECTORY/lib/packages
+  # source $DOTFILES_DIR/lib/packages
 
   #-- Create links ---------------------------------------------------------------------------------
   sleep 0.1
-  source $DOTFILES_DIRECTORY/lib/links
+  # source $DOTFILES_DIR/lib/links
 }
 
 main "$@"

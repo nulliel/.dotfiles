@@ -1,322 +1,8 @@
-#!/USSR/bin/env bash
-
-#-- Header logging ---------------------------------------------------------------------------------
-declare -i header_color1=92
-declare -i header_color2=93
-
-declare -i subheader_color1=95
-declare -i subheader_color2=96
-
-declare in_header=false
-declare in_subheader=false
-
-declare is_headless=false
-
-declare header_value=""
-declare subheader_value=""
-
-# Toggle header colors
-function u_toggle_header() {
-  read header_color1 header_color2<<<"$header_color2 $header_color1"
-}
-function u_toggle_subheader() {
-  read subheader_color1 subheader_color2<<<"$subheader_color2 $subheader_color1"
-}
-
-# Set header mode
-function u_header() {
-  u_toggle_header
-
-  in_header=true
-  header_value="$1"
-}
-function u_exit_header() {
-  in_header=false
-}
-
-function u_subheader() {
-  u_toggle_subheader
-
-  in_subheader=true
-  subheader_value="$1"
-}
-function u_exit_subheader() {
-    in_subheader=false
-}
-
-# Print header
-function u_print_header() {
-  local headless_length=0
-
-  if [[ "$is_headless" = true ]]; then
-    if [[ "$in_subheader" = true ]]; then
-      headless_length=${#subheader_value}+5
-    elif [[ "$in_header" = true ]]; then
-      headless_length=${#header_value}+3
-    fi
-
-    for (( i=0; i<$headless_length; i++ )); do
-      printf " "
-    done
-
-    is_headless=false
-  elif [[ "$in_subheader" = true ]]; then
-    printf "  [\e[1;${subheader_color1}m${subheader_value}\e[0m] "
-  elif [[ "$in_header" = true ]]; then
-    printf "[\e[1;${header_color1}m${header_value}\e[0m] "
-  fi
-}
-
-#-- Message logging --------------------------------------------------------------------------------
-function u_console() {
-  u_print_header 1>&3 2>&1
-  printf "%b" "$@" 1>&3 2>&1
-}
-function u_consolel() {
-  u_console "$@\n"
-}
-
-function u_consoleh() {
-  is_headless=true
-  u_console "$@"
-}
-function u_consolehl() {
-  u_consoleh "$@\n"
-}
-
-function u_print() {
-  u_print_header 1>&5 2>&1
-  printf "%b" "$@" 1>&5 2>&1
-}
-function u_printl() {
-  u_print "$@\n"
-}
-
-function u_printh() {
-  is_headless=true
-  u_print "$@"
-}
-function u_printhl() {
-  u_printh "$@\n"
-}
-
-function u_error() {
-  u_printl "[\e[1;91mError\e[0m] $@"
-}
-function u_warning() {
-  u_printl "[\e[1;93mWarning\e[0m] $@"
-}
-
-function new_line() {
-  printf "\n" 1>&3 2>&1
-}
-function clear_line() {
-  printf "\r\e[K" 1>&3 2>&1
-}
-
-#-- Success logging --------------------------------------------------------------------------------
-function u_pass() {
-  printf "\e[92mOK\e[0m\n" 1>&3 2>&1
-  printf "\n"
-}
-function u_fail() {
-  printf "\e[91mERROR\e[0m\n" 1>&3 2>&1
-  printf "\n"
-}
-function u_skip() {
-  if [[ "$#" -eq 1 ]]; then
-    u_print "$1"
-  fi
-
-  printf "\e[93mSKIPPED\e[0m\n" 1>&5 2>&1
-}
-
-function do_fail() {
-  u_fail
-  exit 1
-}
-function u_return() {
-  "$@" && u_pass || do_fail
-}
-
-# Exits --------------------------------------------------------------------------------------------
-function die() {
-  u_error "$1"
-
-  if [[ "$#" -eq 2 && "$2" =~ ^[0-9]+$ ]]; then
-    exit "$2"
-  else
-    exit 1
-  fi
-}
-
-#-- Confirmation -----------------------------------------------------------------------------------
-function seek_confirmation() {
-  local confirm_message="[y/N]"
-
-  if [[ -n "$1" ]]; then
-    confirm_message="$1 $confirm_message"
-  fi
-
-  u_print_header 1>&3 2>&4
-  read -p "$confirm_message: " -n 1 1>&3 2>&1
-  clear_line
-}
-function is_confirmed() {
-  set +o nounset
-
-  if [[ "$REPLY" =~ ^[yY]$ ]]; then
-    set -o nounset
-
-    unset REPLY
-    return 0
-  fi
-  set -o nounset
-
-  unset REPLY
-  return 1
-}
-function set_confirmed() {
-  REPLY='y'
-}
-function poll_confirm() {
-  if [[ "$#" -ne "2" ]]; then
-    u_error "poll_package requires 2 arguments"
-  fi
-
-  if is_default && [[ "$2" = true ]]; then
-    return 0
-  elif is_default && [[ "$2" = false ]]; then
-    return 1
-  fi
-
-  seek_confirmation "$1"
-
-  if is_confirmed; then
-    return 0
-  else
-    return 1
-  fi
-}
-
-#-- Default ----------------------------------------------------------------------------------------
-function is_default() {
-  if [[ "$INSTALL_DEFAULTS" = true ]]; then
-    return 0
-  fi
-  return 1
-}
-
-#-- Selection --------------------------------------------------------------------------------------
-declare first_selection_run=false
-
-function print_selection() {
-  local selected_id="$1"
-  shift
-
-  # Update list
-  local list_id="1"
-  for i in "$@"; do
-    if [[ "$list_id" = "1" && "$first_selection_run" = false ]]; then
-      printf "\e[$#A" 1>&3 2>&1
-    fi
-
-    if [[ "$list_id" == "$selected_id" ]]; then
-      printf "\e[96m" 1>&3 2>&1
-    fi
-
-    u_consolehl "• $i\e[0m"
-
-    list_id="$(($list_id+1))"
-  done
-
-  if [[ "$first_selection_run" = true ]]; then
-    first_selection_run=false
-  fi
-}
-function delete_selection() {
-    printf "\e[$1A" 1>&3 2>&1
-
-    for (( c=1; c<=$1; c++ )); do
-        printf "\r\e[K\n" 1>&3 2>&1
-    done
-
-    printf "\e[$1A" 1>&3 2>&1
-}
-function u_selection() {
-  local current_selection="1"
-  local selection_length="$#"
-
-  first_selection_run=true
-
-  # Print title if exists
-  if [[ "${1:0:1}" = '^' ]]; then
-    u_consolel "${1:1}"
-    shift
-  fi
-
-  # Check for a default parameter
-  if [[ "${1:0:1}" = '#' ]]; then
-    current_selection="${1:1}"
-    selection_length="$((selection_length-1))"
-    shift
-  fi
-
-  # Print the initial list
-  print_selection "$current_selection" "$@"
-
-  # Selection mechanism
-  while read -rsn1 key; do
-    case "$key" in
-      $'\x1b')
-        read -rsn1 -t 0.1 tmp
-        if [[ "$tmp" = '[' ]]; then
-          read -rsn1 -t 0.1 tmp
-          case "$tmp" in
-            "A") # Up arrow
-              if [[ "$current_selection" = "1" ]]; then
-                current_selection="$selection_length"
-              else
-                current_selection="$(($current_selection-1))"
-              fi
-            ;;
-            "B") # Down arrow
-              if [[ "$current_selection" = "$selection_length" ]]; then
-                current_selection="1"
-              else
-                current_selection="$(($current_selection+1))"
-              fi
-              ;;
-          esac
-        fi
-        ;;
-      "")
-        break;
-        ;;
-    esac
-    print_selection "$current_selection" "$@"
-  done
-
-  # Cleanup
-   delete_selection $selection_length
-
-  # Set the selected value
-  SELECTED_VALUE="${!current_selection}"
-}
-function is_selection() {
-    if [[ "$1" == "$SELECTED_VALUE" ]]; then
-        return 0
-    fi
-
-    return 1
-}
-function set_selection() {
-    SELECTED_VALUE="$1"
-}
+#!/usr/bin/env bash
 
 #-- Cursor manipulation ----------------------------------------------------------------------------
 # From http://askubuntu.com/questions/366103/saving-more-corsor-positions-with-tput-in-bash-terminal
-function save_cursor() {
+save_cursor () {
   exec < /dev/tty
   oldstty=$(stty -g)
   stty raw -echo min 0
@@ -326,144 +12,93 @@ function save_cursor() {
   eval "$1[0]=$((${pos[0]:2} - 1))"
   eval "$1[1]=$((${pos[1]} - 1))"
 }
-function restore_cursor() {
+restore_cursor () {
     eval ARRAY=\( \${${1}[@]} \)
     tput cup ${ARRAY[0]} ${ARRAY[1]} 1>&3
 }
 
-#-- Package Install --------------------------------------------------------------------------------
-function package_install() {
-  tput rmam 1>&3 2>&1
-  u_print "Installing $1..."
-  tput smam 1>&3 2>&1
+#-- Check for set flags ----------------------------------------------------------------------------
+is_set () {
+  local flag="$1"
 
-  if package_installed "$1"; then
-    u_skip
-    return
+  # Prevent errors
+  set +o nounset
+
+  if [[ "${!flag}" = true ]]; then
+    return 0
   fi
 
-  show_progress sudo dnf install -y "$1" || {
-    u_fail 1>&4
+  set -o nounset
+
+  return 1
+}
+is_default () {
+  if [[ "$INSTALL_DEFAULTS" = true ]]; then
+    return 0
+  fi
+
+  return 1
+}
+
+#-- Check for command existance --------------------------------------------------------------------
+command_exists () {
+  command -v "$1" >/dev/null 2>&1 && return 0 || return 1
+}
+
+#-- Random -----------------------------------------------------------------------------------------
+random_string () {
+  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-32} | head -n 1
+}
+
+#-- Exit -------------------------------------------------------------------------------------------
+die () {
+  error "$1"
+
+  if [[ "$#" -eq 2 && "$2" =~ ^[0-9]+$ ]]; then
+    exit "$2"
+  else
     exit 1
-  }
-
-  u_pass
-}
-function package_groupinstall() {
-    u_print "Installing $1..."
-
-    show_progress sudo dnf groupinstall -y "'$@'" || {
-        u_fail
-        exit 1
-    }
-
-    u_pass
+  fi
 }
 
-function package_installed() {
-  dnf list installed "$1" >/dev/null 2>&1 || {
-    if command_exists $1; then
-      return 0
-    fi
+#-- Super user checks ------------------------------------------------------------------------------
+is_super_user () {
+  if [[ "$EUID" -eq "0" ]]; then
+    return 0
+  fi
 
+  return 1
+}
+can_use_sudo () {
+  sudo -n true || {
     return 1
   }
 
   return 0
 }
-function command_exists() {
-    command -v $1 >/dev/null 2>&1 && {
-        return 0
-    }
 
-    return 1
-}
 
-function install_build_tools() {
-    package_groupinstall "Development Tools"
-    package_groupinstall "C Development Tools and Libraries"
 
-    package_install "autoconf"
-    package_install "automake"
-}
 
-#-- Command output ---------------------------------------------------------------------------------
-function progress_print() {
-  new_line
 
-  while read data; do
-    progress_list=("${progress_list[@]:1}")        # Pop the first object off the list
-    progress_list[5]=$(echo "$data" | tr -d '\n')  # Move the new data to the end of the list
 
-    u_consolehl "${progress_list[5]}" 3>&1
 
-    if [[ "$progress_init" = false ]]; then
-      printf "\e[${#progress_list[@]}A]" 1>&3 2>&1
-    else
-      progress_init=false
-    fi
+#-- Updating ---------------------------------------------------------------------------------------
+function can_update() {
+  local installed="${1//./ }"
+  local available="${2//./ }"
 
-    for i in "${progress_list[@]}"; do
-      if [[ "$i" = "+" ]]; then
-        i=""
-      fi
+  installed=($installed)
+  available=($available)
 
-      clear_line
-      u_consolehl "| $i"
-    done
-  done
-}
-function progress_done() {
-  for i in "${progress_list[@]}"; do
-    printf "\r\e[K\e[A" 1>&3 2>&1
-  done
+  [[ "${available[0]]}" -gt "${installed[0]}" ]] && return 0
+  [[ "${available[0]]}" -lt "${installed[0]}" ]] && return 1
 
-  printf "\r\e[K" 1>&3 2>&1
-}
-function show_progress() {
-  local progress_init=true
-  local progress_list=(+ + + + +)
-  local did_error=false
+  [[ "${available[1]]}" -gt "${installed[1]}" ]] && return 0
+  [[ "${available[1]]}" -lt "${installed[1]}" ]] && return 1
 
-  # Print a newline for the log
-  printf "\n\n"
+  [[ "${available[2]]}" -gt "${installed[2]}" ]] && return 0
+  [[ "${available[2]]}" -lt "${installed[2]}" ]] && return 1
 
-  # Disable line wrapping
-  tput rmam 1>&3 2>&1
-
-  # Save cursor position
-  save_cursor test
-
-  if [[ "${test[0]}" -ge "$(($SCRIPT_HEIGHT-6))" ]]; then
-    local lines_under="$(($SCRIPT_HEIGHT-${test[0]}))"
-
-    for (( i=0; i<$lines_under; i++ )); do
-      printf "\n" 1>&3 2>&1
-    done
-
-    for (( i=0; i<"$((6-$lines_under))"; i++ )); do
-      test[0]="$((${test[0]}-1))"
-      printf "\n" 1>&3 2>&1
-    done
-
-    test[0]="$((${test[0]}-1))"
-    restore_cursor test
-  fi
-
-  # Run the command
-  eval "$@; echo '.'" 2>&1 | progress_print && progress_done || {
-      did_error=true
-  }
-
-  # Restore Cursor position
-  restore_cursor test
-
-  # Enable line wrapping
-  tput smam 1>&3 2>&1
-
-  if [[ "$did_error" = true ]]; then
-    return 1
-  else
-    return 0
-  fi
+  return 1
 }

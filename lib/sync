@@ -1,37 +1,54 @@
 #!/usr/bin/env bash
 
-u_header "sync"
+header "sync"
 
 #-- Check flags ------------------------------------------------------------------------------------
-if [[ "$NO_SYNC" = true ]]; then
-  u_skip "Syncing dotfiles..."
-  u_exit_header && return
+if is_set "NO_SYNC"; then
+  skip "Syncing dotfiles..."
+  exit_header && return
 fi
 
 #-- Confirm Sync -----------------------------------------------------------------------------------
-if ! poll_confirm "Sync dotfiles?" true; then
-  u_skip "Syncing dotfiles..."
-  u_exit_header && return
+if ! confirm_default "Sync dotfiles?"; then
+  skip "Syncing dotfiles..."
+  exit_header && return
 fi
 
 #-- Initialize the git repository ------------------------------------------------------------------
-u_print "Initializing git repository..."
+log "Initializing git repository..."
 
 if [[ "$(git rev-parse --is-inside-work-tree 1>/dev/null 2>&1)" = "false" ]]; then
-  git init || do_fail
-  git remote add origin "${DOTFILES_GIT_REMOTE}" || do_fail
+  git init || {
+    fail
+    die "Failed to initialize git repository" 21
+  }
 
-  u_pass
+  git remote add origin "${DOTFILES_GIT_REMOTE}" || {
+    fail
+    die "Failed to add remote" 22
+  }
+
+  pass
 else
-  u_skip
+  skip
 fi
 
 #-- Sync the repository ----------------------------------------------------------------------------
-u_print "Syncing dotfiles..."
-u_return show_progress git pull --rebase origin master
+log "Syncing dotfiles..."
+show_progress git pull --rebase origin master || {
+  fail
+  die "Failed to sync to remote repository" 23
+}
+
+pass
 
 #-- Update modules ---------------------------------------------------------------------------------
-u_print "Updating submodules..."
-u_return show_progress git submodule update --recursive --init
+log "Updating submodules..."
+show_progress git submodule update --recursive --init || {
+  fail
+  die "Failed to update submodules" 24
+}
 
-u_exit_header
+pass
+
+exit_header

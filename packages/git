@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-u_header "git"
+header "git"
 
 package_install "git"
 
-u_exit_header
+exit_header

@@ -18,3 +18,25 @@
 * TODO Upgrade node on newer version
 
 * TODO Eventually correctly load dependencies. Might be missing a couple due to already having them.
+
+* TODO Exit Codes in EXITCODES.md
+  10 - Dotfiles not found at ${DOTFILES_DIR}
+  11 - Only one instance of $SCRIPT_NAME can be run at a time
+  12 - This script should not be run using sudo or as the root user
+  13 - This script requires the use of sudo
+
+  21 - Failed to initialize git repository
+  22 - Failed to add remote
+  23 - Failed to sync to remote repository
+  24 - Failed to update submodules
+
+  31 - Failed to download archive $1
+  32 - Failed to extract archive $1
+
+  41 - Package ($1) failed to install
+  42 - Group ($1) failed to install
+
+  51 - Build failed on ./autogen.sh
+  52 - Build failed on ./configure $@
+  53 - Build failed on make
+  54 - Build failed on make install
