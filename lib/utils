@@ -17,6 +17,13 @@ restore_cursor () {
     tput cup ${ARRAY[0]} ${ARRAY[1]} 1>&3
 }
 
+#-- Safe CD ----------------------------------------------------------------------------------------
+cd_safe () {
+  cd "$1" 2>/dev/null || {
+    die "Failed to change directory to $1" 14
+  }
+}
+
 #-- Check for set flags ----------------------------------------------------------------------------
 is_set () {
   local flag="$1"

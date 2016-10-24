@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+#-- Utilities --------------------------------------------------------------------------------------
+_do_rpm_download() {
+  log "Downloading rpm..."
+
+  if [[ -f "$2" ]]; then
+    rm "$2"
+  fi
+
+  wget "$1" -q -O "$2" || {
+    fail
+    die "Failed to download archive $1" 31
+  }
+
+  pass
+}
+_do_rpm_install() {
+  log "Installing rpm..."
+
+  show_progress sudo rpm -ivh "$1" || {
+    fail
+    die "Failed to install rpm archive" 33
+  }
+
+  pass
+}
+_do_rpm_cleanup() {
+  if [[ -f "$1" ]]; then
+    rm "$1" 2>/dev/null
+  fi
+}
+
+#-- Install ----------------------------------------------------------------------------------------
+install_rpm () {
+  local source_url="$1"
+  local source_file="${DOTFILES_TMP}/$(random_string 16).rpm"
+
+  _do_rpm_download "$source_url" "$source_file"
+  _do_rpm_install "$source_file"
+  _do_rpm_cleanup "$source_file"
+}

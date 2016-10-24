@@ -1,56 +1,34 @@
 #!/usr/bin/env bash
 
-u_subheader "skypeforlinux"
+subheader "skypeforlinux"
 
 #-- Config -----------------------------------------------------------------------------------------
-local tmp_dir="/tmp"
-
 local rpm_source="https://go.skype.com/skypeforlinux-64-alpha.rpm"
-local rpm_path="${tmp_dir}/skypeforlinux-64-alpha.rpm"
 
 #-- Check for existing installation ----------------------------------------------------------------
 if command_exists skypeforlinux; then
-    u_skip "Installing skypeforlinux..."
-    u_exit_subheader && return
+  skip "Installing skypeforlinux..."
+  exit_subheader && return
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if ! poll_confirm "Install skypeforlinux?" true; then
-  u_skip "Installing skypeforlinux..."
-  u_exit_subheader && return
+if ! confirm_default "Install skypeforlinux?"; then
+  skip "Installing skypeforlinux..."
+  exit_subheader && return
 fi
 
 #-- Dependencies -----------------------------------------------------------------------------------
-package_install "libXv.i686"
-package_install "libXScrnSaver.i686"
-package_install "qt.i686"
-package_install "qt-x11.i686"
-package_install "pulseaudio-libs.i686"
-package_install "pulseaudio-libs-glib2.i686"
-package_install "alsa-plugins-pulseaudio.i686"
-package_install "qtwebkit.i686"
+package_install "libXv"
+package_install "libXScrnSaver"
+package_install "qt"
+package_install "qt-x11"
+package_install "pulseaudio-libs"
+package_install "pulseaudio-libs-glib2"
+package_install "alsa-plugins-pulseaudio"
+package_install "qtwebkit"
 package_install "libappindicator"
 
 #-- Install ----------------------------------------------------------------------------------------
-cd "$tmp_dir"
+install_rpm "$rpm_source"
 
-function download() {
-  u_print "Downloading skypeforlinux..."
-
-  if [[ -f "$rpm_path" ]]; then
-    cleanup
-  fi
-
-  u_return wget -q "$rpm_source"
-}
-function install() {
-  u_print "Installing skypeforlinux..."
-  u_return show_progress sudo rpm -ivh "$rpm_path"
-}
-function cleanup() {
-  rm "$rpm_path"
-}
-
-download && install && cleanup
-
-u_exit_subheader
+exit_subheader

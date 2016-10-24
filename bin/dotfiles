@@ -32,7 +32,7 @@ trap_err () {
   set +o errexit
 
   # Print fatal error
-  printf "\n[\e[1;91mFatal\e[0m] Check the logfile at %s for more information." "$DOTFILES_LOG"
+  printf "\n[\e[1;91mFatal\e[0m] Check the logfile at %s for more information.\n" "$DOTFILES_LOG"
 
   # Exit with failure status
   if [[ "$#" -eq 1 && "$1" =~ ^[0-9]+$ ]]; then
@@ -198,7 +198,9 @@ main () {
   source "${DOTFILES_DIR}/lib/utils-screen"
   source "${DOTFILES_DIR}/lib/utils-package"
   source "${DOTFILES_DIR}/lib/utils-interactive"
+
   source "${DOTFILES_DIR}/lib/utils-build"
+  source "${DOTFILES_DIR}/lib/utils-rpm"
 
   #-- Check privileges -----------------------------------------------------------------------------
   if is_super_user; then
@@ -213,19 +215,19 @@ main () {
   # stderr/stdout.
 
   #-- Ensure git is installed ----------------------------------------------------------------------
-  sleep 0.1
+  sleep 0.05
   source "${DOTFILES_DIR}/packages/git"
 
   #-- Sync repository ------------------------------------------------------------------------------
-  sleep 0.1
+  sleep 0.05
   source "${DOTFILES_DIR}/lib/sync"
 
   #-- Install packages -----------------------------------------------------------------------------
-  sleep 0.1
-  # source "${DOTFILES_DIR}/lib/packages"
+  sleep 0.05
+  source "${DOTFILES_DIR}/lib/packages"
 
   #-- Create links ---------------------------------------------------------------------------------
-  sleep 0.1
+  sleep 0.05
   source "${DOTFILES_DIR}/lib/links"
 }
 

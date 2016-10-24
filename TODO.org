@@ -25,6 +25,8 @@
   12 - This script should not be run using sudo or as the root user
   13 - This script requires the use of sudo
 
+  14 - Failed to change directory to $1
+
   21 - Failed to initialize git repository
   22 - Failed to add remote
   23 - Failed to sync to remote repository
@@ -32,6 +34,8 @@
 
   31 - Failed to download archive $1
   32 - Failed to extract archive $1
+  33 - Failed to install rpm archive
+
 
   41 - Package ($1) failed to install
   42 - Group ($1) failed to install

@@ -1,21 +1,20 @@
 #!/usr/bin/env bash
 
-u_header "package"
+header "package"
+
+#-- Check for flags --------------------------------------------------------------------------------
+if is_set "NO_PACKAGES"; then
+  skip "Installing packages..."
+  exit_header && return
+fi
+
+logl "Installing packages..."
 
 #-- Utilities --------------------------------------------------------------------------------------
 function load_package() {
-  sleep 0.1
-  source "$DOTFILES_DIRECTORY/packages/$1"
+  sleep 0.05
+  source "${DOTFILES_DIR}/packages/$1"
 }
-
-#-- Poll confirmation ------------------------------------------------------------------------------
-u_print "Installing packages..."
-
-if [[ "$NO_PACKAGES" = true ]]; then
-  u_skip && return
-fi
-
-new_line 3>&5 4>&6
 
 #-- Packages ---------------------------------------------------------------------------------------
 
@@ -23,18 +22,18 @@ new_line 3>&5 4>&6
 load_package "chrome"
 
 # Editors
-load_package "emacs"
+#load_package "emacs"
 
 # Scripts
-load_package "nvm"
+#load_package "nvm"
 
 # Social
 load_package "skype"
 load_package "slack"
 
 # Utility
-load_package "qbittorrent"  # A torrent client
-load_package "deadbeef"     # An audio player
-load_package "mpv"          # A video player
+#load_package "qbittorrent"  # A torrent client
+#load_package "deadbeef"     # An audio player
+#load_package "mpv"          # A video player
 
-u_exit_header
+exit_header
