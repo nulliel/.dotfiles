@@ -214,19 +214,19 @@ main () {
 
   #-- Ensure git is installed ----------------------------------------------------------------------
   sleep 0.1
-  source $DOTFILES_DIR/packages/git
+  source "${DOTFILES_DIR}/packages/git"
 
   #-- Sync repository ------------------------------------------------------------------------------
   sleep 0.1
-  source $DOTFILES_DIR/lib/sync
+  source "${DOTFILES_DIR}/lib/sync"
 
   #-- Install packages -----------------------------------------------------------------------------
   sleep 0.1
-  # source $DOTFILES_DIR/lib/packages
+  # source "${DOTFILES_DIR}/lib/packages"
 
   #-- Create links ---------------------------------------------------------------------------------
   sleep 0.1
-  # source $DOTFILES_DIR/lib/links
+  source "${DOTFILES_DIR}/lib/links"
 }
 
 main "$@"

@@ -40,3 +40,6 @@
   52 - Build failed on ./configure $@
   53 - Build failed on make
   54 - Build failed on make install
+
+  71 - File $link_to already exists and is not linked.
+  72 - Failed to create link $link_from->$link_to
