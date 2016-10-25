@@ -188,7 +188,7 @@ show_progress () {
     "$@" && return 0 || return 1
   fi
 
-  printf "\n\n" # Print a newline to the log
+  printf "\n" # Print a newline to the log
 
   save_cursor progress_cursor
 
@@ -209,7 +209,7 @@ show_progress () {
     restore_cursor progress_cursor
   fi
 
-  "$@" 2>&1 | _print_progress
+  { echo ''; "$@"; } 2>&1 | _print_progress
 
   if [[ "${PIPESTATUS[0]}" != "0" ]]; then
     set_return=1
