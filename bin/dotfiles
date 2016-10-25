@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 #-- Config -----------------------------------------------------------------------------------------
 readonly SCRIPT_NAME="$(basename "$0")"
 
@@ -10,8 +9,8 @@ readonly DOTFILES_LOG="${DOTFILES_DIR}/dotfiles.log"
 
 readonly DOTFILES_GIT_REMOTE="https://github.com/nulliel/dotfiles.git"
 
-#-- Don't modify this ------------------------------------------------------------------------------
-declare -i SCRIPT_HEIGHT="$(tput lines)"
+#-- Don't mess with this ---------------------------------------------------------------------------
+declare LOCKFILE_EXIT=false
 
 #-- Options ----------------------------------------------------------------------------------------
 set -o errexit     # Exit on most errors
@@ -48,7 +47,7 @@ trap_exit () {
   fi
 
   # Empty tmp directory
-  if [[ -d "$DOTFILES_TMP" ]]; then
+  if [[ -d "$DOTFILES_TMP" && "$LOCKFILE_EXIT" = false ]]; then
     rm -r "$DOTFILES_TMP"
   fi
 
@@ -71,44 +70,15 @@ acquire_lock () {
     || return 1
 }
 
-#-- Local helpers ----------------------------------------------------------------------------------
-output_to_log () {
-  IFS=''
-  while read -r data; do
-    printf "%b\n" "$data" \
-      | sed -r "s/\r//g" \
-      | sed -r "s/\x1B\[\?7[l|h]//g" \
-      | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K|A]//g" \
-      >>"$DOTFILES_LOG"
-
-    # Hack to maintain a copy of the actual height
-    SCRIPT_HEIGHT="$(tput lines)"
-  done
-}
+#-- Utilities --------------------------------------------------------------------------------------
 parse_params () {
   INSTALL_DEFAULTS=false  # Perform all default actions without prompts
-  NO_LINKS=false          # Don't create symbolic links
-  NO_PACKAGES=false       # Don't install packages (OVERRIDES DEFAULTS)
-  NO_REPOSITORIES=false    # Don't install additional package repositories
-  NO_SCRIPTS=false        # Don't load scripts
   NO_SYNC=false           # Don't sync dotfiles (OVERRIDES DEFAULTS)
 
   for opt in "$@"; do
     case "$opt" in
       --defaults)
         INSTALL_DEFAULTS=true
-        ;;
-      --no-links)
-        NO_LINKS=true
-        ;;
-      --no-packages)
-        NO_PACKAGES=true
-        ;;
-      --no-repositories)
-        NO_REPOSITORIES=true
-        ;;
-      --no-scripts)
-        NO_SCRIPTS=true
         ;;
       --no-sync)
         NO_SYNC=true
@@ -125,10 +95,6 @@ parse_params () {
   done
 
   readonly INSTALL_DEFAULTS
-  readonly NO_LINKS
-  readonly NO_PACKAGES
-  readonly NO_REPOSITORIES
-  readonly NO_SCRIPTS
   readonly NO_SYNC
 }
 show_banner () {
@@ -148,19 +114,15 @@ show_usage () {
 Usage: $SCRIPT_NAME [options]
 
 Options:
-        --defaults           Install all defaults without any prompts
-    -h, --help               Print this help text
-        --no-links           Suppress linking of dotfiles
-        --no-packages        Suppress package updates
-        --no-repositories    Suppress installation of additional package repositories
-        --no-scripts         Suppress loading of scripts
-        --no-sync            Suppress repository syncing
+        --defaults    Install all defaults without any prompts
+    -h, --help        Print this help text
+        --no-sync     Suppress repository syncing
 
 Documentation can be found at https://github.com/nulliel/dotfiles/
 EOF
 }
 
-#-- Main function ----------------------------------------------------------------------------------
+#-- Main -------------------------------------------------------------------------------------------
 main () {
   trap "trap_err" ERR
   trap "trap_exit" EXIT SIGINT SIGTERM SIGTSTP
@@ -168,7 +130,6 @@ main () {
   # Disable word wrapping
   tput rmam
 
-  #-- Setup script ---------------------------------------------------------------------------------
   show_banner
   parse_params "$@"
 
@@ -179,67 +140,26 @@ main () {
   }
 
   #-- Create tmp folder ----------------------------------------------------------------------------
-  [[ ! -d "$DOTFILES_TMP" ]] && mkdir "$DOTFILES_TMP"
+  if [[ ! -d "$DOTFILES_TMP" ]]; then
+    mkdir "$DOTFILES_TMP"
+  fi
 
   #-- Acquire the lock -----------------------------------------------------------------------------
   acquire_lock $SCRIPT_NAME || {
+    LOCKFILE_EXIT=true
+
     printf "[\e[1;91mError\e[0m] Only one instance of %b can run at a time.\n" "${SCRIPT_NAME}"
     exit 11
   }
 
-  #-- Empty the log file ---------------------------------------------------------------------------
-  printf "" >"$DOTFILES_LOG"
-
-  #-- Log everything -------------------------------------------------------------------------------
-  # fd1 - $DOTFILES_LOG_FILE
-  # fd2 - $DOTFILES_LOG_FILE
-  # fd3 - stdout
-  # fd4 - stderr
-  # fd5 - $DOTFILES_LOG_FILE && stdout
-  # fd6 - $FOTFILES_LOG_FILE && stderr
-  exec 3>&1 4>&2 1> >(output_to_log) 2>&1 5> >(tee /dev/fd/3) 6> >(tee /dev/fd/4)
-
-  #-- Source helpers -------------------------------------------------------------------------------
-  source "${DOTFILES_DIR}/lib/utils"
-  source "${DOTFILES_DIR}/lib/utils-screen"
-  source "${DOTFILES_DIR}/lib/utils-package"
-  source "${DOTFILES_DIR}/lib/utils-interactive"
-  source "${DOTFILES_DIR}/lib/utils-repos"
-
-  source "${DOTFILES_DIR}/lib/utils-build"
-  source "${DOTFILES_DIR}/lib/utils-rpm"
-
-  #-- Check privileges -----------------------------------------------------------------------------
-  if is_super_user; then
-    die "This script should not be run using sudo or as the root user" 12
-  fi
-
-  if ! can_use_sudo; then
-    die "This script requires the use of sudo" 13
-  fi
-
-  # All sleeps after this point are a bit of a hack to help prevent issues with writing to
-  # stderr/stdout.
-
   #-- Ensure git is installed ----------------------------------------------------------------------
-  sleep 0.05
   source "${DOTFILES_DIR}/packages/git"
 
   #-- Sync repository ------------------------------------------------------------------------------
-  sleep 0.05
   source "${DOTFILES_DIR}/lib/sync"
 
-  #-- Install repositories -------------------------------------------------------------------------
-  sleep 0.05
-  source "${DOTFILES_DIR}/lib/repositories"
-
-  #-- Install packages -----------------------------------------------------------------------------
-  sleep 0.05
-  source "${DOTFILES_DIR}/lib/packages"
-
-  #-- Create links ---------------------------------------------------------------------------------
-  sleep 0.05
-  source "${DOTFILES_DIR}/lib/links"
+  #-- Call the rest of the script ------------------------------------------------------------------
+  source "${DOTFILES_DIR}/bin/_dotfiles"
 }
 
 main "$@"

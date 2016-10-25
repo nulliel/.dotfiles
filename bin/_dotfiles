@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+#-- Config -----------------------------------------------------------------------------------------
+declare -i SCRIPT_HEIGHT="$(tput lines)"
+
+#-- Local helpers ----------------------------------------------------------------------------------
+output_to_log () {
+  IFS=''
+  while read -r data; do
+    printf "%b\n" "$data" \
+      | sed -r "s/\r//g" \
+      | sed -r "s/\x1B\[\?7[l|h]//g" \
+      | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K|A]//g" \
+      >>"$DOTFILES_LOG"
+
+    # Hack to maintain a copy of the actual height
+    SCRIPT_HEIGHT="$(tput lines)"
+  done
+}
+
+#-- Main function ----------------------------------------------------------------------------------
+main () {
+  #-- Empty the log file ---------------------------------------------------------------------------
+  printf "" >"$DOTFILES_LOG"
+
+  #-- Log everything -------------------------------------------------------------------------------
+  # fd1 - $DOTFILES_LOG_FILE
+  # fd2 - $DOTFILES_LOG_FILE
+  # fd3 - stdout
+  # fd4 - stderr
+  # fd5 - $DOTFILES_LOG_FILE && stdout
+  # fd6 - $FOTFILES_LOG_FILE && stderr
+  exec 3>&1 4>&2 1> >(output_to_log) 2>&1 5> >(tee /dev/fd/3) 6> >(tee /dev/fd/4)
+
+  #-- Source helpers -------------------------------------------------------------------------------
+  source "${DOTFILES_DIR}/lib/utils"
+  source "${DOTFILES_DIR}/lib/utils-screen"
+  source "${DOTFILES_DIR}/lib/utils-package"
+  source "${DOTFILES_DIR}/lib/utils-interactive"
+  source "${DOTFILES_DIR}/lib/utils-repos"
+
+  source "${DOTFILES_DIR}/lib/utils-build"
+  source "${DOTFILES_DIR}/lib/utils-rpm"
+
+  #-- Check privileges -----------------------------------------------------------------------------
+  if is_super_user; then
+    die "This script should not be run using sudo or as the root user" 12
+  fi
+
+  if ! can_use_sudo; then
+    die "This script requires the use of sudo" 13
+  fi
+
+  # All sleeps after this point are a bit of a hack to help prevent issues with writing to
+  # stderr/stdout.
+
+  #-- Install repositories -------------------------------------------------------------------------
+  sleep 0.05
+  source "${DOTFILES_DIR}/lib/repositories"
+
+  #-- Install packages -----------------------------------------------------------------------------
+  sleep 0.05
+  source "${DOTFILES_DIR}/lib/packages"
+
+  #-- Create links ---------------------------------------------------------------------------------
+  sleep 0.05
+  source "${DOTFILES_DIR}/lib/links"
+}
+
+main

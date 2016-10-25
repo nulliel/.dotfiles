@@ -1,66 +1,64 @@
 #!/usr/bin/env bash
 
-header "sync"
-
 #-- Check flags ------------------------------------------------------------------------------------
-if is_set "NO_SYNC"; then
-  skip "Syncing dotfiles..."
-  exit_header && return
-fi
-
-#-- Confirm Sync -----------------------------------------------------------------------------------
-if ! confirm_default "Sync dotfiles?"; then
-  skip "Syncing dotfiles..."
-  exit_header && return
+if [[ "$NO_SYNC" = true ]]; then
+  printf "Syncing dotfiles...\033[1;93mSKIPPING\033[0m\n"
+  return
 fi
 
 #-- Initialize the git repository ------------------------------------------------------------------
-log "Initializing git repository..."
+printf "Initializing git repository..."
 
 if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]]; then
-  git init || {
-    fail
-    die "Failed to initialize git repository" 21
+  git init >/dev/null 2>&1 || {
+    printf "\033[1;91mERROR\033[0m\n"
+    printf "[\033[1;91mError\033[0m] Failed to initialize git repository\n"
+    exit 21
   }
 
-  git remote add origin "${DOTFILES_GIT_REMOTE}" || {
-    fail
-    die "Failed to add remote" 22
+  git remote add origin "${DOTFILES_GIT_REMOTE}" >/dev/null 2>&1 || {
+    printf "\033[1;91mERROR\033[0m\n"
+    printf "[\033[1;91mError\033[0m] Failed to add remote\n"
+    exit 22
   }
 
-  git fetch origin master || {
-    fail
-    die "Failed to fetch origin" 23
+  git fetch origin master >/dev/null 2>&1 || {
+    printf "\033[1;91mERROR\033[0m\n"
+    printf "[\033[1;91mError\033[0m] Failed to fetch origin\n"
+    exit 23
   }
 
-  git reset --hard FETCH_HEAD || {
-    fail
-    die "Failed to reset branch" 24
+  git reset --hard FETCH_HEAD >/dev/null 2>&1 || {
+    printf "\033[1;91mERROR\033[0m\n"
+    printf "[\033[1;91mError\033[0m] Failed to reset branch\n"
+    exit 24
   }
 
-  git clean -fd
+  git clean -fd >/dev/null 2>&1
 
-  pass
+  printf "\033[1;92mOK\033[0m\n"
 else
-  skip
+  printf "\033[1;93mSKIPPING\033[0m\n"
 fi
 
 #-- Sync the repository ----------------------------------------------------------------------------
-log "Syncing dotfiles..."
-show_progress git pull --rebase origin master || {
-  fail
-  die "Failed to sync to remote repository" 25
+printf "Syncing dotfiles..."
+
+git pull --rebase origin master >/dev/null 2>&1 || {
+  printf "\033[1;91mERROR\033[0m\n"
+  printf "[\033[1;91mError\033[0m] Failed to sync to remote repository\n"
+  exit 25
 }
 
-pass
+printf "\033[1;92mOK\033[0m\n"
 
 #-- Update modules ---------------------------------------------------------------------------------
-log "Updating submodules..."
-show_progress git submodule update --recursive --init || {
-  fail
-  die "Failed to update submodules" 26
+printf "Updating submodules..."
+
+git submodule update --recursive --init >/dev/null 2>&1 || {
+  printf "\033[1;91mERROR\033[0m\n"
+  printf "[\033[1;91mError\033[0m] Failed to update submodules\n"
+  exit 26
 }
 
-pass
-
-exit_header
+printf "\033[1;92mOK\033[0m\n"
