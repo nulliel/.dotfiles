@@ -10,7 +10,7 @@ local mpv_version="0.0.0"
 
 #-- utilities --------------------------------------------------------------------------------------
 get_mpv_version () {
-  mpv_version="$(mpv --version | sed -n -e 's/^.*mpv\s\(.*\)\s(.*/\1/p;1q')"
+  mpv_version="$(mpv --version --config-dir /tmp | sed -n -e 's/^.*mpv\s\(.*\)\s(.*/\1/p;1q')"
 }
 
 #-- Check for existing installation ----------------------------------------------------------------
