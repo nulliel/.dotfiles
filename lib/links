@@ -2,18 +2,6 @@
 
 header "link"
 
-#-- Check for flags --------------------------------------------------------------------------------
-if is_set "NO_LINKS"; then
-  skip "Creating links..."
-  exit_header && return
-fi
-
-#-- Confirm linking --------------------------------------------------------------------------------
-if ! confirm_default "Create symlinks?"; then
-  skip "Creating links..."
-  exit_header && return
-fi
-
 #-- Link function ----------------------------------------------------------------------------------
 link_home () {
   local link_from="${DOTFILES_DIR}/$1"
