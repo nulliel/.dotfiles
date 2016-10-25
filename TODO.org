@@ -1,9 +1,5 @@
 #+TITLE: TODOs
 
-* DONE Upgrade emacs on newer version
-* DONE Update optional dependencies easier
-
-* TODO deadbeef-gnome-mm-keys package
 * TODO add ~/.dotfiles/bin to the path
 * TODO add global node modules
 * TODO automatically download latest node version
@@ -12,12 +8,8 @@
 * TODO ZSH? (default shell)
 * TODO Scripts (backup)
 * TODO ssh-agent, gpg-agent
-* TODO only make links of installed programs
-* TODO ask user if they want certain things, in npmrc for example
 * TODO redo nvm installation
 * TODO Upgrade node on newer version
-
-* TODO Eventually correctly load dependencies. Might be missing a couple due to already having them.
 
 * TODO Exit Codes in EXITCODES.md
   10 - Dotfiles not found at ${DOTFILES_DIR}
