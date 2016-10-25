@@ -28,6 +28,18 @@ if [[ "$(git rev-parse --is-inside-work-tree 1>/dev/null 2>&1)" != "true" ]]; th
     die "Failed to add remote" 22
   }
 
+  git fetch origin master || {
+    fail
+    die "Failed to fetch origin" 23
+  }
+
+  git reset --hard FETCH_HEAD || {
+    fail
+    die "Failed to reset branch" 24
+  }
+
+  git clean -fd
+
   pass
 else
   skip
@@ -37,7 +49,7 @@ fi
 log "Syncing dotfiles..."
 show_progress git pull --rebase origin master || {
   fail
-  die "Failed to sync to remote repository" 23
+  die "Failed to sync to remote repository" 25
 }
 
 pass
@@ -46,7 +58,7 @@ pass
 log "Updating submodules..."
 show_progress git submodule update --recursive --init || {
   fail
-  die "Failed to update submodules" 24
+  die "Failed to update submodules" 26
 }
 
 pass

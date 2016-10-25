@@ -29,8 +29,11 @@
 
   21 - Failed to initialize git repository
   22 - Failed to add remote
-  23 - Failed to sync to remote repository
-  24 - Failed to update submodules
+  23 - Failed to fetch origin
+  24 - Failed to reset branch
+  25 - Failed to sync to remote repository
+  26 - Failed to update submodules
+
 
   31 - Failed to download archive $1
   32 - Failed to extract archive $1
