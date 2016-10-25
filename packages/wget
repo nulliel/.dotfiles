@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+subheader "wget"
+
+package_install "wget"
+
+exit_subheader

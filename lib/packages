@@ -17,6 +17,7 @@ load_package () {
 }
 
 #-- Packages ---------------------------------------------------------------------------------------
+load_package "wget"
 
 #-- Packages Groups --------------------------------------------------------------------------------
 # package_group "Install Emacs additional dependencies?" \
