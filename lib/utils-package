@@ -25,7 +25,7 @@ package_install () {
 package_groupinstall () {
   log "Installing $1..."
 
-  show_progress sudo dnf groupinstall -y "'$@'" && pass || {
+  show_progress sudo dnf groupinstall -y "$1" && pass || {
       fail
       die "Group ($1) failed to install" 42
     }
