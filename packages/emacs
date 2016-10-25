@@ -1,24 +1,38 @@
 #!/usr/bin/env bash
 
-u_subheader "emacs"
-cd /tmp
-#-- Config -----------------------------------------------------------------------------------------
-local tmp_dir="/tmp"
+subheader "emacs"
 
-local tar_gz_source="https://github.com/emacs-mirror/emacs/archive/emacs-25.1.tar.gz"
-local tar_gz_path="${tmp_dir}/emacs-25.1.tar.gz"
-local folder_path="${tmp_dir}/emacs-emacs-25.1"
+#-- Config -----------------------------------------------------------------------------------------
+local source_path="https://github.com/emacs-mirror/emacs/archive/emacs-25.1.tar.gz"
+
+local source_version="25.1.1"
+local emacs_version="0.0.0"
+
+#-- Utilities --------------------------------------------------------------------------------------
+get_emacs_version () {
+  emacs_version="$(emacs --version | sed -n -e 's/^.*GNU Emacs //p;1q')"
+}
 
 #-- Check for existing installation ----------------------------------------------------------------
-if package_installed emacs; then
-  u_skip "Installing emacs..."
-  u_exit_subheader && return
+if command_exists "emacs"; then
+  get_emacs_version
+
+  if ! can_update "$emacs_version" "$source_version"; then
+    skip "Installing emacs..."
+    exit_subheader && return
+  fi
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if ! poll_confirm "Install emacs?" true; then
-  u_skip "Installing emacs..."
-  u_exit_subheader && return
+local update_string="Install emacs?"
+
+if [[ "$emacs_version" != "0.0.0" ]]; then
+  update_string="Update emacs? ($emacs_version -> $source_version)"
+fi
+
+if ! confirm_default "$update_string"; then
+  skip "Installing emacs..."
+  exit_subheader && return
 fi
 
 #-- Dependencies -----------------------------------------------------------------------------------
@@ -35,57 +49,6 @@ package_install "gtk3-devel"
 package_install "webkitgtk3-devel"
 
 #-- Installation -----------------------------------------------------------------------------------
-cd "$tmp_dir"
-
-function download() {
-  u_print "Downloading tarball..."
-
-  if [[ -f "$tar_gz_path" ]]; then
-    rm "$tar_gz_path"
-  fi
-
-  u_return wget "$tar_gz_source" -q
-}
-function extract() {
-  u_print "Extracting tarball..."
-
-  if [[ -d "$folder_path" ]]; then
-    rm -r "$folder_path"
-  fi
-
-  tar -zxf "$tar_gz_path"
-  rm "$tar_gz_path"
-
-  u_pass
-}
-function configure() {
-  u_print "Running ./autogen.sh..."
-  u_return show_progress ./autogen.sh
-
-  u_print "Running ./configure --with-xwidgets..."
-  u_return show_progress ./configure --with-xwidgets
-}
-function build() {
-  u_print "Running make..."
-  u_return show_progress make
-}
-function install() {
-  u_print "Running make install..."
-  sudo make install
-}
-
-download && extract
-
-cd "$folder_path"
-
-configure && build && install
-
-#-- Additional packages ----------------------------------------------------------------------------
-if poll_confirm "optional packages" true; then
-  package_install "adobe-source-code-pro-fonts"
-  package_install "aspell"
-  package_install "aspell-en"
-  package_install "the_silver_searcher"
-fi
+do_make_install "$source_path" "--with-x-widgets"
 
 u_exit_subheader

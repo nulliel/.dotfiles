@@ -84,13 +84,12 @@ can_use_sudo () {
   return 0
 }
 
-
-
-
-
-
-
 #-- Updating ---------------------------------------------------------------------------------------
+# Compare a version string (major.minor.build) to another version string to see if a newer
+# version is available.
+#
+# $1 - Installed version
+# $2 - Newest version
 function can_update() {
   local installed="${1//./ }"
   local available="${2//./ }"

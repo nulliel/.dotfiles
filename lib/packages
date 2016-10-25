@@ -11,18 +11,28 @@ fi
 logl "Installing packages..."
 
 #-- Utilities --------------------------------------------------------------------------------------
-function load_package() {
+load_package () {
   sleep 0.05
   source "${DOTFILES_DIR}/packages/$1"
 }
 
 #-- Packages ---------------------------------------------------------------------------------------
 
+#-- Packages Groups --------------------------------------------------------------------------------
+# package_group "Install Emacs additional dependencies?" \
+#  "adobe-source-code-pro-fonts"
+#  package_install "adobe-source-code-pro-fonts"
+#  package_install "aspell"
+#  package_install "aspell-en"
+#  package_install "the_silver_searcher"
+
+#-- Package Modules --------------------------------------------------------------------------------
+
 # Browsers
 load_package "chrome"
 
 # Editors
-#load_package "emacs"
+load_package "emacs"
 
 # Scripts
 #load_package "nvm"
