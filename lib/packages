@@ -19,13 +19,11 @@ load_package () {
 #-- Packages ---------------------------------------------------------------------------------------
 load_package "wget"
 
-#-- Packages Groups --------------------------------------------------------------------------------
-# package_group "Install Emacs additional dependencies?" \
-#  "adobe-source-code-pro-fonts"
-#  package_install "adobe-source-code-pro-fonts"
-#  package_install "aspell"
-#  package_install "aspell-en"
-#  package_install "the_silver_searcher"
+# Emacs packages
+# package_install "adobe-source-code-pro-fonts"
+# package_install "aspell"
+# package_install "aspell-en"
+# package_install "the_silver_searcher"
 
 #-- Package Modules --------------------------------------------------------------------------------
 
@@ -43,8 +41,8 @@ load_package "skype"
 load_package "slack"
 
 # Utility
-load_package "qbittorrent"  # A torrent client
-#load_package "deadbeef"     # An audio player
-#load_package "mpv"          # A video player
+load_package "qbittorrent"    # A torrent client
+load_package "deadbeef"       # An audio player
+#load_package "mpv"            # A video player
 
 exit_header

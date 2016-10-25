@@ -51,4 +51,4 @@ package_install "webkitgtk3-devel"
 #-- Installation -----------------------------------------------------------------------------------
 do_make_install "$source_path" "--with-x-widgets"
 
-u_exit_subheader
+exit_subheader
