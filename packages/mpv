@@ -1,24 +1,38 @@
 #!/usr/bin/env bash
 
-u_subheader "mpv"
+subheader "mpv"
 
 #-- Config -----------------------------------------------------------------------------------------
-local tmp_dir="/tmp"
+local source_path="https://github.com/mpv-player/mpv/archive/v0.21.0.tar.gz"
 
-local tar_gz_source="https://github.com/mpv-player/mpv/archive/v0.21.0.tar.gz"
-local tar_gz_path="${tmp_dir}/v0.21.0.tar.gz"
-local folder_path="${tmp_dir}/mpv-0.21.0"
+local source_version="0.21.0"
+local mpv_version="0.0.0"
+
+#-- utilities --------------------------------------------------------------------------------------
+get_mpv_version () {
+  mpv_version="$(mpv --version | sed -n -e 's/^.*mpv\s\(.*\)\s(.*/\1/p;1q')"
+}
 
 #-- Check for existing installation ----------------------------------------------------------------
-if command_exists mpv; then
-  u_skip "Installing mpv..."
-  u_exit_subheader && return
+if command_exists "mpv"; then
+  get_mpv_version
+
+  if ! can_update "$mpv_version" "$source_version"; then
+    skip "Installing mpv..."
+    exit_subheader && return
+  fi
 fi
 
 #-- Confirm installation ---------------------------------------------------------------------------
-if ! poll_confirm "Install mpv?" true; then
-  u_skip "Installing mpv..."
-  u_exit_subheader && return
+local update_string="Install mpv?"
+
+if [[ "$mpv_version" != "0.0.0" ]]; then
+  update_string="Update mpv? ($mpv_version -> $source_version)"
+fi
+
+if ! confirm_default "$update_string"; then
+  skip "Installing mpv..."
+  exit_subheader && return
 fi
 
 #-- Dependencies -----------------------------------------------------------------------------------
@@ -54,56 +68,6 @@ package_install "libv4l-devel"
 package_install "perl-Math-BigRat"
 
 #-- Install ----------------------------------------------------------------------------------------
-cd "$tmp_dir"
+do_waf_install "$source_path"
 
-function download() {
-  u_print "Downloading tarball..."
-
-  if [[ -f "$tar_gz_path" ]]; then
-    rm "$tar_gz_path"
-  fi
-
-  u_return wget -q "$tar_gz_source"
-}
-function extract() {
-  u_print "Extracting tarball..."
-
-  if [[ -d "$folder_path" ]]; then
-    rm -r "$folder_path"
-  fi
-
-  u_return tar -zxf "$tar_gz_path"
-}
-function configure() {
-  u_print "Running ./bootstrap.py..."
-  u_return show_progress ./bootstrap.py
-
-  u_print "Running ./waf configure..."
-  u_return show_progress ./waf configure
-}
-function build() {
-  u_print "Running ./waf build..."
-  u_return show_progress ./waf build
-
-}
-function install() {
-  u_print "Running ./waf install..."
-  u_return show_progress sudo ./waf install
-}
-function cleanup() {
-  if [[ -f "$tar_gz_path" ]]; then
-    rm "$tar_gz_path"
-  fi
-
-  if [[ -d "$folder_path" ]]; then
-    rm -r "$folder_path"
-  fi
-}
-
-download && extract
-
-cd "$folder_path"
-
-configure && build && install && cleanup
-
-u_exit_subheader
+exit_subheader

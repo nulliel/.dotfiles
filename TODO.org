@@ -1,7 +1,7 @@
 #+TITLE: TODOs
 
-* TODO Upgrade emacs on newer version
-* TODO Update optional dependencies easier
+* DONE Upgrade emacs on newer version
+* DONE Update optional dependencies easier
 
 * TODO deadbeef-gnome-mm-keys package
 * TODO add ~/.dotfiles/bin to the path
@@ -34,11 +34,9 @@
   25 - Failed to sync to remote repository
   26 - Failed to update submodules
 
-
   31 - Failed to download archive $1
   32 - Failed to extract archive $1
   33 - Failed to install rpm archive
-
 
   41 - Package ($1) failed to install
   42 - Group ($1) failed to install
@@ -47,6 +45,10 @@
   52 - Build failed on ./configure $@
   53 - Build failed on make
   54 - Build failed on make install
+  55 - Build dependencies require a missing repository '$1'
+  56 - Build failed on ./waf configure $@
+  57 - Build failed on ./waf build
+  58 - Build failed on ./waf install
 
   71 - File $link_to already exists and is not linked.
   72 - Failed to create link $link_from->$link_to
