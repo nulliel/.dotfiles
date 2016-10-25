@@ -4,6 +4,7 @@ subheader "deadbeef"
 
 #-- Config -----------------------------------------------------------------------------------------
 local source_path="https://github.com/Alexey-Yakovenko/deadbeef/archive/0.7.2.tar.gz"
+local mmkeys_path="https://github.com/nulliel/deadbeef-gnome-mmkeys/archive/1.0.0.tar.gz"
 
 local source_version="0.7.2"
 local deadbeef_version="0.0.0"
@@ -82,5 +83,6 @@ package_install "gtk3-devel"
 
 #-- Install ----------------------------------------------------------------------------------------
 do_make_install "$source_path"
+do_make_install "$mmkeys_path"
 
 exit_subheader
