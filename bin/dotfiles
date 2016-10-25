@@ -8,7 +8,7 @@ readonly DOTFILES_DIR="${HOME}/.dotfiles"
 readonly DOTFILES_TMP="${DOTFILES_DIR}/tmp"
 readonly DOTFILES_LOG="${DOTFILES_DIR}/dotfiles.log"
 
-readonly DOTFILES_GIT_REPO="https://github.com/nulliel/dotfiles.git"
+readonly DOTFILES_GIT_REMOTE="https://github.com/nulliel/dotfiles.git"
 
 #-- Don't modify this ------------------------------------------------------------------------------
 declare -i SCRIPT_HEIGHT="$(tput lines)"
