@@ -16,9 +16,6 @@ load_package () {
   source "${DOTFILES_DIR}/packages/$1"
 }
 
-#-- Repositories -----------------------------------------------------------------------------------
-enable_repository "rpmfusion"
-
 #-- Packages ---------------------------------------------------------------------------------------
 load_package "wget"
 

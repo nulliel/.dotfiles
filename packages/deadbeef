@@ -35,6 +35,12 @@ if ! confirm_default "$update_string"; then
   exit_subheader && return
 fi
 
+#-- Requires repositories --------------------------------------------------------------------------
+if ! repository_activated "rpmfusion"; then
+  log "Installing deadbeef..." && fail
+  die "Build requires a missing repository 'rpmfusion'" 55
+fi
+
 #-- Dependencies -----------------------------------------------------------------------------------
 install_build_tools
 

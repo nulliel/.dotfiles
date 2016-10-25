@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+header "repos"
+
+#-- Check for flags --------------------------------------------------------------------------------
+if is_set "NO_REPOSITORIES"; then
+  skip "Installing repositories..."
+  exit_header && return
+fi
+
+logl "Install repositories. This may take a while..."
+
+#-- Repositories -----------------------------------------------------------------------------------
+enable_repository "rpmfusion"
+
+exit_header

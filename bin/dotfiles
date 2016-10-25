@@ -89,6 +89,7 @@ parse_params () {
   INSTALL_DEFAULTS=false  # Perform all default actions without prompts
   NO_LINKS=false          # Don't create symbolic links
   NO_PACKAGES=false       # Don't install packages (OVERRIDES DEFAULTS)
+  NO_REPOSITORIES=false    # Don't install additional package repositories
   NO_SCRIPTS=false        # Don't load scripts
   NO_SYNC=false           # Don't sync dotfiles (OVERRIDES DEFAULTS)
 
@@ -102,6 +103,9 @@ parse_params () {
         ;;
       --no-packages)
         NO_PACKAGES=true
+        ;;
+      --no-repositories)
+        NO_REPOSITORIES=true
         ;;
       --no-scripts)
         NO_SCRIPTS=true
@@ -123,6 +127,7 @@ parse_params () {
   readonly INSTALL_DEFAULTS
   readonly NO_LINKS
   readonly NO_PACKAGES
+  readonly NO_REPOSITORIES
   readonly NO_SCRIPTS
   readonly NO_SYNC
 }
@@ -143,12 +148,13 @@ show_usage () {
 Usage: $SCRIPT_NAME [options]
 
 Options:
-        --defaults      Install all defaults without any prompts
-    -h, --help          Print this help text
-        --no-links      Suppress linking of dotfiles
-        --no-packages   Suppress package updates
-        --no-scripts    Suppress loading of scripts
-        --no-sync       Suppress repository syncing
+        --defaults           Install all defaults without any prompts
+    -h, --help               Print this help text
+        --no-links           Suppress linking of dotfiles
+        --no-packages        Suppress package updates
+        --no-repositories    Suppress installation of additional package repositories
+        --no-scripts         Suppress loading of scripts
+        --no-sync            Suppress repository syncing
 
 Documentation can be found at https://github.com/nulliel/dotfiles/
 EOF
@@ -222,6 +228,10 @@ main () {
   #-- Sync repository ------------------------------------------------------------------------------
   sleep 0.05
   source "${DOTFILES_DIR}/lib/sync"
+
+  #-- Install repositories -------------------------------------------------------------------------
+  sleep 0.05
+  source "${DOTFILES_DIR}/lib/repositories"
 
   #-- Install packages -----------------------------------------------------------------------------
   sleep 0.05
