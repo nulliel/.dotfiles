@@ -83,7 +83,7 @@ package_install "gtk3-devel"
 
 #-- Install ----------------------------------------------------------------------------------------
 do_make_install "$source_path"
-exit_header
+exit_subheader
 
 sleep "0.05"
 
