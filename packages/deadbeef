@@ -78,6 +78,7 @@ package_install "libSM-devel"
 # package_install "gstreamer-{ffmpeg,plugins-{good,ugly,bad{,-free,-nonfree}}}"
 package_install "glib-devel"
 package_install "glib2-devel"
+package_install "gtk3-devel"
 
 #-- Install ----------------------------------------------------------------------------------------
 do_make_install "$source_path"
