@@ -198,6 +198,7 @@ main () {
   source "${DOTFILES_DIR}/lib/utils-screen"
   source "${DOTFILES_DIR}/lib/utils-package"
   source "${DOTFILES_DIR}/lib/utils-interactive"
+  source "${DOTFILES_DIR}/lib/utils-repos"
 
   source "${DOTFILES_DIR}/lib/utils-build"
   source "${DOTFILES_DIR}/lib/utils-rpm"

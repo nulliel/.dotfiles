@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+#-- Config -----------------------------------------------------------------------------------------
+local rpmfusion_free="https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+local rpmfusion_nonfree="https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+
+#-- Enable repositories ----------------------------------------------------------------------------
+enable_repository () {
+  case "$1" in
+    "rpmfusion")
+      sudo dnf install "$rpmfusion_free"
+      sudo dnf install "$rpmfusion_nonfree"
+      ;;
+    "*")
+      error "Repository $1 does not exist."
+      exit 1
+      ;;
+  esac
+}
