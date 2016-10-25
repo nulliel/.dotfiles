@@ -83,6 +83,10 @@ package_install "gtk3-devel"
 
 #-- Install ----------------------------------------------------------------------------------------
 do_make_install "$source_path"
-do_make_install "$mmkeys_path"
+exit_header
 
+sleep "0.05"
+
+header "deadbeef-mm-keys"
+do_make_install "$mmkeys_path"
 exit_subheader
