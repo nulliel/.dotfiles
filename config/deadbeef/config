@@ -3,12 +3,11 @@ chip.voices 255
 cli_add_playlist_name Default
 cli_add_to_specific_playlist 1
 close_send_to_tray 1
+ddb_gnome_mmkeys.enable 1
+ddb_gnome_mmkeys.mate 0
 deadbeef_version 0.7.2
-filechooser.lastdir file:///home/sribich/Downloads
-filechooser.playlist.lastdir file:///home/sribich/Downloads
 gtkui.columns.playlist [{"title":"♫","id":"1","format":"%playstatus%","size":"50","align":"0","color_override":"0","color":"#ff000000"},{"title":"Artist / Album","id":"-1","format":"%artist% - %album%","size":"203","align":"0","color_override":"0","color":"#ff000000"},{"title":"Track No","id":"-1","format":"%tracknumber%","size":"50","align":"1","color_override":"0","color":"#ff000000"},{"title":"Title","id":"-1","format":"%title%","size":"150","align":"0","color_override":"0","color":"#ff000000"},{"title":"Duration","id":"-1","format":"%length%","size":"50","align":"0","color_override":"0","color":"#ff000000"}]
 gtkui.eq.visible 0
-gtkui.last_playlist_save_name /home/sribich/Downloads/Music/Playlist.dbpl
 gtkui.layout.0.6.2 vsplitter pos=0 locked=0 {placeholder {} vsplitter pos=371 locked=1 {hsplitter pos=575 locked=1 {vsplitter pos=34 locked=1 {hsplitter pos=170 locked=1 {playtb {} seekbar {} } pltbrowser {} } tabbed_playlist hideheaders=0 width=1342 {} } hsplitter pos=575 locked=1 {coverart {} selproperties {} } } } 
 gtkui.mmb_delete_playlist 1
 gtkui.name_playlist_from_folder 1
@@ -67,12 +66,11 @@ playback.loop 0
 playback.order 2
 playback.volume 0.0000000
 playlist.current 0
-playlist.cursor.0 -1
+playlist.cursor.0 5638
 playlist.cursor.1 0
-playlist.scroll.0 19214
+playlist.scroll.0 146458
 playlist.scroll.1 0
 playlist.scroll.cursorfollowplayback 1
-playlist.tab.00000 Default
 prefwin.geometry.h 520
 prefwin.geometry.w 653
 prefwin.geometry.x 26
@@ -81,8 +79,8 @@ replaygain_mode 0
 replaygain_scale 1
 resume.paused 0
 resume.playlist 0
-resume.position 0.0000000
-resume.track 2683
+resume.position 181.83543
+resume.track 2115
 streamer.16_to_24 1
 streamer.8_to_16 1
 trkproperties.geometry.h 400
