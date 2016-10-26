@@ -1,13 +1,20 @@
 #+TITLE: TODOs
 
-* TODO add ~/.dotfiles/bin to the path
-* TODO add global node modules
-* TODO Ask for name/email to add git config options
-* TODO ZSH? (default shell)
-* TODO Scripts (backup)
-* TODO ssh-agent, gpg-agent
-* TODO Seriously clean up README.md
-* TODO Exit Codes in EXITCODES.md
+* TODO Add support for easily adding scripts to crontab
+
+* TODO Prompt the user for information to set configuration options (git, npm)
+
+* TODO Add backup script
+
+* TODO Initialize ssh-agent
+
+* TODO Setup gpg-agent configs
+
+* TODO Configure ZSH and add dotfiles support
+
+* TODO Rewrite README.md
+
+* TODO Create EXITCODES.md
   10 - Dotfiles not found at ${DOTFILES_DIR}
   11 - Only one instance of $SCRIPT_NAME can be run at a time
   12 - This script should not be run using sudo or as the root user
