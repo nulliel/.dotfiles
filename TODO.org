@@ -4,6 +4,8 @@
 
 * TODO Prompt the user for information to set configuration options (git, npm)
 
+* TODO Add a pre-commit git hook for validating credentials (user.name, user.email)
+
 * TODO Add backup script
 
 * TODO Initialize ssh-agent
