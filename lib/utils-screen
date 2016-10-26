@@ -129,10 +129,15 @@ skip () {
   sleep "0.01"
 }
 
+die_message () {
+  printf "\n[\e[1;91mError\e[0m] Check the logfile at %s for more information.\n" "$DOTFILES_LOG"
+}
 check_success () {
-  "$@" \
-    || fail \
-    && exit 1
+  "$@" || {
+    fail
+    die_message >&3 2>&1
+    exit 1
+  }
 
   pass
 }
