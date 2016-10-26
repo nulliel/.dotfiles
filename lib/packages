@@ -25,6 +25,16 @@ package_group () {
 
   exit_subheader
 }
+npm_group () {
+  subheader "$1"
+  shift
+
+  for item in "$@"; do
+    npm_install_global "$item"
+  done
+
+  exit_subheader
+}
 
 #-- Packages ---------------------------------------------------------------------------------------
 package_install "wget"
@@ -40,14 +50,21 @@ package_install "screenfetch"
 load_package "chrome"
 
 # Editors
-load_package "emacs" && package_group "emacs-other" \
-                                      "adobe-source-code-pro-fonts" \
-                                      "aspell" \
-                                      "aspell-en" \
-                                      "the_silver_searcher"
+load_package "emacs" \
+  && command_exists "emacs" \
+  && package_group "emacs-other" \
+                   "adobe-source-code-pro-fonts" \
+                   "aspell" \
+                   "aspell-en" \
+                   "the_silver_searcher"
 
 # Scripts
-load_package "nvm"
+load_package "nvm" \
+  && command_exists "nvm" \
+  && package_group "yarn" \
+                   "yarn" \
+  && npm_group "npm-packages" \
+               "jshint"o
 
 # Social
 load_package "skype"

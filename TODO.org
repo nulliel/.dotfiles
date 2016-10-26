@@ -2,11 +2,11 @@
 
 * TODO add ~/.dotfiles/bin to the path
 * TODO add global node modules
-* TODO Install required bash dependencies
 * TODO Ask for name/email to add git config options
 * TODO ZSH? (default shell)
 * TODO Scripts (backup)
 * TODO ssh-agent, gpg-agent
+* TODO Seriously clean up README.md
 * TODO Exit Codes in EXITCODES.md
   10 - Dotfiles not found at ${DOTFILES_DIR}
   11 - Only one instance of $SCRIPT_NAME can be run at a time
@@ -27,9 +27,11 @@
   31 - Failed to download archive $1
   32 - Failed to extract archive $1
   33 - Failed to install rpm archive
+  34 - Failed to install repository $1
 
   41 - Package ($1) failed to install
   42 - Group ($1) failed to install
+  43 - NPM package ($1) failed to install
 
   51 - Build failed on ./autogen.sh
   52 - Build failed on ./configure $@

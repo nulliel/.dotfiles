@@ -12,5 +12,6 @@ logl "Install repositories. This may take a while..."
 
 #-- Repositories -----------------------------------------------------------------------------------
 enable_repository "rpmfusion"
+enable_repository "yarn"
 
 exit_header
