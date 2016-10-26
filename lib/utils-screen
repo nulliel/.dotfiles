@@ -129,6 +129,16 @@ skip () {
   sleep "0.01"
 }
 
+die () {
+  error "$1"
+  die_message
+
+  if [[ "$#" -eq 2 && "$2" =~ ^[0-9]+$ ]]; then
+    exit "$2"
+  else
+    exit 1
+  fi
+}
 die_message () {
   printf "\n[\e[1;91mError\e[0m] Check the logfile at %s for more information.\n" "$DOTFILES_LOG"
 }
