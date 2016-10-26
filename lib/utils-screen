@@ -131,7 +131,7 @@ skip () {
 
 die () {
   error "$1"
-  die_message
+  die_message 1>&5 2>&1
 
   if [[ "$#" -eq 2 && "$2" =~ ^[0-9]+$ ]]; then
     exit "$2"
