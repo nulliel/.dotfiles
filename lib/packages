@@ -15,15 +15,24 @@ load_package () {
   sleep 0.05
   source "${DOTFILES_DIR}/packages/$1"
 }
+package_group () {
+  subheader "$1"
+  shift
+
+  for item in "$@"; do
+    package_install "$item"
+  done
+
+  exit_subheader
+}
 
 #-- Packages ---------------------------------------------------------------------------------------
-load_package "wget"
+package_install "wget"
 
-# Emacs packages
-# package_install "adobe-source-code-pro-fonts"
-# package_install "aspell"
-# package_install "aspell-en"
-# package_install "the_silver_searcher"
+# Bash additions
+package_install "zopfli"
+package_install "pigz"
+package_install "screenfetch"
 
 #-- Package Modules --------------------------------------------------------------------------------
 
@@ -31,10 +40,14 @@ load_package "wget"
 load_package "chrome"
 
 # Editors
-load_package "emacs"
+load_package "emacs" && package_group "emacs-other" \
+                                      "adobe-source-code-pro-fonts" \
+                                      "aspell" \
+                                      "aspell-en" \
+                                      "the_silver_searcher"
 
 # Scripts
-#load_package "nvm"
+load_package "nvm"
 
 # Social
 load_package "skype"
@@ -44,5 +57,7 @@ load_package "slack"
 load_package "qbittorrent"    # A torrent client
 load_package "deadbeef"       # An audio player
 load_package "mpv"            # A video player
+
+
 
 exit_header
