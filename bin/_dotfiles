@@ -66,6 +66,9 @@ main () {
   sleep 0.05
   source "${DOTFILES_DIR}/lib/links"
 
+  #-- Restore line wrapping ------------------------------------------------------------------------
+  tput smam 1>&3 2>&1
+
   #-- Restart terminal -----------------------------------------------------------------------------
   if ! is_set "NO_RESTART"; then
     logl "\033[1mPlease restart your terminal session for changes to take effect.\033[0m"
