@@ -74,11 +74,15 @@ acquire_lock () {
 parse_params () {
   INSTALL_DEFAULTS=false  # Perform all default actions without prompts
   NO_SYNC=false           # Don't sync dotfiles (OVERRIDES DEFAULTS)
+  NO_RESTART=false        # Don't restart after the script finishes
 
   for opt in "$@"; do
     case "$opt" in
       --defaults)
         INSTALL_DEFAULTS=true
+        ;;
+      --no-restart)
+        NO_RESTART=true
         ;;
       --no-sync)
         NO_SYNC=true
@@ -95,6 +99,7 @@ parse_params () {
   done
 
   readonly INSTALL_DEFAULTS
+  readonly NO_RESTART
   readonly NO_SYNC
 }
 show_banner () {
@@ -125,7 +130,7 @@ EOF
 #-- Main -------------------------------------------------------------------------------------------
 main () {
   trap "trap_err" ERR
-  trap "trap_exit" EXIT SIGINT SIGTERM SIGTSTP
+  # trap "trap_exit" EXIT SIGINT SIGTERM SIGTSTP
 
   # Disable word wrapping
   tput rmam

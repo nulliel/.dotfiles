@@ -67,11 +67,13 @@ main () {
   source "${DOTFILES_DIR}/lib/links"
 
   #-- Restart terminal -----------------------------------------------------------------------------
-  logl "\033[1mPlease restart your terminal session for changes to take effect.\033[0m"
+  if ! is_set "NO_RESTART"; then
+    logl "\033[1mPlease restart your terminal session for changes to take effect.\033[0m"
 
-  while read; do
-    :
-  done
+    while read; do
+      :
+    done
+  fi
 }
 
 main
