@@ -64,7 +64,7 @@ load_package "nvm" \
   && package_group "yarn" \
                    "yarn" \
   && npm_group "npm-packages" \
-               "jshint"o
+               "jshint"
 
 # Social
 load_package "skype"
