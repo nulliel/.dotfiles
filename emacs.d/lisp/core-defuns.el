@@ -17,6 +17,22 @@
       (set-visited-file-name new-name)
       (rename-buffer new-name))))
 
+(defun move-this-file (dir)
+  (interactive "DDirectory: ")
+  (let* ((name (buffer-name))
+         (filename (buffer-file-name))
+         (dir
+          (if (string-match dir "\\(?:/\\|\\\\)$")
+              (substring dir 0 -1) dir))
+         (newname (concat dir "/" name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (progn (copy-file filename newname 1)
+             (delete-file filename)
+             (set-visited-file-name newname)
+             (set-buffer-modified-p nil)
+             t))))
+
 (defun get-buffer-file-name ()
   (if (buffer-file-name) (file-name-nondirectory (buffer-file-name)) nil))
 
