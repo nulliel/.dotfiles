@@ -161,7 +161,7 @@ main () {
   source "${DOTFILES_DIR}/packages/git"
 
   #-- Sync repository ------------------------------------------------------------------------------
-  source "${DOTFILES_DIR}/lib/sync"
+  source "${DOTFILES_DIR}/lib/internal/sync"
 
   #-- Call the rest of the script ------------------------------------------------------------------
   source "${DOTFILES_DIR}/bin/_dotfiles"
