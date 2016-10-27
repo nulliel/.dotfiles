@@ -1,0 +1,67 @@
+
+;; ----- smex-history -----
+(
+ delete-this-file
+ shell-script-mode
+ counsel-ag
+ rename-this-file
+ hs-hide-all
+ hs-show-all
+ whitespace-cleanup-mode
+)
+
+;; ----- smex-data -----
+(
+ (whitespace-mode . 2)
+ (kill-emacs . 3)
+ (ivy-avy . 1)
+ (counsel-projectile . 2)
+ (counsel-ag . 14)
+ (find-library . 5)
+ (delete-this-file . 9)
+ (ibuffer . 3)
+ (projectile-find-file . 1)
+ (dired . 8)
+ (dired-update-buffer . 14)
+ (set-window-dedicated . 1)
+ (select-dired-window . 5)
+ (dired-upcase . 1)
+ (remove-dired-window . 2)
+ (ace-window . 1)
+ (set-window-width . 65)
+ (redraw-display . 1)
+ (revert-buffer . 15)
+ (dired-jump . 2)
+ (visual-line-mode . 3)
+ (visual-fill-column-mode . 5)
+ (hl-line-mode . 4)
+ (set-fill-column . 1)
+ (hs-minor-mode . 1)
+ (load-theme . 9)
+ (rename-this-file . 14)
+ (package-refresh-contents . 1)
+ (package-install . 1)
+ (dired-k . 1)
+ (revert-buffer-with-coding-system . 2)
+ (set-window-height . 1)
+ (ansi-term . 2)
+ (load-library . 2)
+ (dired-omit-mode . 2)
+ (yas-insert-snippet . 1)
+ (yas/expand . 1)
+ (yas-reload-all . 1)
+ (winner-mode . 2)
+ (desktop-save . 2)
+ (projectile-ag . 1)
+ (desktop-read . 2)
+ (desktop-change-dir . 1)
+ (org-reload . 1)
+ (shell-script-mode . 25)
+ (shell . 1)
+ (ispell-region . 6)
+ (flyspell-prog-mode . 1)
+ (setup-sh-mode . 1)
+ (whitespace-cleanup-mode . 1)
+ (hs-hide-all . 5)
+ (hs-show-all . 1)
+)

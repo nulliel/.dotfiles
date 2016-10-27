@@ -33,14 +33,14 @@ main () {
   exec 3>&1 4>&2 1> >(output_to_log) 2>&1 5> >(tee /dev/fd/3) 6> >(tee /dev/fd/4)
 
   #-- Source helpers -------------------------------------------------------------------------------
-  source "${DOTFILES_DIR}/lib/utils"
-  source "${DOTFILES_DIR}/lib/utils-screen"
-  source "${DOTFILES_DIR}/lib/utils-package"
-  source "${DOTFILES_DIR}/lib/utils-interactive"
-  source "${DOTFILES_DIR}/lib/utils-repos"
+  source "${DOTFILES_DIR}/lib/internal/utils"
+  source "${DOTFILES_DIR}/lib/internal/utils-screen"
+  source "${DOTFILES_DIR}/lib/internal/utils-package"
+  source "${DOTFILES_DIR}/lib/internal/utils-interactive"
+  source "${DOTFILES_DIR}/lib/internal/utils-repos"
 
-  source "${DOTFILES_DIR}/lib/utils-build"
-  source "${DOTFILES_DIR}/lib/utils-rpm"
+  source "${DOTFILES_DIR}/lib/internal/utils-build"
+  source "${DOTFILES_DIR}/lib/internal/utils-rpm"
 
   #-- Check privileges -----------------------------------------------------------------------------
   if is_super_user; then

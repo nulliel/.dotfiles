@@ -4,19 +4,24 @@ header "link"
 
 #-- Link function ----------------------------------------------------------------------------------
 link_home () {
-  local link_from="${DOTFILES_DIR}/$1"
+  local link_from="${DOTFILES_DIR}/links/$1"
   local link_to="${HOME}/$2"
+  local link_path="$(readlink -f $link_to)"
 
   log "Linking $link_to..."
 
-  if [[ -f "$link_to" || -d "$link_to" ]]; then
-    if [[ "$(readlink -f $link_to)" = "$link_from" ]]; then
+  if [[ -f "$link_to" || -d "$link_to" || -f "$link_path" ]]; then
+    if [[ "$link_path" = "$link_from" ]]; then
       skip
       return
     fi
 
     fail
-    die "File $link_to already exists and is not linked." 71
+    die "File $link_to already exists." 71
+  fi
+
+  if [[ ! -f "$link_path" ]]; then
+    rm "$link_to" >/dev/null 2>&1
   fi
 
   ln -s "$link_from" "$link_to" || {

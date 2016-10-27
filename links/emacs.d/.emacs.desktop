@@ -1,0 +1,655 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Thu Oct 27 12:10:13 2016
+;; Desktop file format version 208
+;; Emacs version 25.1.1
+
+;; Global section:
+(setq desktop-saved-frameset [frameset 1 (22546 9957 901034 187000) (desktop . "208") "sribich@akumaki" nil nil ((((font-backend xft x) (font . "-ADBO-Source Code Pro-normal-normal-normal-*-9-*-*-*-m-0-iso10646-1") (font-parameter . "Source Code Pro") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#D6D6D4") (background-color . "#1D1F20") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (scroll-bar-foreground) (scroll-bar-background) (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (fullscreen . maximized) (display-type . color) (background-mode . dark) (cursor-color . "#FFFFFF") (sticky) (environment) (powerline-cache) (frameset--id . "73E7-A271-3141-935B") (frameset--mini t . t) (modeline . t) (minibuffer . t) (unsplittable) (icon-name) (display . ":0") (explicit-name) (visibility . t) (height . 84) (width . 380) (left + -1) (top . 26)) ((min-height . 4) (min-width . 188) (min-height-ignore . 3) (min-width-ignore . 188) (min-height-safe . 1) (min-width-safe . 4) (min-pixel-height . 48) (min-pixel-width . 940) (min-pixel-height-ignore . 36) (min-pixel-width-ignore . 940) (min-pixel-height-safe . 12) (min-pixel-width-safe . 20)) hc (pixel-width . 1920) (pixel-height . 1004) (total-width . 384) (total-height . 83) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 960) (pixel-height . 1004) (total-width . 192) (total-height . 83) (normal-height . 1.0) (normal-width . 0.5) (buffer "_dotfiles" (selected) (hscroll . 0) (fringes 8 8 t) (margins nil . 88) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 1550) (start . 1))) (leaf (last . t) (pixel-width . 960) (pixel-height . 1004) (total-width . 192) (total-height . 83) (normal-height . 1.0) (normal-width . 0.5) (buffer "utils-rpm" (selected . t) (hscroll . 0) (fringes 8 8 t) (margins nil . 88) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 858) (start . 1)))))])
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("cons" "default" "projectile" "workerList[" "pdf" "melp" "haskell" "melpa" "cannot have" "buff" "find-file-other-window" "C-c C-t" "* J" "* Pro" "projectile" "theme"))
+(setq regexp-search-ring '("/package" "\\(Your\\).*?\\(vers\\)" "yas-expand-snippet" "dired-omit-files" "\\.last"))
+(setq register-alist (list (desktop-list* 49 (vector 'registerv (vector [frameset 1 (22454 14925 429574 303000) register nil nil nil ((((font-backend xft x) (font . "-ADBO-Source Code Pro-normal-normal-normal-*-11-*-*-*-m-0-iso10646-1") (font-parameter . "Source Code Pro") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#F8F8F2") (background-color . "#272822") (mouse-color . "#F8F8F2") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (scroll-bar-foreground) (scroll-bar-background) (menu-bar-lines . 0) (tool-bar-lines . 0) (buffer-predicate) (title) (wait-for-wm . t) (tool-bar-position . top) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (fullscreen . maximized) (window-system . x) (display-type . color) (background-mode . dark) (cursor-color . "#F8F8F2") (sticky) (environment) (powerline-cache . "Unprintable entity") (frameset--id . "32EF-CDE3-6B35-B024") (frameset--mini t . t) (modeline . t) (minibuffer . t) (unsplittable) (icon-name) (display . ":0") (explicit-name) (visibility . t) (height . 72) (width . 272) (buffer-list "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity") (buried-buffer-list "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity" "Unprintable entity") (left + -1) (top . 26) (window-id . "58720551") (outer-window-id . "58720547") (parent-id . 4200881)) ((min-height . 8) (min-width . 30) (min-height-ignore . 7) (min-width-ignore . 15) (min-height-safe . 2) (min-width-safe . 6) (min-pixel-height . 112) (min-pixel-width . 210) (min-pixel-height-ignore . 98) (min-pixel-width-ignore . 105) (min-pixel-height-safe . 28) (min-pixel-width-safe . 42)) hc (pixel-width . 1920) (pixel-height . 1002) (total-width . 274) (total-height . 72) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (vc (pixel-width . 366) (pixel-height . 1002) (total-width . 52) (total-height . 72) (normal-height . 1.0) (normal-width . 0.19010416666666669) (combination-limit) (leaf (pixel-width . 366) (pixel-height . 498) (total-width . 52) (total-height . 36) (normal-height . 0.5) (normal-width . 1.0) (buffer "src" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 249) (start . 1))) (leaf (last . t) (pixel-width . 366) (pixel-height . 504) (total-width . 52) (total-height . 36) (normal-height . 0.5) (normal-width . 1.0) (buffer "*Flycheck errors*" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 1) (start . 1)))) (leaf (pixel-width . 777) (pixel-height . 1002) (total-width . 111) (total-height . 72) (normal-height . 1.0) (normal-width . 0.40494791666666663) (buffer "error.js —£À battlenull" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 482) (start . 1))) (leaf (last . t) (pixel-width . 777) (pixel-height . 1002) (total-width . 111) (total-height . 72) (normal-height . 1.0) (normal-width . 0.40494791666666663) (buffer "error.js —£À battlenull" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 482) (start . 1)))))] "32EF-CDE3-6B35-B024" (let ((mk (make-marker))) (add-hook 'desktop-delay-hook `(lambda nil (set-marker ,mk ,nil (get-buffer ," *temp*")))) mk)) 'frameset--print-register 'frameset--jump-to-register nil)) (list 7 "Unprintable entity" (let ((mk (make-marker))) (add-hook 'desktop-delay-hook `(lambda nil (set-marker ,mk ,nil (get-buffer ," *temp*")))) mk))))
+(setq file-name-history '("/home/sribich/.dotfiles/lib/internal" "/home/sribich/.dotfiles/bin/_dotfiles" "/home/sribich/.dotfiles/lib/repositories" "/home/sribich/.dotfiles/packages/wget" "/home/sribich/.dotfiles/lib/utils-rpm" "/home/sribich/.dotfiles/lib/utils-interactive" "/home/sribich/.dotfiles/lib/utils-package" "/home/sribich/.dotfiles/lib/utils-screen" "/home/sribich/.dotfiles/lib/build" "/home/sribich/.dotfiles/.git/COMMIT_EDITMSG" "/home/sribich/.nvm/nvm.sh" "/home/sribich/.dotfiles/packages/nvm" "/home/sribich/.dotfiles/packages/mpv" "/home/sribich/.dotfiles/TODO.org" "/home/sribich/.dotfiles/packages/emacs" "/home/sribich/.dotfiles/lib/links" "/home/sribich/.dotfiles/.git/COMMIT_EDITMSG" "/home/sribich/.dotfiles/emacs.d/mode/mode-bash.el" "/home/sribich/.dotfiles/emacs.d/mode/.#mode-bash.el" "/home/sribich/.dotfiles/package/git" "/tmp/emacs-emacs-25.1/configure" "/home/sribich/.dotfiles/package/slack" "/home/sribich/.dotfiles/package/skype" "/home/sribich/.dotfiles/package/emacs" "/home/sribich/.dotfiles/package/deadbeef" "/home/sribich/.dotfiles/package/qbittorrent" "/home/sribich/.dotfiles/bin/packages" "/home/sribich/.dotfiles/bin/sync" "/home/sribich/.dotfiles/lib/chrome" "/home/sribich/testTime.sh" "/home/sribich/.bash_profile" "/home/sribich/Projects/object-no-prototype/" "/home/sribich/Projects/nu-enum/.git/COMMIT_EDITMSG" "/home/sribich/Projects/clustard/src/components/worker/state.js" "/home/sribich/Projects/clustard/src/components/worker/flag.js" "/home/sribich/Projects/clustard/src/components/worker/process.js" "/home/sribich/Projects/clustard/src/components/worker-pool.js" "/home/sribich/Projects/clustard/src/components/worker.js" "/home/sribich/Projects/clustard/test/components/shutdown.spec.js" "/home/sribich/Projects/clustard/src/master-setup.js" "/home/sribich/Projects/clustard/src/clustard.js" "/home/sribich/Projects/clustard/src/master.js" "/home/sribich/Projects/clustard/src/worker.js" "/home/sribich/Projects/clustard/test/components/plugin.file.js" "/home/sribich/.emacs.d/.git/COMMIT_EDITMSG" "/home/sribich/Projects/clustard/test/options.spec.js" "/home/sribich/Projects/clustard/src/options.js" "/home/sribich/Projects/clustard/src/plugins/strategies.js" "/home/sribich/.emacs.d/.git/COMMIT_EDITMSG" "/home/sribich/Projects/clustard/src/components/shutdown.js" "/home/sribich/Projects/clustard/src/components/load-balancer.js" "/home/sribich/Projects/clustard/.git/COMMIT_EDITMSG" "/home/sribich/Projects/clustard/test/components/plugin.spec.js" "/home/sribich/Projects/clustard/src/components/plugin.js" "/home/sribich/Projects/clustard/.git/COMMIT_EDITMSG" "/home/sribich/Projects/clustard/src/components/strategy.js" "/home/sribich/Projects/clustard/test/components/api.spec.js" "/home/sribich/Projects/clustard/src/components/api.js" "/home/sribich/Projects/clustard/src/components/module.js" "/home/sribich/Projects/clustard/test/components/http.spec.js" "/home/sribich/Projects/clustard/src/components/http.js" "/home/sribich/Projects/clustard/test/cluster-server.spec.js" "/home/sribich/Projects/clustard/test/components/runflag.spec.js" "/home/sribich/.emacs.d/lisp/core-save.el" "/tmp/test.js" "/home/sribich/Downloads/test.sh" "/home/sribich/Downloads/TEST/test.sh" "/home/sribich/.emacs.d/.git/COMMIT_EDITMSG" "/home/sribich/.emacs.d/lisp/core-writing.el" "/home/sribich/.emacs.d/lisp/core-defuns.el" "/home/sribich/.emacs.d/lisp/core-company.el" "/home/sribich/.emacs.d/lisp/core-editor.el" "/home/sribich/.emacs.d/lisp/core-modeline.el" "/home/sribich/.emacs.d/lisp/core-ido.el" "/home/sribich/.emacs.d/lisp/core-ivy.el" "/home/sribich/.emacs.d/lisp/core-automodes.el" "/home/sribich/.emacs.d/INSTALL.md" "/home/sribich/.emacs.d/lisp/core-ui.el" "/home/sribich/.emacs.d/lisp/core-binds.el" "/home/sribich/.emacs.d/.git/COMMIT_EDITMSG" "/home/sribich/.emacs.d/init.el" "/home/sribich/.emacs.d/LICENSE" "/home/sribich/.emacs.d/emacs.org" "/home/sribich/.emacs.d/lisp/core-yasnippet.el" "/home/sribich/.emacs.d/" "~/.emacs.d/lisp/core-ivy.el" "~/.emacs.d/lisp/core.el" "~/.emacs.d/lisp/core-editor.el" "~/.emacs.d/lisp/core-windows.el" "~/.emacs.d/emacs.org" "~/.emacs.d/init.el" "/home/sribich/.emacs.d/.git/COMMIT_EDITMSG" "/etc/ssh/sshd_config" "~/.emacs.d/site/emacs-doom-theme/doom-dark-theme.el" "~/.emacs.d/site/emacs-doom-theme/doom-one-theme.el" "/home/sribich/Projects/clustard/.git/COMMIT_EDITMSG" "/home/sribich/Projects/nu-enum/.git/COMMIT_EDITMSG" "/home/sribich/Projects/clustard/.git/COMMIT_EDITMSG" "~/Projects/battlenull/battlenull.org" "~/Projects/nu-interfaces/src/signature.js"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/internal/utils-rpm"
+  "utils-rpm"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  858
+  '(484 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (331 146))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/bin/_dotfiles"
+  "_dotfiles"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  1550
+  '(1325 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (1325 708 708 2920 2374 709 165 145 2920 699 2525 709 709 709 2488))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/internal/utils-build"
+  "utils-build"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  3723
+  '(2674 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (2653 1741 1553 2188 2161 1704 1443 985 958 3666 3666 3244 3983 4006 192 174))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/internal/utils-repos"
+  "utils-repos"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  1326
+  '(1605 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (1605 1600 1595 394 430 1020 370 1429 711 266 841 145 818 370 801 801))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/internal/utils-interactive"
+  "utils-interactive"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  544
+  '(682 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (822 292 285 285 3373 1717 1452 1555 1312 1518 1412 1743 1518 1518 2826 2557))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/internal/utils-package"
+  "utils-package"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  1457
+  '(1045 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (1097 1016 398 397 570 235 247 235))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/internal/utils-screen"
+  "utils-screen"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  3012
+  '(2862 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (3139 3152 3015 5102 3720 3874 3720 3337 3875 3337 3875 2584 2582 2704 2702 4361))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/internal/utils"
+  "utils"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  1468
+  '(1469 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (1469 1000 1092 1723 878 1469 1469 1275 1468 1275 2507 1469 1469 1469 1469 1469))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/emacs.d/lisp/core-defuns.el"
+  "core-defuns.el"
+  'emacs-lisp-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  1176
+  '(908 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . prefer-utf-8-unix) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/emacs.d/init.el"
+  "init.el"
+  'emacs-lisp-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  473
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . prefer-utf-8-unix) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/bin/dotfiles"
+  "dotfiles"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  5068
+  '(5069 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (1358 5079 21 3715 3963 4375 1621 3578 2701 2152 2446 3959 3959 749 506 3817))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/TODO.org"
+  "TODO.org"
+  'org-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode)
+  239
+  '(1451 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines . t))
+  '((mark-ring (758 896 426))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/packages"
+  "packages"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  1462
+  '(652 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (679 1069 902 902 1291 1291 805 435 435 805 435 1651 805 805 261 40))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/git/gitconfig"
+  "gitconfig"
+  'conf-unix-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode)
+  663
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/.gitignore"
+  ".gitignore"
+  'gitignore-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode)
+  162
+  '(78 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix))
+  '((mark-ring (78))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/config/deadbeef/config"
+  "config"
+  'conf-space-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode)
+  39
+  '(263 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (92 262 3677 263 263))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/packages/nvm"
+  "nvm"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  2019
+  '(2019 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (2018 2003 1651 1483 1344 742 684 485 540 455 1949 1742 1483 1225 1094 843))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/repositories"
+  "repositories"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  447
+  '(292 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/shell/bash_profile"
+  "bash_profile"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  523
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/shell/bash_paths"
+  "bash_paths"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  626
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/shell/bashrc"
+  "bashrc"
+  'fundamental-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode)
+  299
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/packages/slack"
+  "slack"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  637
+  '(901 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (901 901 241 902 22 901 901 901 637 580 428 160 901 41 771 769))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/bin/install"
+  "install"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  1064
+  '(414 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (1183 414 180 671 490 490 484 484 484 414 1223 1 1223 21))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/packages/mpv"
+  "mpv"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  2627
+  '(217 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (159 2150 2581 159 38 2581 2627 2612 2580 1 1 2580 2580 2581 1115 899))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/links"
+  "links"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  583
+  '(37 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (36 584 1362 138 37 36 37 583 685 685 222 22 34 583))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/lib/sync"
+  "sync"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  21
+  '(1893 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (1849 1890 1780 1547 1551 1499 1548 1406 1145 990 821 658 473 1430 1016 1203))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/packages/git"
+  "git"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  177
+  '(22 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (22 22))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/packages/emacs"
+  "emacs"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  410
+  '(1656 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (227 1655 1656 142 1656 285 1655 1655 1227 1068 703 758 1655 1605 1655 1655))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/packages/deadbeef"
+  "deadbeef"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  2846
+  '(43 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (2877 1 2877 1261 991 322 2846 321 250 250 2933 889 1459 162 2715 2595))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/packages/chrome"
+  "chrome"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  1324
+  '(1487 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (22 401 227 448 1277 446 1277 1277 224 1277 1277 1102 1277 475))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/packages/qbittorrent"
+  "qbittorrent"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  249
+  '(250 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (22 596 594 466 250 245 191 614 467 466 466 250 47))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/packages/skype"
+  "skype"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  1154
+  '(1128 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (1128 1128 1128 1154 1128 1128 1128 1128 1155 48 570 217 1128 49 1154 1154))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.nvm/nvm.sh"
+  "nvm.sh"
+  'sh-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  89042
+  '(390 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (94568 657 90710 2680 2680))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/README.md"
+  "README.md"
+  'markdown-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode)
+  1106
+  '(1 nil)
+  nil
+  nil
+  '((tab-width . 4) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (275 275 308 301 301 301 301 1372 301 301 301 301 301 301 301 301))))
+
+(desktop-create-buffer 208
+  "/home/sribich/.dotfiles/emacs.d/mode/mode-js.el"
+  "mode-js.el"
+  'emacs-lisp-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode auto-revert-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  1289
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . prefer-utf-8-unix) (truncate-lines))
+  '((mark-ring (1))))
+
+(desktop-create-buffer 208
+  nil
+  ".emacs.d"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  371
+  '(nil nil)
+  t
+  '("/home/sribich/.emacs.d/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "counsel-20160906.750"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  305
+  '(nil nil)
+  t
+  '("/home/sribich/.emacs.d/elpa/counsel-20160906.750/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/sribich/.emacs.d/elpa/dired-rainbow-20141214.543/dired-rainbow-autoloads.el"
+  "dired-rainbow-autoloads.el"
+  'fundamental-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "/"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  1186
+  '(nil nil)
+  t
+  '("/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "save"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  132
+  '(nil nil)
+  t
+  '("/home/sribich/.emacs.d/save/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/sribich/.emacs.d/save/ido.last"
+  "ido.last"
+  'fundamental-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "mode"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  204
+  '(nil nil)
+  t
+  '("/home/sribich/.emacs.d/mode/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "sribich"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  2137
+  '(nil nil)
+  t
+  '("/home/sribich/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "bin"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode)
+  117
+  '(nil nil)
+  t
+  '("/bin/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "lisp"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  199
+  '(nil nil)
+  t
+  '("/home/sribich/.emacs.d/lisp/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "js2-mode"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  230
+  '(nil nil)
+  t
+  '("/home/sribich/.emacs.d/data/snippets/js2-mode/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "projectile-20160830.138"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  158
+  '(nil nil)
+  t
+  '("/home/sribich/.emacs.d/elpa/projectile-20160830.138/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "yasnippet-20160801.1142"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  158
+  '(nil nil)
+  t
+  '("/home/sribich/.emacs.d/elpa/yasnippet-20160801.1142/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "lisp"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode)
+  255
+  '(nil nil)
+  t
+  '("/usr/local/share/emacs/25.1/lisp/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/usr/local/share/emacs/25.1/lisp/dired-x.el.gz"
+  "dired-x.el.gz"
+  'emacs-lisp-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  5939
+  '(1 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . prefer-utf-8-unix) (truncate-lines))
+  '((mark-ring (1))))
+
+(desktop-create-buffer 208
+  nil
+  "stripe-buffer-20141208.708"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  316
+  '(nil nil)
+  t
+  '("/home/sribich/.emacs.d/elpa/stripe-buffer-20141208.708/")
+  nil
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/sribich/.emacs.d/elpa/stripe-buffer-20141208.708/stripe-buffer.el"
+  "stripe-buffer.el"
+  'emacs-lisp-mode
+  '(visual-line-mode override-global-mode super-save-mode beacon-mode which-key-mode highlight-symbol-mode volatile-highlights-mode rainbow-delimiters-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode flycheck-mode flyspell-mode yas-minor-mode projectile-mode diff-hl-mode ivy-mode hs-minor-mode)
+  8989
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-file-coding-system . prefer-utf-8-unix) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "dired-rainbow-20141214.543"
+  'dired-mode
+  '(override-global-mode super-save-mode beacon-mode which-key-mode volatile-highlights-mode global-auto-revert-mode global-disable-mouse-mode global-whitespace-mode whitespace-cleanup-mode flx-ido-mode company-mode yas-minor-mode projectile-mode ivy-mode dired-omit-mode)
+  304
+  '(nil nil)
+  t
+  '("/home/sribich/.emacs.d/elpa/dired-rainbow-20141214.543/")
+  nil
+  '((mark-ring nil)))
+
