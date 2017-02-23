@@ -1,43 +1,23 @@
-;; Replace yes/no with y/n
-(defalias 'yes-or-no-p 'y-or-n-p)
+;;--------------------------------------------------
+;; Editor Configurations
+;;--------------------------------------------------
+(setq-default fill-column 100)
 
 ;; Smooth scrolling
 (setq scroll-margin 0
       scroll-conservatively 100000
       scroll-preserve-screen-position 1)
 
-;; Suppress gui features
-(setq use-file-dialog nil
-      use-dialog-box nil
-      ring-bell-function 'ignore)
-
-;; Auto revert mode
-(global-auto-revert-mode 1)
-
-;; Electric pairing
-(when (fboundp 'electric-pair-mode)
-  (electric-pair-mode t)
-  (electric-indent-mode t))
-
 ;; Preserve tab spacing, bur prevent tabs
 (setq-default indent-tabs-mode nil
               tab-width 8)
 
-;; Indentation
 (setq tab-always-indent 'complete)
-(global-set-key (kbd "RET") 'newline-and-indent)
 
-;; Smart newline
-(defun newline-without-break-line ()
-  "Move to end of line and insert new line."
-  (interactive)
-  (end-of-line)
-  (newline-and-indent))
-
-(global-set-key (kbd "C-<return>") 'newline-without-break-line)
-
-;; Remove old buffers
-(require 'midnight)
+;; Automatically pair delimiters
+(when (fboundp 'electric-pair-mode)
+  (electric-pair-mode t)
+  (electric-indent-mode t))
 
 ;; Disable mouse
 (use-package disable-mouse
@@ -46,18 +26,24 @@
   :config
   (global-disable-mouse-mode))
 
-;; Save point
-(require 'saveplace)
-(setq-default save-place-file (concat emacs-save-dir "/saveplace")
-              save-place t)
-(save-place-mode t)
+;;--------------------------------------------------
+;; Quality of Life Changes
+;;--------------------------------------------------
+;; Replace yes/no with y/n
+(defalias 'yes-or-no-p 'y-or-n-p)
 
-;; Save history
-(require 'savehist)
-(setq savehist-file (concat emacs-save-dir "/savehist")
-      savehist-save-minibuffer-history t
-      savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-(savehist-mode t)
+;; Automatically indent on newline
+(global-set-key (kbd "RET") 'newline-and-indent)
+
+;;--------------------------------------------------
+;; Buffer Settings
+;;--------------------------------------------------
+;; Remove inactive buffers
+(require 'midnight)
+
+;; Automatically revert buffers every 5 seconds
+(global-auto-revert-mode 1)
+
 
 ;; Recent history
 (require 'recentf)
@@ -70,5 +56,18 @@
       recentf-auto-cleanup 600
       recentf-filename-handlers '(abbreviate-file-name))
 (recentf-mode 1)
+
+;;--------------------------------------------------
+;; UTF8 Everywhere
+;;--------------------------------------------------
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system  'utf-8)
+(set-keyboard-coding-system  'utf-8)
+(set-selection-coding-system 'utf-8)
+
+(setq-default buffer-file-coding-system 'utf-8)
+
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 (provide 'core-editor)

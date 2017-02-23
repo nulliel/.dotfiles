@@ -3,8 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil nil ("dired-rainbow.el") (22481 45025 984496
-;;;;;;  302000))
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/dired-rainbow-20141214.543/dired-rainbow-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/dired-rainbow-20141214.543/dired-rainbow.el")
+;;;;;;  (22647 41241 682092 344000))
 
 ;;;***
 

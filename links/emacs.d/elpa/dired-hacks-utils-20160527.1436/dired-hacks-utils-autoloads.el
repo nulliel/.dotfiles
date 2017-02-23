@@ -3,8 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil nil ("dired-hacks-utils.el") (22481 45025 481501
-;;;;;;  363000))
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/dired-hacks-utils-20160527.1436/dired-hacks-utils-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/dired-hacks-utils-20160527.1436/dired-hacks-utils.el")
+;;;;;;  (22647 41241 84098 598000))
 
 ;;;***
 

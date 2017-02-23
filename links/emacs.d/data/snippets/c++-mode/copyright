@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: copyright
+# key: copyright
+# --
+// MIT License
+//
+// Copyright © 2016-2017 Stephen Ribich
+//
+// The full license can be found at https://github.com/nulliel/node-ctimers/blob/master/LICENSE

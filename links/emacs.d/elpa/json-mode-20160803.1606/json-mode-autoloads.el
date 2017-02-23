@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "json-mode" "json-mode.el" (22481 46761 199707
-;;;;;;  347000))
-;;; Generated autoloads from json-mode.el
+;;;### (autoloads nil "json-mode" "../../../../../.emacs.d/elpa/json-mode-20160803.1606/json-mode.el"
+;;;;;;  "afa0730045f9c80e331c99296b618d4e")
+;;; Generated autoloads from ../../../../../.emacs.d/elpa/json-mode-20160803.1606/json-mode.el
 
 (autoload 'json-mode "json-mode" "\
 Major mode for editing JSON files
@@ -25,6 +25,12 @@ Major mode for editing JSON files
 Beautify / pretty-print the active region (or the entire buffer if no active region).
 
 \(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/json-mode-20160803.1606/json-mode-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/json-mode-20160803.1606/json-mode.el")
+;;;;;;  (22647 41257 900922 727000))
 
 ;;;***
 

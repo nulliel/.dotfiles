@@ -41,3 +41,12 @@ dnf install adobe-source-code-pro-fonts
 ```bash
 dnf install aspell aspell-en
 ```
+
+
+
+
+requires...
+
+font: source code pro
+
+programs: the_silver_searcher

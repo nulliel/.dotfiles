@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "flycheck-color-mode-line" "flycheck-color-mode-line.el"
-;;;;;;  (22482 3751 135908 100000))
-;;; Generated autoloads from flycheck-color-mode-line.el
+;;;### (autoloads nil "flycheck-color-mode-line" "../../../../../.emacs.d/elpa/flycheck-color-mode-line-20131125.2138/flycheck-color-mode-line.el"
+;;;;;;  "1e6c9373daab87214ca5b910f7261ca3")
+;;; Generated autoloads from ../../../../../.emacs.d/elpa/flycheck-color-mode-line-20131125.2138/flycheck-color-mode-line.el
 
 (autoload 'flycheck-color-mode-line-mode "flycheck-color-mode-line" "\
 Minor mode to color the mode line with the Flycheck status.
@@ -22,6 +22,12 @@ Otherwise behave as if called interactively.
 \(fn &optional ARG)" t nil)
 
 (custom-add-frequent-value 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/flycheck-color-mode-line-20131125.2138/flycheck-color-mode-line-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/flycheck-color-mode-line-20131125.2138/flycheck-color-mode-line.el")
+;;;;;;  (22647 41245 168055 888000))
 
 ;;;***
 

@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "flx-ido" "flx-ido.el" (22481 45022 874527
-;;;;;;  598000))
-;;; Generated autoloads from flx-ido.el
+;;;### (autoloads nil "flx-ido" "../../../../../.emacs.d/elpa/flx-ido-20151030.1112/flx-ido.el"
+;;;;;;  "eabfa1183afef739e3fe0bbbd78549f6")
+;;; Generated autoloads from ../../../../../.emacs.d/elpa/flx-ido-20151030.1112/flx-ido.el
 
 (defvar flx-ido-mode nil "\
 Non-nil if Flx-Ido mode is enabled.
@@ -18,6 +18,12 @@ for a description of this minor mode.")
 Toggle flx ido mode
 
 \(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/flx-ido-20151030.1112/flx-ido-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/flx-ido-20151030.1112/flx-ido.el")
+;;;;;;  (22647 41238 152129 261000))
 
 ;;;***
 

@@ -3,8 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "js-doc" "js-doc.el" (22481 45040 250352 739000))
-;;; Generated autoloads from js-doc.el
+;;;### (autoloads nil "js-doc" "../../../../../.emacs.d/elpa/js-doc-20160714.2134/js-doc.el"
+;;;;;;  "6681a2a5e957489e7cfcc50eb889b2c1")
+;;; Generated autoloads from ../../../../../.emacs.d/elpa/js-doc-20160714.2134/js-doc.el
 
 (autoload 'js-doc-insert-file-doc "js-doc" "\
 Insert specified-style comment top of the file
@@ -31,6 +32,12 @@ Insert a JsDoc tag interactively.
 Describe the JsDoc tag
 
 \(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/js-doc-20160714.2134/js-doc-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/js-doc-20160714.2134/js-doc.el")
+;;;;;;  (22647 41265 552842 704000))
 
 ;;;***
 

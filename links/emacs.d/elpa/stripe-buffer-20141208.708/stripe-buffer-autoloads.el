@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "stripe-buffer" "stripe-buffer.el" (22481 45020
-;;;;;;  948546 981000))
-;;; Generated autoloads from stripe-buffer.el
+;;;### (autoloads nil "stripe-buffer" "../../../../../.emacs.d/elpa/stripe-buffer-20141208.708/stripe-buffer.el"
+;;;;;;  "18227b87de58b483702b4ae3e71692bb")
+;;; Generated autoloads from ../../../../../.emacs.d/elpa/stripe-buffer-20141208.708/stripe-buffer.el
 
 (autoload 'stripe-buffer-mode "stripe-buffer" "\
 Stripe buffer mode
@@ -36,6 +36,12 @@ Backward compatibility
 Turn on `stripe-buffer-mode' and `hl-line-mode'.
 
 \(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/stripe-buffer-20141208.708/stripe-buffer-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/stripe-buffer-20141208.708/stripe-buffer.el")
+;;;;;;  (22647 41241 851090 577000))
 
 ;;;***
 

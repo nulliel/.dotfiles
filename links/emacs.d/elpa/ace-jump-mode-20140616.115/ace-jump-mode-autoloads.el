@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "ace-jump-mode" "ace-jump-mode.el" (22481 45035
-;;;;;;  650399 30000))
-;;; Generated autoloads from ace-jump-mode.el
+;;;### (autoloads nil "ace-jump-mode" "../../../../../.emacs.d/elpa/ace-jump-mode-20140616.115/ace-jump-mode.el"
+;;;;;;  "89c5924d4c9d2b09c6f11ff20db6bb2c")
+;;; Generated autoloads from ../../../../../.emacs.d/elpa/ace-jump-mode-20140616.115/ace-jump-mode.el
 
 (autoload 'ace-jump-mode-pop-mark "ace-jump-mode" "\
 Pop up a postion from `ace-jump-mode-mark-ring', and jump back to that position
@@ -52,6 +52,12 @@ You can constrol whether use the case sensitive via
 `ace-jump-mode-case-fold'.
 
 \(fn &optional PREFIX)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/ace-jump-mode-20140616.115/ace-jump-mode-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/ace-jump-mode-20140616.115/ace-jump-mode.el")
+;;;;;;  (22647 41254 253960 868000))
 
 ;;;***
 

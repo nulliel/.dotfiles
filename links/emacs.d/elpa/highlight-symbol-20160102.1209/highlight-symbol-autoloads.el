@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "highlight-symbol" "highlight-symbol.el" (22481
-;;;;;;  45019 383562 729000))
-;;; Generated autoloads from highlight-symbol.el
+;;;### (autoloads nil "highlight-symbol" "../../../../../.emacs.d/elpa/highlight-symbol-20160102.1209/highlight-symbol.el"
+;;;;;;  "0ba6aec08859bc1f7e24d0aa7cbb7d0c")
+;;; Generated autoloads from ../../../../../.emacs.d/elpa/highlight-symbol-20160102.1209/highlight-symbol.el
 
 (autoload 'highlight-symbol-mode "highlight-symbol" "\
 Minor mode that highlights the symbol under point throughout the buffer.
@@ -88,6 +88,12 @@ Each line is displayed with NLINES lines before and after, or -NLINES
 before if NLINES is negative.
 
 \(fn &optional NLINES)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/highlight-symbol-20160102.1209/highlight-symbol-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/highlight-symbol-20160102.1209/highlight-symbol.el")
+;;;;;;  (22647 41235 160160 551000))
 
 ;;;***
 

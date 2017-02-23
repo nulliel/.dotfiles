@@ -1,38 +1,30 @@
 (use-package ivy
   :ensure t
+  :diminish ivy-mode
+  :bind (("C-s" . swiper)
+         ("M-x" . counsel-M-x)
+         ("C-x f" . counsel-find-file)
+         ("C-c k" . counsel-ag))
   :init
-  (setq projectile-completion-system 'ivy
-        ivy-height 15
-        ivy-do-completion-in-region nil
-        ivy-wrap t)
+  (setq-default ivy-use-virtual-buffers t
+                ivy-count-format ""
+                ivy-height 15
+                ivy-wrap t
+                ivy-do-completion-in-region nil
+                projectile-completion-system 'ivy
+                counsel-mode-override-describe-bindings t
+                ivy-initial-inputs-alist '((counsel-M-x . "^")
+                                           (man . "^")
+                                           (woman . "^")))
   :config
   (require 'ivy)
   (require 'counsel)
   (require 'swiper)
 
-;  (eval-after-load 'magit
-;    (setq magit-completing-read-function 'ivy-completing-read))
-
-  (ivy-mode t)
-  (diminish 'ivy-mode)
-
   (advice-add 'ivy-done :after 'redraw-display)
-  :bind (("C-s" . swiper)
-         ("M-x" . counsel-M-x)
-         ("C-x f" . counsel-find-file)
-         ("C-c k" . counsel-ag)))
 
-(use-package counsel-projectile
-  :ensure t
-  :after projectile
-  :config
-  (global-set-key (kbd "C-x C-p") 'counsel-projectile)
-  (global-set-key (kbd "C-x C-f") (lambda ()
-                                    (interactive)
-                                    (if (projectile-project-name)
-                                        (projectile-find-file)
-                                      (ivy-find)))))
-
-
+  (ido-ubiquitous-mode -1)
+  (ido-mode -1)
+  (ivy-mode t))
 
 (provide 'core-ivy)

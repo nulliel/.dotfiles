@@ -4,6 +4,10 @@
   :config
   (global-diff-hl-mode))
 
+;  (eval-after-load 'magit
+;    (setq magit-completing-read-function 'ivy-completing-read))
+
+
 ;; Magit
 (use-package magit
   :ensure t

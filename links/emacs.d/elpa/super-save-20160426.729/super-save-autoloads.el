@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "super-save" "super-save.el" (22508 1462 948284
-;;;;;;  718000))
-;;; Generated autoloads from super-save.el
+;;;### (autoloads nil "super-save" "../../../../../.emacs.d/elpa/super-save-20160426.729/super-save.el"
+;;;;;;  "78a56192d8fc745626052eccfdf3e111")
+;;; Generated autoloads from ../../../../../.emacs.d/elpa/super-save-20160426.729/super-save.el
 
 (defvar super-save-mode nil "\
 Non-nil if Super-Save mode is enabled.
@@ -21,6 +21,12 @@ or call the function `super-save-mode'.")
 A minor mode that saves your Emacs buffers when they lose focus.
 
 \(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/super-save-20160426.729/super-save-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/super-save-20160426.729/super-save.el")
+;;;;;;  (22647 41214 754373 955000))
 
 ;;;***
 

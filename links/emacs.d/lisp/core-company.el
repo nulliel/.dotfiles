@@ -2,7 +2,7 @@
   :ensure t
   :diminish company-mode
   :init
-  (setq company-idle-delay nil
+  (setq company-idle-delay 0
         company-minimum-prefix-length 2
         company-tooltip-limit 10
         company-dabbrev-downcase nil
@@ -11,15 +11,16 @@
         company-tooltop-align-annotations t
         company-require-match 'never
         company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode)
-        company-backends '(company-capf company-yasnippet)
+        company-backends '(company-capf company-dabbrev-code company-dabbrev company-yasnippet)
         company-quickhelp-delay nil)
   :config
-  (require 'company-capf)
-  (require 'company-yasnippet)
+  (setq company-backends (delete 'company-semantic company-backends))
+
   (use-package company-quickhelp
     :ensure t
     :config
     (company-quickhelp-mode t))
+
   (global-company-mode t))
 
 (provide 'core-company)

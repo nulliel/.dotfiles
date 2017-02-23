@@ -1,4 +1,4 @@
-# Dotfiles stuff
+#Dotfiles stuff
 tmp
 dotfiles.log
 
@@ -9,11 +9,12 @@ bash_nocommit
 npmrc
 
 # Emacs
-emacs.d/save
-emacs.d/elpa
-emacs.d/*.desktop*
-emacs.d/session*
-emacs.d/.mc-lists.el
+*/emacs.d/save/*
+*/emacs.d/elpa/*
+*/emacs.d/*.desktop*
+*/emacs.d/session*
+*/emacs.d/.mc-lists.el
+*/emacs.d/semanticdb/*
 
 # Deadbeef
 config/deadbeef/playlists
