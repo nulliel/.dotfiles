@@ -1,6 +1,3 @@
 [submodule "antigen"]
 	path = antigen
 	url = https://github.com/zsh-users/antigen.git
-[submodule "emacs-doom-theme"]
-	path = emacs.d/site/emacs-doom-theme
-	url = https://github.com/hlissner/emacs-doom-theme.git
