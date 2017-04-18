@@ -3,11 +3,6 @@
 header "package"
 
 #-- Check for flags --------------------------------------------------------------------------------
-if is_set "NO_PACKAGES"; then
-  skip "Installing packages..."
-  exit_header && return
-fi
-
 logl "Installing packages..."
 
 #-- Utilities --------------------------------------------------------------------------------------
@@ -47,7 +42,10 @@ package_install "screenfetch"
 #-- Package Modules --------------------------------------------------------------------------------
 
 # Browsers
-load_package "chrome"
+load_package "google-chrome"
+
+exit_header
+return
 
 # Editors
 load_package "emacs" \

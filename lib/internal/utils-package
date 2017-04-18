@@ -17,7 +17,7 @@ package_install () {
     skip && return
   fi
 
-  show_progress sudo pacman -Syu "$1" && pass || {
+  show_progress sudo pacman -Syu --needed "$1" && pass || {
     fail
     die "Package ($1) failed to install" 41
   }

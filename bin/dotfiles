@@ -120,9 +120,7 @@ show_usage () {
 Usage: $SCRIPT_NAME [options]
 
 Options:
-        --defaults    Install all defaults without any prompts
     -h, --help        Print this help text
-        --no-sync     Suppress repository syncing
 
 Documentation can be found at https://github.com/nulliel/dotfiles/
 EOF

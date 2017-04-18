@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+#-- Config -----------------------------------------------------------------------------------------
+DOTFILES_AUR_PATH="${HOME}/AUR"
+
+#-- Create AUR Directory ---------------------------------------------------------------------------
+if [[ ! -d "${DOTFILES_AUR_PATH}" ]]; then
+  mkdir "${DOTFILES_AUR_PATH}"
+fi
+
+#-- Create AUR -------------------------------------------------------------------------------------
+# $1 - AUR Package
+get_aur() {
+  log "Downloading AUR package $1..."
+
+  local cur_pwd=$(pwd)
+
+  show_progress git clone "https://aur.archlinux.org/$1.git" "${DOTFILES_AUR_PATH}/$1" && pass || {
+      fail
+      die "AUR package ($1) failed to download" 1
+  }
+
+  cd "${DOTFILES_AUR_PATH}/$1"
+
+  log "Making AUR package $1..."
+
+  show_progress makepkg && pass || {
+      fail
+      die "Package ($1) failed to make" 1
+  }
+
+  log "Installing AUR package $1..."
+
+  show_progress makepkg -i && pass || {
+      fail
+      die "Package ($1) failed to make" 1
+  }
+
+  cd "${cur_pwd}"
+}

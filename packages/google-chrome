@@ -15,22 +15,25 @@ if ! confirm_default "Install google-chrome?"; then
 fi
 
 #-- Add google-chrome repository -------------------------------------------------------------------
-log "Adding google-chrome repository..."
+# log "Adding google-chrome repository..."
 
-if [[ -f /etc/yum.repos.d/google-chrome.repo ]]; then
-  skip
-else
-  local repo_contents="[google-chrome]
-name=google-chrome
-baseurl=http://dl.google.com/linux/chrome/rpm/stable/x86_64
-enabled=1
-gpgcheck=1
-gpgkey=https://dl.google.com/linux/linux_signing_key.pub
-"
+# if [[ -f /etc/yum.repos.d/google-chrome.repo ]]; then
+#   skip
+# else
+#   local repo_contents="[google-chrome]
+# name=google-chrome
+# baseurl=http://dl.google.com/linux/chrome/rpm/stable/x86_64
+# enabled=1
+# gpgcheck=1
+# gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+# "
 
-  sudo bash -c "echo \"${REPO_CONTENTS}\" > /etc/yum.repos.d/google-chrome.repo"
-  pass
-fi
+#   sudo bash -c "echo \"${REPO_CONTENTS}\" > /etc/yum.repos.d/google-chrome.repo"
+#   pass
+# fi
+
+#-- Dependencies -----------------------------------------------------------------------------------
+package_install "alsa-lib gconf gtk2 libxss libxtst nss"
 
 #-- Release install --------------------------------------------------------------------------------
 if ! is_default; then
@@ -45,13 +48,13 @@ fi
 
 case $SELECTED_VALUE in
   "beta")
-    package_install google-chrome-beta
+    get_aur "google-chrome-beta"
     ;;
   "stable")
-    package_install google-chrome-stable
+    get_aur "google-chrome"
     ;;
   "unstable")
-    package_install google-chrome-unstable
+    get_aur "google-chrome-dev"
     ;;
 esac
 

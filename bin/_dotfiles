@@ -39,6 +39,7 @@ main () {
   source "${DOTFILES_DIR}/lib/internal/utils-interactive"
   source "${DOTFILES_DIR}/lib/internal/utils-repos"
 
+  source "${DOTFILES_DIR}/lib/internal/utils-aur"
   source "${DOTFILES_DIR}/lib/internal/utils-build"
   source "${DOTFILES_DIR}/lib/internal/utils-rpm"
 
@@ -52,10 +53,10 @@ main () {
   fi
 
   #-- Install repositories -------------------------------------------------------------------------
-  source "${DOTFILES_DIR}/lib/repositories"
+  # source "${DOTFILES_DIR}/lib/repositories"
 
   #-- Install packages -----------------------------------------------------------------------------
-#  source "${DOTFILES_DIR}/lib/packages"
+  source "${DOTFILES_DIR}/lib/packages"
 
   #-- Create links ---------------------------------------------------------------------------------
 #  source "${DOTFILES_DIR}/lib/links"
@@ -64,13 +65,11 @@ main () {
   tput smam 1>&3 2>&1
 
   #-- Restart terminal -----------------------------------------------------------------------------
-  if ! is_set "NO_RESTART"; then
-    logl "\033[1mPlease restart your terminal session for changes to take effect.\033[0m"
+  logl "\033[1mPlease restart your terminal session for changes to take effect.\033[0m"
 
-    while read; do
-      :
-    done
-  fi
+  while read; do
+    :
+  done
 }
 
 main
