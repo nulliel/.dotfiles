@@ -5,6 +5,7 @@ readonly SCRIPT_NAME="$(basename "$0")"
 
 readonly DOTFILES_DIR="${HOME}/.dotfiles"
 readonly DOTFILES_TMP="${DOTFILES_DIR}/tmp"
+readonly DOTFILES_BLD="${DOTFILES_DIR}/build"
 readonly DOTFILES_LOG="${DOTFILES_DIR}/dotfiles.log"
 
 readonly DOTFILES_GIT_REMOTE="https://github.com/nulliel/dotfiles.git"
@@ -130,7 +131,7 @@ EOF
 #-- Main -------------------------------------------------------------------------------------------
 main () {
   trap "trap_err" ERR
-  # trap "trap_exit" EXIT SIGINT SIGTERM SIGTSTP
+  trap "trap_exit" EXIT SIGINT SIGTERM SIGTSTP
 
   # Disable word wrapping
   tput rmam
@@ -149,8 +150,12 @@ main () {
     mkdir "$DOTFILES_TMP"
   fi
 
+  if [[ ! -d "$DOTFILES_BLD" ]]; then
+    mkdir "$DOTFILES_BLD"
+  fi
+
   #-- Acquire the lock -----------------------------------------------------------------------------
-  acquire_lock $SCRIPT_NAME || {
+  acquire_lock "${SCRIPT_NAME}" || {
     LOCKFILE_EXIT=true
 
     printf "[\e[1;91mError\e[0m] Only one instance of %b can run at a time.\n" "${SCRIPT_NAME}"

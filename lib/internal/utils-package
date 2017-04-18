@@ -2,7 +2,7 @@
 
 #-- Check for existing package ---------------------------------------------------------------------
 package_installed () {
-  dnf list installed "$1" >/dev/null 2>&1 \
+  pacman -Q "$1" >/dev/null 2>&1 \
     || command_exists "$1" \
     || return 1
 
@@ -17,19 +17,20 @@ package_install () {
     skip && return
   fi
 
-  show_progress sudo dnf install -y "$1" && pass || {
+  show_progress sudo pacman -Syu "$1" && pass || {
     fail
     die "Package ($1) failed to install" 41
   }
 }
-package_groupinstall () {
-  log "Installing $1..."
 
-  show_progress sudo dnf groupinstall -y "$1" && pass || {
-      fail
-      die "Group ($1) failed to install" 42
-    }
-}
+# package_groupinstall () {
+#   log "Installing $1..."
+
+#   show_progress sudo dnf groupinstall -y "$1" && pass || {
+#       fail
+#       die "Group ($1) failed to install" 42
+#     }
+# }
 
 #-- NPM Packages -----------------------------------------------------------------------------------
 npm_install_global () {
@@ -59,8 +60,8 @@ npm_install_global () {
 
 #-- Build tools ------------------------------------------------------------------------------------
 install_build_tools () {
-  package_groupinstall "Development Tools"
-  package_groupinstall "C Development Tools and Libraries"
+  # package_groupinstall "Development Tools"
+  # package_groupinstall "C Development Tools and Libraries"
 
   package_install "autoconf"
   package_install "automake"

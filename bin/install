@@ -12,7 +12,8 @@ fi
 
 #-- Download Dotfiles ------------------------------------------------------------------------------
 printf "Downloading dotfiles..."
-mkdir ${DOTFILES_DIRECTORY}
+
+mkdir "${DOTFILES_DIRECTORY}"
 
 # Remove existing download
 if [[ -f /tmp/dotfiles.tar.gz ]]; then
@@ -20,13 +21,13 @@ if [[ -f /tmp/dotfiles.tar.gz ]]; then
 fi
 
 # Download dotfiles tarball
-curl -fsSLo /tmp/dotfiles.tar.gz ${DOTFILES_TAR_PATH} || {
+curl -fsSLo /tmp/dotfiles.tar.gz "${DOTFILES_TAR_PATH}" || {
     printf "\033[91mERROR\033[0m\n"
     exit 1
 }
 
 # Extract the tarball
-tar -zxf /tmp/dotfiles.tar.gz --strip-components 1 -C ${DOTFILES_DIRECTORY}
+tar -zxf /tmp/dotfiles.tar.gz --strip-components 1 -C "${DOTFILES_DIRECTORY}"
 
 # Remove the tarball
 rm /tmp/dotfiles.tar.gz
@@ -34,4 +35,5 @@ rm /tmp/dotfiles.tar.gz
 printf "\033[92mOK\033[0m\n"
 
 #-- Install Dotfiles -------------------------------------------------------------------------------
-source $DOTFILES_DIRECTORY/bin/dotfiles
+# shellcheck disable=SC1090
+source "${DOTFILES_DIRECTORY}/bin/dotfiles"

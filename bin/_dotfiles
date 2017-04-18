@@ -55,10 +55,10 @@ main () {
   source "${DOTFILES_DIR}/lib/repositories"
 
   #-- Install packages -----------------------------------------------------------------------------
-  source "${DOTFILES_DIR}/lib/packages"
+#  source "${DOTFILES_DIR}/lib/packages"
 
   #-- Create links ---------------------------------------------------------------------------------
-  source "${DOTFILES_DIR}/lib/links"
+#  source "${DOTFILES_DIR}/lib/links"
 
   #-- Restore line wrapping ------------------------------------------------------------------------
   tput smam 1>&3 2>&1
