@@ -35,7 +35,7 @@ npm_group () {
 package_install "wget"
 
 # Bash additions
-package_install "zopfli"
+# package_install "zopfli" MAKE A PACKAGE AND BUILD FROM GOOGLE GIT
 package_install "pigz"
 package_install "screenfetch"
 
