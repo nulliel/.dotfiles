@@ -3,64 +3,24 @@
 #-- Config -----------------------------------------------------------------------------------------
 readonly SCRIPT_NAME="$(basename "$0")"
 
-readonly DOTFILES_DIR="${HOME}/.dotfiles"
-readonly DOTFILES_TMP="${DOTFILES_DIR}/tmp"
-readonly DOTFILES_BLD="${DOTFILES_DIR}/build"
+readonly DOTFILES_DIR="@DOTFILES_DIR@"
 readonly DOTFILES_LOG="${DOTFILES_DIR}/dotfiles.log"
+readonly DOTFILES_BUILD="${DOTFILES_DIR}/build"
 
 readonly DOTFILES_GIT_REMOTE="https://github.com/nulliel/dotfiles.git"
 
-#-- Don't mess with this ---------------------------------------------------------------------------
-declare LOCKFILE_EXIT=false
-
 #-- Options ----------------------------------------------------------------------------------------
-set -o errexit     # Exit on most errors
 set -o errtrace    # Inherit error traps
 set -o nounset     # Disallow expansion of unset variables
 
-#-- Traps ------------------------------------------------------------------------------------------
-trap_err () {
-  # Disable trap to prevent possible recursion
-  trap - ERR
-
-  # Undo logging
-  if { true 1>&3; } 2>/dev/null; then
-    exec 1>&3 2>&4 3>&- 4>&- 5>&- 6>&-
-  fi
-
-  # Consider further errors nonfatal so we can run to completion
-  set +o errexit
-
-  # Print fatal error
-  printf "\n[\e[1;91mFatal\e[0m] Check the logfile at %s for more information.\n" "$DOTFILES_LOG"
-
-  # Exit with failure status
-  if [[ "$#" -eq 1 && "$1" =~ ^[0-9]+$ ]]; then
-    exit "$1"
-  else
-    exit 1
-  fi
-}
-trap_exit () {
-  # Undo logging
-  if { true 1>&3; } 2>/dev/null; then
-    exec 1>&3 2>&4 3>&- 4>&- 5>&- 6>&-
-  fi
-
-  # Empty tmp directory
-  if [[ -d "$DOTFILES_TMP" && "$LOCKFILE_EXIT" = false ]]; then
-    rm -r "$DOTFILES_TMP"
-  fi
-
-  # Restore line wrapping
-  tput smam
-}
+#-- Libraries --------------------------------------------------------------------------------------
+source "${DOTFILES_DIR}/lib/internal/utils-logging"
 
 #-- Lockfile ---------------------------------------------------------------------------------------
 acquire_lock () {
   local prefix="$1"
   local fd="${2:-200}"
-  local lock_file="${DOTFILES_TMP}/$prefix.lock"
+  local lock_file="${DOTFILES_DIR}/$prefix.lock"
 
   # Create the lock
   eval "exec $fd>$lock_file"
@@ -71,20 +31,51 @@ acquire_lock () {
     || return 1
 }
 
+#-- Traps ------------------------------------------------------------------------------------------
+trap_error () {
+  # Disable trap to prevent possible recursion
+  trap - ERR
+
+  # Restore console output
+  restore_output
+
+  # Print fatal error
+  printf "\n[\e[1;91mFatal\e[0m] Check the logfile at %s for more information.\n" "{$DOTFILES_LOG}"
+
+  # Exit with failure status
+  if [[ "$#" -eq 1 && "$1" =~ ^[0-9]+$ ]]; then
+    exit "$1"
+  else
+    exit 1
+  fi
+}
+
+trap_exit () {
+  # Restore console output
+  restore_output
+
+  # Restore line wrapping
+  tput smam
+}
+
 #-- Utilities --------------------------------------------------------------------------------------
+show_usage () {
+  cat <<EOF
+Usage: $SCRIPT_NAME [options]
+
+Options:
+    -h, --help        Print this help text
+        --no-sync     Skip syncing the git repository
+
+Documentation can be found at https://github.com/nulliel/dotfiles/
+EOF
+}
+
 parse_params () {
-  INSTALL_DEFAULTS=false  # Perform all default actions without prompts
-  NO_SYNC=false           # Don't sync dotfiles (OVERRIDES DEFAULTS)
-  NO_RESTART=false        # Don't restart after the script finishes
+  NO_SYNC=false
 
   for opt in "$@"; do
     case "$opt" in
-      --defaults)
-        INSTALL_DEFAULTS=true
-        ;;
-      --no-restart)
-        NO_RESTART=true
-        ;;
       --no-sync)
         NO_SYNC=true
         ;;
@@ -93,16 +84,15 @@ parse_params () {
         exit 0
         ;;
       -*|--*)
-        printf "[\e[1;91mError\e[0m] Invalid option $opt\n"
+        printf "[\e[1;91mError\e[0m] Invalid option %b\n" "$opt"
         exit 1
         ;;
     esac
   done
 
-  readonly INSTALL_DEFAULTS
-  readonly NO_RESTART
   readonly NO_SYNC
 }
+
 show_banner () {
   clear
   printf '\e[1m'
@@ -115,20 +105,10 @@ show_banner () {
   printf '     Y88b 888 Y88..88P Y88b.  888    888 888 Y8b.          X88\n'
   printf '      "Y88888  "Y88P"   "Y888 888    888 888  "Y8888   88888P" \e[0m\n\n'
 }
-show_usage () {
-  cat <<EOF
-Usage: $SCRIPT_NAME [options]
-
-Options:
-    -h, --help        Print this help text
-
-Documentation can be found at https://github.com/nulliel/dotfiles/
-EOF
-}
 
 #-- Main -------------------------------------------------------------------------------------------
 main () {
-  trap "trap_err" ERR
+  trap "trap_error" ERR
   trap "trap_exit" EXIT SIGINT SIGTERM SIGTSTP
 
   # Disable word wrapping
@@ -143,21 +123,15 @@ main () {
     exit 10
   }
 
-  #-- Create tmp folder ----------------------------------------------------------------------------
-  if [[ ! -d "$DOTFILES_TMP" ]]; then
-    mkdir "$DOTFILES_TMP"
-  fi
-
-  if [[ ! -d "$DOTFILES_BLD" ]]; then
-    mkdir "$DOTFILES_BLD"
+  #-- Create folder structure ----------------------------------------------------------------------
+  if [[ ! -d "$DOTFILES_BUILD" ]]; then
+    mkdir "$DOTFILES_BUILD"
   fi
 
   #-- Acquire the lock -----------------------------------------------------------------------------
   acquire_lock "${SCRIPT_NAME}" || {
-    LOCKFILE_EXIT=true
-
     printf "[\e[1;91mError\e[0m] Only one instance of %b can run at a time.\n" "${SCRIPT_NAME}"
-    exit 11
+    exit 1
   }
 
   #-- Ensure git is installed ----------------------------------------------------------------------

@@ -7,7 +7,7 @@ if pacman -Q "git" >/dev/null 2>&1 || command -v "git" >/dev/null 2>&1; then
   return
 fi
 
-sudo pacman -Syu --noconfirm "git" >/dev/null 2>&1 || {
+sudo pacman -Syu --noconfirm --needed "git" >/dev/null 2>&1 || {
   printf "\033[1;91mERROR\033[0m\n"
   exit
 }
