@@ -3,32 +3,34 @@
 #-- Cursor manipulation ----------------------------------------------------------------------------
 # From http://askubuntu.com/questions/366103/saving-more-corsor-positions-with-tput-in-bash-terminal
 save_cursor () {
-  exec < /dev/tty
+  exec </dev/tty
   oldstty=$(stty -g)
   stty raw -echo min 0
-  printf "\e[6n" 1>&3 > /dev/tty
+  printf "\e[6n" >/dev/tty
   IFS=';' read -r -d R -a pos
-  stty $oldstty
+  stty "$oldstty"
   eval "$1[0]=$((${pos[0]:2} - 1))"
   eval "$1[1]=$((${pos[1]} - 1))"
 }
+
 restore_cursor () {
-    eval ARRAY=\( \${${1}[@]} \)
-    tput cup ${ARRAY[0]} ${ARRAY[1]} 1>&3
+    eval ARRAY=\( \${$1[@]} \)
+    tput cup "${ARRAY[0]}" "${ARRAY[1]}"
 }
 
 #-- Safe CD ----------------------------------------------------------------------------------------
+# $1 - Directory
 cd_safe () {
   cd "$1" 2>/dev/null || {
     die "Failed to change directory to $1" 14
   }
 }
 
-#-- Check for set flags ----------------------------------------------------------------------------
+#-- Check for set environment variables ------------------------------------------------------------
+# $1 - Environment Variable Name
 is_set () {
   local flag="$1"
 
-  # Prevent errors
   set +o nounset
 
   if [[ "${!flag}" = true ]]; then
@@ -39,22 +41,11 @@ is_set () {
 
   return 1
 }
-is_default () {
-  if [[ "$INSTALL_DEFAULTS" = true ]]; then
-    return 0
-  fi
-
-  return 1
-}
 
 #-- Check for command existance --------------------------------------------------------------------
+# $1 - Command Name
 command_exists () {
   command -v "$1" >/dev/null 2>&1 && return 0 || return 1
-}
-
-#-- Random -----------------------------------------------------------------------------------------
-random_string () {
-  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-32} | head -n 1
 }
 
 #-- Super user checks ------------------------------------------------------------------------------
@@ -65,12 +56,18 @@ is_super_user () {
 
   return 1
 }
+
 can_use_sudo () {
   sudo -n true || {
     return 1
   }
 
   return 0
+}
+
+#-- Random -----------------------------------------------------------------------------------------
+random_string () {
+  tr -dc 'a-zA-Z0-9' </dev/urandom | fold -w "${1:-32}" | head -n 1
 }
 
 #-- Updating ---------------------------------------------------------------------------------------

@@ -5,7 +5,6 @@ package_installed () {
   pacman -Q "$1" >/dev/null 2>&1 \
     || command_exists "$1" \
     || return 1
-
   return 0
 }
 
@@ -19,50 +18,11 @@ package_install () {
 
   show_progress sudo pacman -Syu --needed "$1" && pass || {
     fail
-    die "Package ($1) failed to install" 41
+    fatal "Package ($1) failed to install"
   }
-}
-
-# package_groupinstall () {
-#   log "Installing $1..."
-
-#   show_progress sudo dnf groupinstall -y "$1" && pass || {
-#       fail
-#       die "Group ($1) failed to install" 42
-#     }
-# }
-
-#-- NPM Packages -----------------------------------------------------------------------------------
-npm_install_global () {
-  log "Install NPM package $1..."
-
-  local npm_installed="$(npm list --depth 1 --global $1 >/dev/null 2>&1; echo $?)" || :
-  local yarn_installed="$(yarn global ls 2>/dev/null | grep $1 >/dev/null 2>&1; echo $?)" || :
-
-  if [[ "$npm_installed" = "0" || "$yarn_installed" = "0" ]]; then
-    skip && return
-  fi
-
-  if command_exists "yarn"; then
-    show_progress yarn global add "$1" || {
-      fail
-      die "NPM package $1 failed to install" 43
-    }
-  else
-    show_progress npm install "$1" --global || {
-      fail
-      die "NPM package $1 failed to install" 43
-    }
-  fi
-
-  pass
 }
 
 #-- Build tools ------------------------------------------------------------------------------------
 install_build_tools () {
-  # package_groupinstall "Development Tools"
-  # package_groupinstall "C Development Tools and Libraries"
-
-  package_install "autoconf"
-  package_install "automake"
+  package_install "base-devel"
 }

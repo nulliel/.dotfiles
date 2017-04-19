@@ -14,7 +14,19 @@ set -o errtrace    # Inherit error traps
 set -o nounset     # Disallow expansion of unset variables
 
 #-- Libraries --------------------------------------------------------------------------------------
+source "${DOTFILES_DIR}/lib/internal/utils"
+source "${DOTFILES_DIR}/lib/internal/utils-screen"
+source "${DOTFILES_DIR}/lib/internal/utils-interactive"
+
 source "${DOTFILES_DIR}/lib/internal/utils-logging"
+
+source "${DOTFILES_DIR}/lib/internal/utils-package"
+
+# utils-npm
+
+#  source "${DOTFILES_DIR}/lib/internal/utils-aur"
+#  source "${DOTFILES_DIR}/lib/internal/utils-build"
+#  source "${DOTFILES_DIR}/lib/internal/utils-rpm"
 
 #-- Lockfile ---------------------------------------------------------------------------------------
 acquire_lock () {
@@ -40,7 +52,7 @@ trap_error () {
   restore_output
 
   # Print fatal error
-  printf "\n[\e[1;91mFatal\e[0m] Check the logfile at %s for more information.\n" "{$DOTFILES_LOG}"
+  fatal "Check the logfile at %s for more information.\n" "{$DOTFILES_LOG}"
 
   # Exit with failure status
   if [[ "$#" -eq 1 && "$1" =~ ^[0-9]+$ ]]; then
@@ -117,16 +129,20 @@ main () {
   show_banner
   parse_params "$@"
 
+  #-- Require non root with sudo privileges --------------------------------------------------------
+  if is_super_user; then
+    fatal "This script should not be run using sudo or as the root user"
+  fi
+
+  if ! can_use_sudo; then
+    fatal "This script requires the use of sudo"
+  fi
+
   #-- Make sure we're in the right directory -------------------------------------------------------
   cd "${DOTFILES_DIR}" 2>/dev/null || {
     printf "[\033[1;91mError\033[0m] Dotfiles not found at %b\n" "${DOTFILES_DIR}"
     exit 10
   }
-
-  #-- Create folder structure ----------------------------------------------------------------------
-  if [[ ! -d "$DOTFILES_BUILD" ]]; then
-    mkdir "$DOTFILES_BUILD"
-  fi
 
   #-- Acquire the lock -----------------------------------------------------------------------------
   acquire_lock "${SCRIPT_NAME}" || {
@@ -134,14 +150,38 @@ main () {
     exit 1
   }
 
+  #-- Create folder structure ----------------------------------------------------------------------
+  if [[ ! -d "$DOTFILES_BUILD" ]]; then
+    mkdir "$DOTFILES_BUILD"
+  fi
+
+  #-- Empty the log file ---------------------------------------------------------------------------
+  printf "" >"$DOTFILES_LOG"
+
+  #-- Output redirection ---------------------------------------------------------------------------
+  redirect_output
+
   #-- Ensure git is installed ----------------------------------------------------------------------
   source "${DOTFILES_DIR}/packages/git"
 
   #-- Sync repository ------------------------------------------------------------------------------
   source "${DOTFILES_DIR}/lib/internal/sync"
 
-  #-- Call the rest of the script ------------------------------------------------------------------
-  source "${DOTFILES_DIR}/bin/_dotfiles"
+  #-- Install packages -----------------------------------------------------------------------------
+#  source "${DOTFILES_DIR}/lib/packages"
+
+  #-- Create links ---------------------------------------------------------------------------------
+#  source "${DOTFILES_DIR}/lib/links"
+
+  #-- Restore line wrapping ------------------------------------------------------------------------
+  tput smam
+
+  #-- Restart terminal -----------------------------------------------------------------------------
+  consolel "\033[1mPlease restart your terminal session for changes to take effect\033[0m"
+
+  while read -r; do
+    :
+  done
 }
 
 main "$@"

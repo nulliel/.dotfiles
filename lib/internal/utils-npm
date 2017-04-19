@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+#-- NPM Packages -----------------------------------------------------------------------------------
+npm_install_global () {
+  log "Install NPM package $1..."
+
+  local npm_installed="$(npm list --depth 1 --global $1 >/dev/null 2>&1; echo $?)" || :
+  local yarn_installed="$(yarn global ls 2>/dev/null | grep $1 >/dev/null 2>&1; echo $?)" || :
+
+  if [[ "$npm_installed" = "0" || "$yarn_installed" = "0" ]]; then
+    skip && return
+  fi
+
+  if command_exists "yarn"; then
+    show_progress yarn global add "$1" || {
+      fail
+      die "NPM package $1 failed to install" 43
+    }
+  else
+    show_progress npm install "$1" --global || {
+      fail
+      die "NPM package $1 failed to install" 43
+    }
+  fi
+
+  pass
+}

@@ -34,9 +34,7 @@ redirect_output () {
 
 restore_output() {
   if { true 1>&3; } 2>/dev/null; then
-    exec 1>&3 \
-         2>&4 \
-         3>&- \
+    exec 3>&- \
          4>&- \
          5>&- \
          6>&-
