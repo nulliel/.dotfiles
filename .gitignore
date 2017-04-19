@@ -1,6 +1,7 @@
 #Dotfiles stuff
 tmp
 dotfiles.log
+dotfiles.lock
 
 #Shell
 bash_nocommit
