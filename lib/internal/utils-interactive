@@ -73,7 +73,7 @@ _selection_print () {
   shift
 
   if [[ "$first_selection_run" = false ]]; then
-    console "\033[%iA" "$#"
+    console "\033[$#A"
   fi
 
   first_selection_run=false
@@ -89,14 +89,14 @@ _selection_print () {
 }
 
 _selection_clear () {
-  console "\033[%bA" "$1"
+  console "\033[$1A"
 
   for (( c=1; c<=$1; c++ )); do
     clear_line
     console "\n"
   done
 
-  console "\033[%bA" "$1"
+  console "\033[$1A"
 }
 
 selection () {

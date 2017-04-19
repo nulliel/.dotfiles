@@ -3,7 +3,7 @@
 #-- Config -----------------------------------------------------------------------------------------
 readonly SCRIPT_NAME="$(basename "$0")"
 
-readonly DOTFILES_DIR="@DOTFILES_DIR@"
+readonly DOTFILES_DIR="${HOME}/.dotfiles"
 readonly DOTFILES_LOG="${DOTFILES_DIR}/dotfiles.log"
 readonly DOTFILES_BUILD="${DOTFILES_DIR}/build"
 

@@ -123,15 +123,15 @@ cloghl () {
 
 #-- Error logging ----------------------------------------------------------------------------------
 error () {
-  clogl "[\033[1;91mError\033[0m] %b" "$@"
+  clogl "[\033[1;91mError\033[0m] $*"
 }
 
 warning () {
-  clogl "[\0ee[1;93mWarning\033[0m] %b" "$@"
+  clogl "[\0ee[1;93mWarning\033[0m] $*"
 }
 
 fatal () {
-  clogl "[\033[1;91mFatal\033[0m] %b\n" "$@"
+  clogl "[\033[1;91mFatal\033[0m] $*\n"
   fatal_message 1>&5 2>&6
 
   if [[ "$#" -eq 2 && "$2" =~ ^[0-9]+$ ]]; then
@@ -270,7 +270,7 @@ show_progress () {
     set_return=1
   fi
 
-  if [[ "$@" == *"pacman"* ]]; then
+  if [[ "$*" == *"pacman"* ]]; then
     pacman=0
   fi
 

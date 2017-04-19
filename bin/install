@@ -27,8 +27,5 @@ curl -fsSLo "${dotfiles_tar_file}" "${DOTFILES_TAR_PATH}" || {
 
 tar -zxf "${dotfiles_tar_file}" --strip-components 1 -C "${DOTFILES_DIRECTORY}"
 
-#-- Replace dotfiles path --------------------------------------------------------------------------
-sed -i "s!@DOTFILES_DIR@!${DOTFILES_DIR}!g" "${DOTFILES_DIR}/bin/dotfiles"
-
 #-- Run dotfiles -----------------------------------------------------------------------------------
 source "${DOTFILES_DIRECTORY}/bin/dotfiles"

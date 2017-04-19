@@ -22,7 +22,7 @@ restore_cursor () {
 # $1 - Directory
 cd_safe () {
   cd "$1" 2>/dev/null || {
-    die "Failed to change directory to $1" 14
+    fatal "Failed to change directory to $1"
   }
 }
 
