@@ -48,7 +48,7 @@ git pull --rebase origin master 1>&3 2>&4 || {
 pass
 
 #-- Update modules ---------------------------------------------------------------------------------
-clogl "Updating submodules..."
+clog "Updating submodules..."
 
 git submodule update --recursive --init 1>&3 2>&4 || {
   fail
