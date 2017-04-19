@@ -109,16 +109,16 @@ clog () {
 }
 
 clogl () {
-  log "$*\n"
+  clog "$*\n"
 }
 
 clogh () {
   _headless=true
-  log "$*"
+  clog "$*"
 }
 
 cloghl () {
-  logh "$*\n"
+  clogh "$*\n"
 }
 
 #-- Error logging ----------------------------------------------------------------------------------
