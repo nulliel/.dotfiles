@@ -3,76 +3,108 @@
 header "package"
 
 #-- Check for flags --------------------------------------------------------------------------------
-logl "Installing packages..."
+clog --linefeed "Installing packages..."
 
 #-- Utilities --------------------------------------------------------------------------------------
-load_package () {
-  sleep 0.05
-  source "${DOTFILES_DIR}/packages/$1"
-}
-package_group () {
-  subheader "$1"
-  shift
+npmInstall () {
+  trySubheader "npm"
 
-  for item in "$@"; do
-    package_install "$item"
-  done
+  console "Installing npm package ${1}..."
+  checkSuccess showProgress "${DOTFILES_USR}/bin/npm" install --global "${1}"
 
-  exit_subheader
-}
-npm_group () {
-  subheader "$1"
-  shift
-
-  for item in "$@"; do
-    npm_install_global "$item"
-  done
-
-  exit_subheader
+  tryExitSubheader "npm"
 }
 
-#-- Packages ---------------------------------------------------------------------------------------
-package_install "wget"
+#-- Core Packages ----------------------------------------------------------------------------------
+console --noheader --bold --linefeed "\n  Core"
 
-# Bash additions
-# package_install "zopfli" MAKE A PACKAGE AND BUILD FROM GOOGLE GIT
-package_install "pigz"
-package_install "screenfetch"
+packageInstall --noconfirm "wget"
+packageInstall --noconfirm "base-devel"
 
-#-- Package Modules --------------------------------------------------------------------------------
+#-- Compression ------------------------------------------------------------------------------------
+console --noheader --bold --linefeed "\n  Compression"
 
-# Browsers
-load_package "google-chrome"
+packageGit --name "zopfli"                               \
+           --repo "https://github.com/google/zopfli.git" \
+           --type "make"                                 \
+           --post ". ${DOTFILES_DIR}/packages/zopfli-post"
 
-exit_header
-return
+packageInstall "pigz"
 
-# Editors
-load_package "emacs" \
-  && command_exists "emacs" \
-  && package_group "emacs-other" \
-                   "adobe-source-code-pro-fonts" \
-                   "aspell" \
-                   "aspell-en" \
+#-- Fonts ------------------------------------------------------------------------------------------
+console --noheader --bold --linefeed "\n  Fonts"
+
+packageInstallList "font"                           \
+                   "adobe-source-code-pro-fonts"    \
+                   "adobe-source-han-sans-jp-fonts"
+
+#-- Sound ------------------------------------------------------------------------------------------
+console --noheader --bold --linefeed "\n  Sound"
+
+packageInstallList "sound"       \
+                   "alsa-lib"    \
+                   "pulseaudio"  \
+                   "pavucontrol"
+
+#-- Editors ----------------------------------------------------------------------------------------
+console --noheader --bold --linefeed "\n  Editors"
+
+packageGit --name "emacs"                                     \
+           --repo "https://github.com/emacs-mirror/emacs.git" \
+           --type "make"                                      \
+           --opts "--with-x-widgets"                          \
+           --deps "texinfo"                                   \
+                  "libxpm"                                    \
+                  "libjpeg-turbo"                             \
+                  "libtiff"                                   \
+                  "giflib"                                    \
+                  "ncurses"                                   \
+                  "gtk3"                                      \
+                  "webkitgtk"                                 \
+                  "m17n-lib"                                  \
+                  "imagemagick"
+
+# Emacs Addons
+packageInstallList "emacs-other"         \
                    "the_silver_searcher"
 
-# Scripts
-load_package "nvm" \
-  && command_exists "nvm" \
-  && package_group "yarn" \
-                   "yarn" \
-  && npm_group "npm-packages" \
-               "jshint"
+#-- Browsers ---------------------------------------------------------------------------------------
+console --noheader --bold --linefeed "\n  Browsers"
 
-# Social
-load_package "skype"
-load_package "slack"
+packageGit --name "google-chrome"                               \
+           --repo "https://aur.archlinux.org/google-chrome.git" \
+           --type "aur"                                         \
+           --deps "alsa-lib"                                    \
+                  "gconf"                                       \
+                  "gtk2"                                        \
+                  "libxss"                                      \
+                  "libxtst"                                     \
+                  "nss"
 
-# Utility
-load_package "qbittorrent"    # A torrent client
-load_package "deadbeef"       # An audio player
-load_package "mpv"            # A video player
+#-- Node -------------------------------------------------------------------------------------------
+console --noheader --bold --linefeed "\n  Node.js"
 
+packageGit --name "n"                                         \
+           --repo "https://github.com/tj/n.git"               \
+           --type "none"                                      \
+           --post "source ${DOTFILES_DIR}/packages/n-post"
 
+if ! echo "${PATH}" | grep "${DOTFILES_USR}/bin"; then
+  export PATH="${PATH}:${DOTFILES_USR}/bin"
+fi
 
-exit_header
+N_PREFIX="${DOTFILES_USR}"
+
+npmInstall tern
+npmInstall eslint
+
+#-- Utilities --------------------------------------------------------------------------------------
+console --noheader --bold --linefeed "\n  Utilities"
+
+packageInstallList "Utilities"   \
+                   "qbittorrent" \
+                   "deadbeef"    \
+                   "mpv"         \
+                   "screenfetch"
+
+exitHeader

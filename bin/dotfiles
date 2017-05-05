@@ -1,183 +1,126 @@
 #!/usr/bin/env bash
-
-#-- Config -----------------------------------------------------------------------------------------
-readonly SCRIPT_NAME="$(basename "$0")"
-
-readonly DOTFILES_DIR="${HOME}/.dotfiles"
-readonly DOTFILES_LOG="${DOTFILES_DIR}/dotfiles.log"
-readonly DOTFILES_BUILD="${DOTFILES_DIR}/build"
-
-readonly DOTFILES_GIT_REMOTE="https://github.com/nulliel/dotfiles.git"
+# shellcheck disable=SC2034,SC1090
 
 #-- Options ----------------------------------------------------------------------------------------
 set -o errtrace    # Inherit error traps
 set -o nounset     # Disallow expansion of unset variables
 
+#-- Config -----------------------------------------------------------------------------------------
+readonly SCRIPT_NAME="$(basename ${0})"
+
+readonly DOTFILES_DIR="${HOME}/.dotfiles"
+readonly DOTFILES_USR="${DOTFILES_DIR}/.usr"
+readonly DOTFILES_BUILD="${DOTFILES_DIR}/.build"
+readonly DOTFILES_STORE="${DOTFILES_DIR}/.store"
+
+readonly DOTFILES_LOG="${DOTFILES_STORE}/dotfiles.log"
+readonly DOTFILES_REMOTE="https://github.com/nulliel/dotfiles.git"
+
 #-- Libraries --------------------------------------------------------------------------------------
-source "${DOTFILES_DIR}/lib/internal/utils"
-source "${DOTFILES_DIR}/lib/internal/utils-screen"
-source "${DOTFILES_DIR}/lib/internal/utils-interactive"
+source "${DOTFILES_DIR}/lib/internal/utils"             # GOOD
+source "${DOTFILES_DIR}/lib/internal/utils-arguments"   # GOOD
+source "${DOTFILES_DIR}/lib/internal/utils-build"       #
+source "${DOTFILES_DIR}/lib/internal/utils-console"     # GOOD
+source "${DOTFILES_DIR}/lib/internal/utils-fs"          # GOOD
+source "${DOTFILES_DIR}/lib/internal/utils-header"      # GOOD
+source "${DOTFILES_DIR}/lib/internal/utils-interactive" # GOOD
+source "${DOTFILES_DIR}/lib/internal/utils-logging"     # GOOD
+source "${DOTFILES_DIR}/lib/internal/utils-npm"         #
+source "${DOTFILES_DIR}/lib/internal/utils-package"     # GOOD
+source "${DOTFILES_DIR}/lib/internal/utils-process"     # GOOD
+source "${DOTFILES_DIR}/lib/internal/utils-progress"    # GOOD
+source "${DOTFILES_DIR}/lib/internal/utils-system"      # GOOD
 
-source "${DOTFILES_DIR}/lib/internal/utils-logging"
+#-- Require non root with sudo privileges ----------------------------------------------------------
+if [[ "$EUID" -eq 0 ]]; then
+  printf "This script should not be run using sudo or as the root user.\n"
+  exit
+fi
 
-source "${DOTFILES_DIR}/lib/internal/utils-package"
+if ! sudo -n true; then
+  printf "This script requires the use of sudo.\n"
+  exit
+fi
 
-# utils-npm
+if ! commandExists "git"; then
+  printf "This script requires git.\n"
+  exit
+fi
 
-#  source "${DOTFILES_DIR}/lib/internal/utils-aur"
-#  source "${DOTFILES_DIR}/lib/internal/utils-build"
-#  source "${DOTFILES_DIR}/lib/internal/utils-rpm"
-
-#-- Lockfile ---------------------------------------------------------------------------------------
-acquire_lock () {
-  local prefix="$1"
-  local fd="${2:-200}"
-  local lock_file="${DOTFILES_DIR}/$prefix.lock"
-
-  # Create the lock
-  eval "exec $fd>$lock_file"
-
-  # Acquire the lock
-  flock -n "${fd}" \
-    && return 0 \
-    || return 1
-}
-
-#-- Traps ------------------------------------------------------------------------------------------
-trap_error () {
-  # Disable trap to prevent possible recursion
-  trap - ERR
-
-  # Restore console output
-  restore_output
-
-  # Print fatal error
-  fatal "Check the logfile at %s for more information.\n" "{$DOTFILES_LOG}"
-
-  # Exit with failure status
-  if [[ "$#" -eq 1 && "$1" =~ ^[0-9]+$ ]]; then
-    exit "$1"
-  else
-    exit 1
-  fi
-}
-
-trap_exit () {
-  # Restore console output
-  restore_output
-
-  # Restore line wrapping
-  tput smam
-}
-
-#-- Utilities --------------------------------------------------------------------------------------
-show_usage () {
+#-- Utils ------------------------------------------------------------------------------------------
+showUsage () {
   cat <<EOF
 Usage: $SCRIPT_NAME [options]
 
 Options:
-    -h, --help        Print this help text
-        --no-sync     Skip syncing the git repository
+    --help        Print this help text
+    --no-sync     Skip syncing the git repository
 
 Documentation can be found at https://github.com/nulliel/dotfiles/
 EOF
 }
 
-parse_params () {
-  NO_SYNC=false
-
-  for opt in "$@"; do
-    case "$opt" in
-      --no-sync)
-        NO_SYNC=true
-        ;;
-      -h|--help)
-        show_usage
-        exit 0
-        ;;
-      -*|--*)
-        printf "[\e[1;91mError\e[0m] Invalid option %b\n" "$opt"
-        exit 1
-        ;;
-    esac
-  done
-
-  readonly NO_SYNC
-}
-
-show_banner () {
-  clear
-  printf '\e[1m'
-  printf '          888          888     .d888 d8b 888                  \n'
-  printf '          888          888    d88P"  Y8P 888                  \n'
-  printf '          888          888    888        888                  \n'
-  printf '      .d88888  .d88b.  888888 888888 888 888  .d88b.  .d8888b \n'
-  printf '     d88" 888 d88""88b 888    888    888 888 d8P  Y8b 88K     \n'
-  printf '     888  888 888  888 888    888    888 888 88888888 "Y8888b.\n'
-  printf '     Y88b 888 Y88..88P Y88b.  888    888 888 Y8b.          X88\n'
-  printf '      "Y88888  "Y88P"   "Y888 888    888 888  "Y8888   88888P" \e[0m\n\n'
-}
-
 #-- Main -------------------------------------------------------------------------------------------
 main () {
-  trap "trap_error" ERR
-  trap "trap_exit" EXIT SIGINT SIGTERM SIGTSTP
+  trap "trapError" ERR                          # utils-process
+  trap "trapExit"  EXIT SIGINT SIGTERM SIGTSTP  # utils-process
 
   # Disable word wrapping
   tput rmam
 
-  show_banner
-  parse_params "$@"
+  #-- Console redirection --------------------------------------------------------------------------
+  redirectOutput
 
-  #-- Require non root with sudo privileges --------------------------------------------------------
-  if is_super_user; then
-    fatal "This script should not be run using sudo or as the root user"
-  fi
+  clear
+  console '\e[1m'
+  console "          888          888     .d888 d8b 888                  \n"
+  console '          888          888    d88P"  Y8P 888                  \n'
+  console '          888          888    888        888                  \n'
+  console '      .d88888  .d88b.  888888 888888 888 888  .d88b.  .d8888b \n'
+  console '     d88" 888 d88""88b 888    888    888 888 d8P  Y8b 88K     \n'
+  console '     888  888 888  888 888    888    888 888 88888888 "Y8888b.\n'
+  console '     Y88b 888 Y88..88P Y88b.  888    888 888 Y8b.          X88\n'
+  console '      "Y88888  "Y88P"   "Y888 888    888 888  "Y8888   88888P" \e[0m\n\n'
 
-  if ! can_use_sudo; then
-    fatal "This script requires the use of sudo"
-  fi
+  noSync=false # Prevent git synchronization
+
+  parseArguments "no-sync" "noSync"    bool      \
+                 "help"    "showUsage" func,exit \
+                 "--" "$@"
 
   #-- Make sure we're in the right directory -------------------------------------------------------
-  cd "${DOTFILES_DIR}" 2>/dev/null || {
-    printf "[\033[1;91mError\033[0m] Dotfiles not found at %b\n" "${DOTFILES_DIR}"
-    exit 10
-  }
+  cdSafe "${DOTFILES_DIR}"
+
+  #-- Create folder structures ---------------------------------------------------------------------
+  mkdirSafe "${DOTFILES_USR}"
+  mkdirSafe "${DOTFILES_USR}/bin"
+  mkdirSafe "${DOTFILES_USR}/etc"
+  mkdirSafe "${DOTFILES_USR}/include"
+  mkdirSafe "${DOTFILES_USR}/lib"
+  mkdirSafe "${DOTFILES_USR}/local"
+  mkdirSafe "${DOTFILES_USR}/share"
+  mkdirSafe "${DOTFILES_USR}/src"
+
+  mkdirSafe "${DOTFILES_BUILD}"
+  mkdirSafe "${DOTFILES_STORE}"
 
   #-- Acquire the lock -----------------------------------------------------------------------------
-  acquire_lock "${SCRIPT_NAME}" || {
-    printf "[\e[1;91mError\e[0m] Only one instance of %b can run at a time.\n" "${SCRIPT_NAME}"
-    exit 1
-  }
-
-  #-- Create folder structure ----------------------------------------------------------------------
-  if [[ ! -d "$DOTFILES_BUILD" ]]; then
-    mkdir "$DOTFILES_BUILD"
-  fi
+  lockfile "${SCRIPT_NAME}"
 
   #-- Empty the log file ---------------------------------------------------------------------------
   printf "" >"$DOTFILES_LOG"
-
-  #-- Output redirection ---------------------------------------------------------------------------
-  redirect_output
-
-  #-- Ensure git is installed ----------------------------------------------------------------------
-  source "${DOTFILES_DIR}/packages/git"
 
   #-- Sync repository ------------------------------------------------------------------------------
   source "${DOTFILES_DIR}/lib/internal/sync"
 
   #-- Install packages -----------------------------------------------------------------------------
-#  source "${DOTFILES_DIR}/lib/packages"
+  # source "${DOTFILES_DIR}/lib/packages"
 
   #-- Create links ---------------------------------------------------------------------------------
-#  source "${DOTFILES_DIR}/lib/links"
-
-  #-- Restore line wrapping ------------------------------------------------------------------------
-  tput smam
+  source "${DOTFILES_DIR}/lib/links"
 
   #-- Restart terminal -----------------------------------------------------------------------------
-  consolel "\033[1mPlease restart your terminal session for changes to take effect\033[0m"
+  console --bold --linefeed "Please restart your terminal session for changes to take effect"
 
   while read -r; do
     :

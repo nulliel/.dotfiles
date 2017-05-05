@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+#-- Definitions ------------------------------------------------------------------------------------
+cdSafe () {
+  cd "${1}" 2>/dev/null || {
+    fatal "Failed to change directory to ${1}."
+  }
+}
+
+mkdirSafe () {
+  if [[ ! -d "$1" ]]; then
+    mkdir "${1}" 2>/dev/null || {
+      fatal "Failed to create directory ${1}."
+    }
+  fi
+}
+
+cdStart () {
+  # $1 - Name
+  # $2 - Directory
+  eval "${1}=$(pwd)"
+  cdSafe "${2}"
+}
+
+cdEnd () {
+  # $1 - Name
+  cdSafe "${!1}"
+}

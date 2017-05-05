@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-# -- Directory aliases -----------------------------------------------------------------------------
-alias p="cd ~/code/projects"
-alias o="cd ~/code/orgs"
-alias t="cd ~/code/templates"
-alias s="cd ~/code/scripts"
-
 # -- ls aliases ------------------------------------------------------------------------------------
 alias l="ls -lF --color"
 alias la="ls -laF --color"

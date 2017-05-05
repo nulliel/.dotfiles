@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2034,SC1090,SC2120,SC2119
+
+#-- Definitions ----------------------------------------------------------------------------
+console () {
+  local bold=false
+  local linefeed=false
+  local headless=false
+  local sanitize=false
+  local noheader=false
+
+  local argArr=()
+  local strArr=()
+
+  local str=""
+
+  splitLastArgument "argArr" "strArr" "$@"
+
+  if [[ "${strArr[0]:0:2}" == "--" ]]; then
+    argArr=( "$@" )
+    strArr=( "" )
+  fi
+
+  str="${strArr[@]}"
+
+  parseArguments "bold"     "bold"     bool,dual \
+                 "headless" "headless" bool,dual \
+                 "linefeed" "linefeed" bool,dual \
+                 "noheader" "noheader" bool,dual \
+                 "sanitize" "sanitize" bool,dual \
+                 -- "${argArr[@]}"
+
+  [[ "${bold}" = true ]]     && _consoleBold
+  [[ "${headless}" = true ]] && _consoleHeadless
+  [[ "${linefeed}" = true ]] && _consoleLinefeed
+  [[ "${sanitize}" = true ]] && _consoleSanitize
+
+  if [[ "${noheader}" == false ]]; then
+    _printHeader
+  fi
+
+  printf "%b" "${str}"
+}
+
+log () {
+  console "$@" 1>&"${DOTFILES_FD_3}" >&"${DOTFILES_FD_4}"
+}
+
+clog () {
+  console "$@" 1>&"${DOTFILES_FD_5}" >&"${DOTFILES_FD_6}"
+}
+
+#-- Definitions ------------------------------------------------------------------------------------
+error () {
+  printf "[\033[1;91mError\033[0m] %b\n" "$1" 1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+}
+
+warning () {
+  printf "[\033[1;91mWarning\033[0m] %b\n" "$1 "1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+}
+
+fatal () {
+  if [[ "$#" -ge 1 ]]; then
+    printf "[\033[1;91mFatal\033[0m] %b\n" "$1" 1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+  fi
+
+  printf "[\e[1;91mFatal\e[0m] Check the logfile at %s for more information.\n" "$DOTFILES_LOG"
+
+  exit 1
+}
+
+#-- Definitions ------------------------------------------------------------------------------------
+pass () {
+  printf "\033[1;92mOK\033[0m\n" 1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+  sleep 0.01
+  log --linefeed
+}
+
+fail () {
+  printf "\033[1;91mERROR\033[0m\n" 1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+  sleep 0.01
+  log --linefeed
+}
+
+skip () {
+  if [[ "${#}" -eq 1 ]]; then
+    clog "$1"
+  fi
+
+  printf "\033[1;92mSKIPPED\033[0m\n" 1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+  sleep 0.01
+  log --linefeed
+}
+
+checkSuccess () {
+  "$@" && pass || { fail; fatal; }
+}
+
+#-- Definitions ------------------------------------------------------------------------------------
+moveUp () {
+  # $1 - Number of lines to move
+  printf "\033[%iA" "${1:-1}"
+}
+
+moveDown () {
+  # $1 - Number of lines to move
+  if [[ "${#}" -eq 0 ]]; then
+    1=1
+  fi
+
+  printf "\033[%iB" "${1}"
+}
+
+clearLine () {
+  printf "\r\033[K"
+}
+
+clearRest () {
+  printf "\033[K"
+}
+
+#-- Console Utilities ------------------------------------------------------------------------------
+_consoleBold () {
+  str="\033[1m${str}\033[0m"
+}
+
+_consoleLinefeed () {
+  str="${str}\n"
+}
+
+_consoleHeadless () {
+  _headless=true
+}
+
+_consoleSanitize () {
+  str=$(echo "${str}"                    \
+          | sed -r "s/\r//g"             \
+          | sed -r "s/\x1B\[\?7[l|h]//g" \
+          | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K|A]//g")
+}

@@ -1,146 +1,53 @@
 #!/usr/bin/env bash
 
-#-- Properties -------------------------------------------------------------------------------------
-declare first_selection_run=false
-declare SELECTED_VALUE=""
+#-- Config -----------------------------------------------------------------------------------------
+SELECTED_VALUE=""
 
-#-- Confirmation -----------------------------------------------------------------------------------
-confirm () {
-  local confirm_message="[y/N]"
-
-  if [[ "$#" = "1" ]]; then
-    confirm_message="$1 $confirm_message"
-  fi
-
-  _print_header
-
-  read -r -s -p "$confirm_message: " -n 1
-  clear_line
-
-  return "$(is_confirmed)"
-}
-
-confirm_default () {
-  local confirm_message="[Y/n]"
-
-  if [[ "$#" = "1" ]]; then
-    confirm_message="$1 $confirm_message"
-  fi
-
-  if ! is_default; then
-    _print_header 1>&3 2>&1
-
-    read -r -s -p "$confirm_message: " -n 1
-    clear_line
-
-    [[ "$REPLY" = "" ]] && set_confirmed
-  else
-    set_confirmed
-  fi
-
-  return "$(is_confirmed)"
-}
-
-is_confirmed () {
-  set +o nounset    # Prevent errors when $REPLY is unset
-
-  if [[ "$REPLY" = "" ]]; then
-    unset REPLY
-    return 1
-  fi
-
-  if [[ "$REPLY" =~ ^[yY]$ ]]; then
-    set -o nounset
-
-    unset REPLY
-    return 0
-  fi
-
-  set -o nounset
-
-  unset REPLY
-  return 1
-}
-
-set_confirmed () {
-  REPLY="y"
-}
-
-#-- Selection --------------------------------------------------------------------------------------
-_selection_print () {
-  local list_id="1"
-  local selected_id="$1"
-  shift
-
-  if [[ "$first_selection_run" = false ]]; then
-    console "\033[$#A"
-  fi
-
-  first_selection_run=false
-
-  # Update list
-  for item in "$@"; do
-    [[ "$list_id" = "$selected_id" ]] && console "\033[96m"
-    consolehl "• $item"
-    [[ "$list_id" = "$selected_id" ]] && console "\033[0m"
-
-    list_id="$((list_id + 1))"
-  done
-}
-
-_selection_clear () {
-  console "\033[$1A"
-
-  for (( c=1; c<=$1; c++ )); do
-    clear_line
-    console "\n"
-  done
-
-  console "\033[$1A"
-}
-
+#-- Definitions ------------------------------------------------------------------------------------
 selection () {
-  local current_selection="1"
-  local selection_length="$#"
+  local selectionTitle=""
+  local selectionValue=""
+  local selectionLength=""
 
-  first_selection_run=true
+  local head=()
+  local tail=()
 
-  # Print title if exists
-  if [[ "${1:0:1}" = '^' ]]; then
-    consolel "${1:1}"
-    shift
-  fi
+  splitArguments "head" "tail" "$@"
 
-  # Check for a default paramater
-  if [[ "${1:0:1}" = '#' ]]; then
-    current_selection="${1:1}"
-    selection_length="$((selection_length - 1))"
-    shift
-  fi
+  parseArguments "title" "selectionTitle" dual \
+                 "value" "selectionValue" dual \
+                 "--" "${head[@]}"
 
-  # Print the initial list
-  _selection_print "$current_selection" "$@"
+  # Print the selection title
+  console --linefeed --headless --bold "${selectionTitle}"
 
-  # Selection mechanism
+  # Set default value
+  selectionValue="${selectionValue:-1}"
+  selectionLength="${#tail[@]}"
+
+  # Initial render
+  _selectionPrint "0" "${selectionValue}" "${tail[@]}"
+
+  # Select
   while read -rsn1 key; do
-    case "$key" in
+    case "${key}" in
       $'\x1b')
         read -rsn1 -t 0.1 tmp
-        if [[ "$tmp" = '[' ]]; then
+        if [[ "${tmp}" == "[" ]]; then
           read -rsn1 -t 0.1 tmp
-          case "$tmp" in
-            "A") # Up arrow
-              if [[ "$current_selection" = "1" ]]; then
-                current_selection="$selection_length"
+          case "${tmp}" in
+            "A") # Up
+              if [[ "${selectionValue}" -eq 1 ]]; then
+                selectionValue="${selectionLength}"
               else
-                current_selection="$((current_selection - 1))"
+                selectionValue="$(( selectionValue - 1 ))"
               fi
               ;;
-            "B") # Down arrow
-              if [[ "$current_selection" = "$selection_length" ]]; then
-                current_selection="1"
+            "B") #Down
+              if [[ "${selectionValue}" -eq "${selectionLength}" ]]; then
+                selectionValue="1"
               else
-                current_selection="$((current_selection + 1))"
+                selectionValue="$(( selectionValue + 1 ))"
               fi
               ;;
           esac
@@ -151,21 +58,77 @@ selection () {
         ;;
     esac
 
-    _selection_print "$current_selection" "$@"
+    _selectionPrint "1" "${selectionValue}" "${tail[@]}"
   done
 
   # Cleanup
-  _selection_clear "$selection_length"
+  _selectionClear "$selectionLength"
 
   # Set the selected value
-  SELECTED_VALUE="${!current_selection}"
+  local val=$(( selectionValue - 1 ))
+  SELECTED_VALUE="${tail[${val}]}"
 }
 
-#-- Selection Utilities ----------------------------------------------------------------------------
-is_selection () {
-  [[ "$1" == "$SELECTED_VALUE" ]] && return 0 || return 1
+selectionValue () {
+  [[ "${1}" == "${SELECTED_VALUE}" ]] && return 0 || return 1
 }
 
-set_selection () {
-  SELECTED_VALUE="$1"
+#-- Definitions ------------------------------------------------------------------------------------
+confirm () {
+  local confirmString="[y/N]"
+
+  if [[ "${#}" -eq 1 ]]; then
+    confirmString="$1 ${confirmString}"
+  fi
+
+  _printHeader
+
+  read -rsp "${confirmString}" -n1
+  clearLine
+
+  return "$(confirmed)"
+}
+
+confirmed () {
+  local ret=1
+
+  set +o nounset
+
+  if [[ "$REPLY" =~ ^[yY]$ ]]; then
+    unset REPLY
+    ret=0
+  fi
+
+  set -o nounset
+  return "${ret}"
+}
+
+#-- Utilities --------------------------------------------------------------------------------------
+_selectionPrint () {
+  local listId="1"
+  local listAge="${1}" && shift
+  local selectedId="${1}" && shift
+
+  if [[ "${listAge}" -ne 0 ]]; then
+    printf "\033[%iA" "${#}"
+  fi
+
+  for item in "${@}"; do
+    [[ "${listId}" == "${selectedId}" ]] && printf "\033[96m"
+    console --headless --linefeed " • ${item}"
+    [[ "${listId}" == "${selectedId}" ]] && printf "\033[0m"
+
+    listId="$(( listId + 1 ))"
+  done
+}
+
+_selectionClear () {
+  # $1 - Selection Length
+  moveUp "$(( ${1} + 1 ))"
+
+  for _ in $(seq 0 "${1}"); do
+    clearLine && console --linefeed
+  done
+
+  moveUp "$(( ${1} + 1 ))"
 }

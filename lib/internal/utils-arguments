@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2034,SC1090
+
+#-- Definitions ----------------------------------------------------------------------------
+parseArguments () {
+  local argumentLength=0
+
+  while : ; do
+    local tempLength=$(( argumentLength + 1 ))
+
+    if [[ "${!tempLength}" == "--" ]]; then
+      break;
+    fi
+
+    argumentLength=${tempLength}
+  done
+
+  _createArgumentParser $(( argumentLength / 3 )) "${@}"
+  _argumentParser "${@:$(( argumentLength + 2 ))}"
+}
+
+splitArguments () {
+  # $1 - Argument set
+  # $2 - Argument set
+  # $@ - A list of arguments to splitby delimiter "--"
+  local argName=( "${1}" "${2}" ); shift; shift
+  local argList=( "$@" )
+  local argSize=0
+
+  while : ; do
+    if [[ "${argList[${argSize}]}" == "--" ]]; then
+      break;
+    fi
+
+    argSize=$(( argSize + 1 ))
+  done
+
+  eval "${argName[0]}=( \${argList[@]:0:\${argSize}} )"
+  eval "${argName[1]}=( \${argList[@]:\$(( argSize + 1 ))} )"
+}
+
+splitLastArgument () {
+  # $1 - Argument set
+  # $2 - Argument set
+  # $@ - A list of arguments to split
+  local argName=( "${1}" "${2}" ); shift; shift
+
+  eval "${argName[0]}=( \"\${@:1:\$(( \${#} - 1 ))}\" )"
+  eval "${argName[1]}=( \"\${!#}\" )"
+}
+
+#-- Utilities --------------------------------------------------------------------------------------
+_createArgumentParser () {
+  local argumentLength="${1}"
+  local argumentString=""
+  shift
+
+  for _ in $(seq 1 "${argumentLength}"); do
+    local lookup="${1}" && shift
+    local setter="${1}" && shift
+    local option="${1}" && shift
+
+    local isdual=false # Is the lookup shorthand
+
+    local isbool=false # Is the setter a boolean value
+    local isfunc=false # Is the setter a function to be called
+
+    local iscont=false # Continue flag
+    local isexit=false # Exit flag
+
+    for opt in ${option//,/ }; do
+      case "${opt}" in
+        bool) isbool=true; iscont=true
+              ;;
+        dual) isdual=true;
+              ;;
+        exit) isexit=true;
+              ;;
+        func) isfunc=true; iscont=true
+              ;;
+           -) ;;
+           *) fatal "Unknown option ${opt}"
+              ;;
+      esac
+    done
+
+    if [[ "${isdual}" = true ]]; then
+      lookup="-${lookup:0:1}|--${lookup}"
+    else
+      lookup="--${lookup}"
+    fi
+
+    argumentString="${argumentString}
+        ${lookup})
+          ${isbool} && ${setter}=true
+          ${isfunc} && ${setter}
+
+          ${isexit} && exit
+          ${iscont} && continue
+
+          ${setter}=\"\${1}\"
+          shift
+
+          while [[ \"\${#}\" -ne 0 ]] && [[ \"\${1:0:2}\" != \"--\" ]]; do
+            ${setter}=\"\${${setter}} \${1}\"
+            shift
+          done
+          ;;"
+  done
+
+  _writeArgumentParser "${argumentString}"
+}
+
+_writeArgumentParser () {
+  eval "
+_argumentParser () {
+  while [[ \"\${#}\" -ge 1 ]]; do
+    local key=\"\${1}\"
+    shift
+
+    case \"\${key}\" in${1}
+      *)
+        if [[ \"\${#}\" -ge 1 ]]; then
+          fatal \"Unknown key \${key} (value: \${1})\"
+        else
+          fatal \"Unknown key \${key}\"
+        fi
+    esac
+  done
+}"
+}

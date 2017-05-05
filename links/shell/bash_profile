@@ -8,10 +8,9 @@ done
 unset file
 
 #-- Message ----------------------------------------------------------------------------------------
-#[[ -o login ]] || shopt -q login_shell 2>/dev/null && command -v screenfetch >/dev/null 2>&1 && {
-#    echo "$(screenfetch)"
-#}
+[[ -o login ]] || shopt -q login_shell 2>/dev/null && command -v screenfetch >/dev/null 2>&1 && {
+    screenfetch
+}
 
-#-- Load NVM ---------------------------------------------------------------------------------------
-#export NVM_DIR="$HOME/.nvm"
-#[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+#-- Start ssh-agent --------------------------------------------------------------------------------
+eval "$(ssh-agent -s)"

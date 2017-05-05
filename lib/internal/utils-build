@@ -1,231 +1,209 @@
 #!/usr/bin/env bash
 
+#-- Definitions ------------------------------------------------------------------------------------
+packageGit () {
+  local packageName=""
+  local packageRepo=""
+  local packageType=""
+  local packageOpts=""
+  local packageDeps=""
+
+  local packagePre=""
+  local packagePost=""
+
+  local ret=0
+
+  parseArguments "name"       "packageName"      - \
+                 "repo"       "packageRepo"      - \
+                 "type"       "packageType"      - \
+                 "opts"       "packageOpts"      - \
+                 "deps"       "packageDeps"      - \
+                 "pre"        "packagePre"       - \
+                 "post"       "packagePost"      - \
+                 -- "${@}"
+
+  trySubheader "${packageName}"
+
+  [[ ! -z "${packagePre}" ]] && ${packagePre}
+
+  # Get the repository and flag it as new if it did not previously exist
+  _packageGitRepo "${packageName}" "${packageRepo}" || ret=1
+
+  if _packageGitUpdate "${packageName}" "${ret}"; then
+
+    if [[ ! -z "${packageDeps}" ]]; then
+      packageInstallList "${packageDeps}"
+    fi
+
+    cdStart "_cdPackageGit" "${DOTFILES_BUILD}/${packageName}"
+
+    case "${packageType}" in
+      make)
+        _packageGitMake "${packageName}" "${packageOpts}"
+        ;;
+      aur)
+        _packageGitAur "${packageName}"
+        ;;
+      none)
+        ;;
+      *)
+        fatal "Invalid package type ${packageType}"
+        ;;
+    esac
+
+    cdEnd "_cdPackageGit"
+  fi
+
+  [[ ! -z "${packagePost}" ]] && ${packagePost}
+
+  tryExitSubheader "${packageName}"
+}
+
 #-- Utilities --------------------------------------------------------------------------------------
-# $1 - Download source
-# $2 - Folder to extract to
-_do_build_download () {
-  log "Downloading tarball..."
+_packageGitRepo () {
+  # $1 - Package Name
+  # $2 - Package Repository
+  clog "Cloning ${1} repository..."
 
-  if [[ -f "$2" ]]; then
-    rm "$2"
+  if [[ -d "${DOTFILES_BUILD}/${1}" ]]; then
+    skip
+    return 1
   fi
 
-  wget "$1" -q -O "$2" || {
-    fail
-    die "Failed to download archive $1" 31
-  }
+  checkSuccess showProgress git clone "${2}" "${DOTFILES_BUILD}/${1}"
 
-  pass
+  return 0
 }
 
-# $1 - File to extract
-# $2 - Folder to extract to
-_do_build_extract () {
-  log "Extracting tarball..."
+_packageGitUpdate () {
+  # $1 - Package Name
+  # $2 - Package Age (0: new, 1: old)
+  cdStart "_cdPackageGitUpdate" "${DOTFILES_BUILD}/${1}"
 
-  if [[ -d "$2" ]]; then
-    rm -r "$2"
+  local branchTag="$(git branch | grep \* | cut -d ' ' -f2)"
+  local masterTag=""
+  local updateTag=""
+
+  local updated=1
+  local doBuild=1
+
+    # Switch to master branch to run updates
+  if [[ "${branchTag}" != "master" ]]; then
+    clog "Switching to branch master..."
+    checkSuccess showProgress git checkout master --force
   fi
 
-  mkdir "$2"
+  # Update repository
+  clog "Updating ${1} repository..."
 
-  tar -zxf "$1" -C "$2" --strip-components=1 || {
-    fail
-    die "Failed to extract archive $1" 32
-  }
-
-  pass
-}
-
-# $1 - Build system (make, waf)
-_do_build_autogen () {
-  case "$1" in
-    "make")
-      log "Running ./autogen.sh..."
-
-      if [[ ! -f "./autogen.sh" ]]; then
-        skip && return
-      fi
-
-      show_progress ./autogen.sh || {
-        fail
-        die "Build failed on ./autogen.sh" 51
-      }
-
-      pass
-      ;;
-    "waf")
-      log "Running ./bootstrap.py..."
-
-      if [[ ! -f "./bootstrap.py" ]]; then
-        skip && return
-      fi
-
-      show_progress ./bootstrap.py || {
-        fail
-        die "Build failed on ./bootstrap.py" 51
-      }
-
-      pass
-      ;;
-    *)
-      error "Unknown build tool $1" && exit 1
-      ;;
-  esac
-}
-
-# $1 - Build system (make, waf)
-# $@ - Arguments
-_do_build_configure () {
-  local build_system="$1"
-  shift
-
-  case "$build_system" in
-    "make")
-      log "Running ./configure $@..."
-
-      if [[ ! -f "./configure" ]]; then
-        skip && return
-      fi
-
-      show_progress ./configure "$@" || {
-        fail
-        die "Build failed on ./configure $@" 52
-      }
-
-      pass
-      ;;
-    "waf")
-      log "Running ./waf configure $@..."
-
-      show_progress ./waf configure "$@" || {
-        fail
-        die "Build failed on ./waf configure $@" 56
-      }
-
-      pass
-      ;;
-    *)
-      error "Unknown build tool $1" && exit 1
-      ;;
-  esac
-}
-
-# $1 - Build system (make, waf)
-_do_build_make () {
-  case "$1" in
-    "make")
-      log "Running make..."
-
-      show_progress make || {
-        fail
-        die "Build failed on make" 53
-      }
-
-      pass
-      ;;
-    "waf")
-      log "Running ./waf build..."
-
-      show_progress ./waf build || {
-        fail
-        die "Build failed on ./waf build" 57
-      }
-
-      pass
-      ;;
-    *)
-      error "Unknown build tool $1" && exit 1
-      ;;
-  esac
-}
-
-# $1 - Build system (make, waf)
-_do_build_install () {
-  case "$1" in
-    "make")
-      log "Running make install.."
-
-      show_progress sudo make install || {
-        fail
-        die "Build failed on make install" 54
-      }
-
-      pass
-      ;;
-    "waf")
-      log "Running ./waf install.."
-
-      show_progress sudo ./waf install || {
-        fail
-        die "Build failed on ./waf install" 54
-      }
-
-      pass
-      ;;
-    *)
-      error "Unknown build tool $1" && exit 1
-      ;;
-  esac
-}
-
-# $1 - Tarball to delete
-# $2 - Extracted folder to delete
-_do_build_cleanup () {
-  log "Cleaning up..."
-
-  if [[ -f "$1" ]]; then
-    rm "$1"
+  if [[ "$(git rev-parse HEAD)" != \
+        "$(git ls-remote $(git rev-parse --abbrev-ref @{u} | sed 's/\// /g') | cut -f1)" ]]; then
+    checkSuccess showProgress git pull --rebase origin master
+    updated=0
+  else
+    skip
   fi
 
-  if [[ -d "$2" ]]; then
-    rm -r "$2"
+  # Check if releases exist
+  masterTag="$(git describe --tags --abbrev=0 2>/dev/null)"
+  returnTag="${?}"
+
+  if [[ "${returnTag}" -eq 127 ]] || [[ "${returnTag}" -eq 128 ]]; then
+    if [[ "${2}" -eq 0 ]]; then
+      doBuild=0
+    fi
+
+    if [[ "${updated}" -eq 0 ]] &&
+          confirm "Package ${1} can be rebuilt. Rebuild?"; then
+      doBuild=0
+    fi
+
+    cdEnd "_cdPackageGitUpdate"
+    return "${doBuild}"
   fi
 
-  pass
+  # Get updated tags
+  updateTag="$(git tag --contains tags/${branchTag} 2>/dev/null | sed 1d | tail -n5 | tr '\n' ' ')"
+
+  if [[ -z "${updateTag}" ]] && [[ "${2}" -eq 0 ]]; then
+    clog "Checking out release ${masterTag}..."
+
+    if [[ "${branchTag}" == "master" ]]; then
+      checkSuccess showProgress git checkout -b "${masterTag}" "tags/${masterTag}"
+      doBuild=0
+    else
+      skip
+    fi
+  fi
+
+  if [[ ! -z "${updateTag}" ]]; then
+    if confirm "A new version of ${1} is available. Update?"; then
+      selection --title "Which release would you like to install?" \
+                --start 5 \
+                -- "${updateTag}"
+
+      clog "Updating $1 to release ${SELECTED_VALUE}..."
+      checkSuccess showProgress git checkout -b "${SELECTED_VALUE}" "tags/${SELECTED_VALUE}"
+      doBuild=0
+    fi
+  else
+    # Re checkout main branch
+    if [[ "${branchTag}" != "master" ]]; then
+      clog "Checking out original branch ${branchTag}..."
+      checkSuccess showProgress git checkout "${branchTag}"
+    fi
+  fi
+
+  cdEnd "_cdPackageGitUpdate"
+  return "${doBuild}"
 }
 
-#-- WAF build sytem --------------------------------------------------------------------------------
-do_waf_install () {
-  local source_url="$1"                                             # URL to download
-  local source_file="${DOTFILES_TMP}/$(random_string 16).tar.gz"    # File to download to
-  local source_folder="${DOTFILES_TMP}/$(random_string 16)"         # Folder to extract to
+_packageGitMake () {
+  # $1 - Project Name
+  # $2 - Project Options
 
-  shift
+  # Autogen
+  clog "Running ./autogen.sh..."
 
-  _do_build_download "$source_url" "$source_file"
-  _do_build_extract "$source_file" "$source_folder"
+  if [[ -f "./autogen.sh" ]]; then
+    checkSuccess showProgress ./autogen.sh
+  else
+    skip
+  fi
 
-  cd "$source_folder"
+  # Configure
+  clog "Running ./configure ${2}..."
 
-  _do_build_autogen "waf"
-  _do_build_configure "waf" "$@"
-  _do_build_make
-  "waf"
-  _do_build_install "waf"
+  if [[ -f "./configure" ]]; then
+    checkSuccess showProgress ./configure "${2}"
+  else
+    skip
+  fi
 
-  _do_build_cleanup "$source_file" "$source_folder"
+  # Make
+  clog "Running make..."
+
+  checkSuccess showProgress make
+
+  # Make Install
+  clog "Running make install.."
+
+  if grep "install:" < "${DOTFILES_BUILD}/${1}/Makefile"; then
+    checkSuccess showProgress sudo make install
+  else
+    skip
+  fi
 }
 
-#-- Make build system ------------------------------------------------------------------------------
-# $1 - Download source
-# $@ - Configure arguments
-do_make_install () {
-  local source_url="$1"                                             # URL to download
-  local source_file="${DOTFILES_TMP}/$(random_string 16).tar.gz"    # File to download to
-  local source_folder="${DOTFILES_TMP}/$(random_string 16)"         # Folder to extract to
+_packageGitAur () {
+  # $1 - Package Name
+  # Make Package
+  clog "Running makepkg..."
 
-  shift
+  checkSuccess showProgress makepkg
 
-  _do_build_download "$source_url" "$source_file"
-  _do_build_extract "$source_file" "$source_folder"
+  # Install Package
+  clog "Running makepkg --install..."
 
-  cd "$source_folder"
-
-  _do_build_autogen "make"
-  _do_build_configure "make" "$@"
-  _do_build_make "make"
-  _do_build_install "make"
-
-  _do_build_cleanup "$source_file" "$source_folder"
+  checkSuccess showProgress makepkg --install
 }

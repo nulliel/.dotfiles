@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+#-- Config -----------------------------------------------------------------------------------------
+declare nodeVersion="v7.10.0"
+
+export N_PREFIX="${DOTFILES_USR}"
+
+if [[ -f "${DOTFILES_BUILD}/n/bin/n" ]]; then
+  mv "${DOTFILES_BUILD}/n/bin/n" "${DOTFILES_USR}/bin/n"
+fi
+
+# Update node version
+console "Updating to node-${nodeVersion} via n..."
+checkSuccess showProgress "${DOTFILES_USR}/bin/n" "${nodeVersion}"

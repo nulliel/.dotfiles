@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+if [[ -f "${DOTFILES_BUILD}/zopfli/zopfli" ]]; then
+  mv "${DOTFILES_BUILD}/zopfli/zopfli" "${DOTFILES_USR}/bin/zopfli"
+fi

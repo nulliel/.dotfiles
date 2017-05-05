@@ -3,49 +3,43 @@
 header "link"
 
 #-- Link function ----------------------------------------------------------------------------------
-link_home () {
-  local link_from="${DOTFILES_DIR}/links/$1"
-  local link_to="${HOME}/$2"
-  local link_path="$(readlink -f $link_to)"
+linkHome () {
+  local linkFrom="${DOTFILES_DIR}/links/$1"
+  local linkTo="${HOME}/$2"
+  local linkPath="$(readlink -f ${linkTo})"
 
-  log "Linking $link_to..."
+  console "Linking ${linkTo}..."
 
-  if [[ -f "$link_to" || -d "$link_to" || -f "$link_path" ]]; then
-    if [[ "$link_path" = "$link_from" ]]; then
+  if [[ -f "${linkTo}" || -d "${linkTo}" || -f "${linkPath}" ]]; then
+    if [[ "${linkPath}" = "${linkFrom}" ]]; then
       skip
       return
     fi
 
-    fail
-    die "File $link_to already exists." 71
+    fail "File ${linkTo} already exists."
   fi
 
-  if [[ ! -f "$link_path" ]]; then
-    rm "$link_to" >/dev/null 2>&1
-  fi
-
-  ln -s "$link_from" "$link_to" || {
-    fail
-    die "Failed to create link $link_from->$link_to" 72
+  ln -s "${linkFrom}" "${linkTo}" || {
+    fail "Failed to create link ${linkFrom}->${linkTo}"
   }
 
   pass
 }
 
 #-- Links ------------------------------------------------------------------------------------------
-link_home "shell/bash_aliases"   ".bash_aliases"
-link_home "shell/bash_exports"   ".bash_exports"
-link_home "shell/bash_functions" ".bash_functions"
-link_home "shell/bash_nocommit"  ".bash_nocommit"
-link_home "shell/bash_options"   ".bash_options"
-link_home "shell/bash_paths"     ".bash_paths"
-link_home "shell/bash_profile"   ".bash_profile"
-link_home "shell/bashrc"         ".bashrc"
-link_home "config/deadbeef"      ".config/deadbeef"
-link_home "config/mpv"           ".config/mpv"
-link_home "emacs.d"              ".emacs.d"
-link_home "git/gitconfig"        ".gitconfig"
-link_home "git/gitignore"        ".gitignore"
-link_home "config/npmrc"         ".npmrc"
+linkHome "shell/bash_aliases"   ".bash_aliases"
+linkHome "shell/bash_exports"   ".bash_exports"
+linkHome "shell/bash_functions" ".bash_functions"
+# linkHome "shell/bash_nocommit"  ".bash_nocommit"
+linkHome "shell/bash_options"   ".bash_options"
+linkHome "shell/bash_paths"     ".bash_paths"
+linkHome "shell/bash_profile"   ".bash_profile"
+linkHome "shell/bashrc"         ".bashrc"
+linkHome "config/deadbeef"      ".config/deadbeef"
+linkHome "config/mpv"           ".config/mpv"
+# linkHome "emacs.d"              ".emacs.d"
+linkHome "git/gitconfig"        ".gitconfig"
+linkHome "git/gitignore"        ".gitignore"
+# linkHome "config/npmrc"         ".npmrc"
 
-exit_header
+exitHeader

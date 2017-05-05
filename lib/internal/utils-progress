@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+#-- Definitions ------------------------------------------------------------------------------------
+showProgress () {
+  local progressInit=true
+  local progressList=(+ + + + + + + +)
+  local ret=0
+
+  # Don't show progress on a small console
+  if [[ "$(tput lines)" -le "10" ]]; then
+    "${@}"; return "${!}"
+  fi
+
+  log --linefeed
+  saveCursor progressCursor
+
+  # Pad the bottom of the console by 8 lines
+  if [[ "${progressCursor[0]}" -ge "$(( $(tput lines) - 8 ))" ]]; then
+    local linesUnder="$(( $(tput lines) - progressCursor[0] ))"
+
+    for _ in $(seq 0 "${linesUnder}"); do
+      console --linefeed
+    done
+
+    for _ in $(seq 0 "$(( 8 - linesUnder ))"); do
+      progressCursor[0]="$(( progressCursor[0] - 1 ))"
+      console --linefeed
+    done
+
+    progressCursor[0]="$(( progressCursor[0] - 2 ))"
+    restoreCursor progressCursor
+  fi
+
+  { echo ""; ${@} 2>&1; } 2>&1 | _printProgress
+
+  if [[ "${PIPESTATUS[0]}" != "0" ]]; then
+    ret=1
+  fi
+
+  _clearProgress
+  restoreCursor progressCursor
+  clearRest
+
+  return "${ret}"
+}
+
+#-- Utilities --------------------------------------------------------------------------------------
+_printProgress () {
+  clog --linefeed --noheader
+
+  while read -r data; do
+    progressList=("${progressList[@]:1}")
+    progressList[8]=$(echo "$data" | tr -d '\n')
+
+    log --headless --linefeed "${progressList[5]}"
+
+    if [[ "${progressInit}" = false ]]; then
+      moveUp "${#progressList[@]}"
+    fi
+
+    for item in "${progressList[@]}"; do
+      if [[ "$item" = "+" ]]; then
+        item=""
+      fi
+
+      clearLine
+      console --headless --linefeed --sanitize "| $item"
+    done
+
+    progressInit=false
+  done
+}
+
+_clearProgress () {
+  for _ in "${progressList[@]}"; do
+    clearLine
+    moveUp
+  done
+
+  clearLine
+}

@@ -2,45 +2,32 @@
 
 # -- Prepend ---------------------------------------------------------------------------------------
 declare -a prepend_dirs=(
-    "/usr/local/bin"
+  "/usr/local/bin"
 )
 
-if [ -n "$ZSH_VERSION" ]; then
-    for index in $prepend_dirs
-    do
-        PATH="$index:$PATH"
-    done
-else
-    for index in ${!prepend_dirs[*]}
-    do
-        if [ -d ${prepend_dirs[$index]} ]; then
-            PATH="${prepend_dirs[$index]}:$PATH"
-        fi
-    done
-fi
+for index in "${prepend_dirs[@]}"
+do
+  if [ -d "${index}" ]; then
+    PATH="${index}:${PATH}"
+  fi
+done
 
 unset prepend_dirs
 
 # -- Append ----------------------------------------------------------------------------------------
 declare -a append_dirs=(
     "/usr/bin"
-    "$HOME/bin"
-    "$HOME/.dotfiles/bin"
+    "${HOME}/bin"
+    "${HOME}/.dotfiles/bin"
+    "${HOME}/.dotfiles/.usr/bin"
 )
 
-if [ -n "$ZSH_VERSION" ]; then
-    for index in $append_dirs
-    do
-        PATH="$index:$PATH"
-    done
-else
-    for index in ${!append_dirs[*]}
-    do
-        if [ -d ${append_dirs[$index]} ]; then
-            PATH="${append_dirs[$index]}:$PATH"
-        fi
-    done
-fi
+for index in "${append_dirs[@]}"
+do
+  if [ -d "${index}" ]; then
+    PATH="${index}:${PATH}"
+  fi
+done
 
 unset append_dirs
 

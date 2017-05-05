@@ -20,3 +20,9 @@ npmrc
 # Deadbeef
 config/deadbeef/playlists
 config/deadbeef/config
+
+# Other
+.build
+.usr
+
+dotfiles.org

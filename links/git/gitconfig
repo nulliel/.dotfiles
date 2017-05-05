@@ -24,6 +24,10 @@
 [commit]
         # https://help.github.com/articles/signing-commits-using-gpg/
         gpgsign = true
+[gpg]
+        program = gpg2
+[user]
+        signingkey = 7299865F4B3F41C3
 [init]
         templateDir = ~/.git/templates
 [push]

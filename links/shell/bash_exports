@@ -3,12 +3,6 @@
 # -- Make emacs the default editor -----------------------------------------------------------------
 export EDITOR='emacs -nw -Q'
 
-# -- Make ZSH the default shell --------------------------------------------------------------------
-# command -v zsh >/dev/null 2>&1 && {
-#    export SHELL=$(which zsh)
-#    exec $SHELL -l
-# }
-
 # -- Node exports ----------------------------------------------------------------------------------
-export BABEL_CACHE_PATH=$HOME/.cache/babel.json
-export N_PREFIX=$HOME/n
+export BABEL_CACHE_PATH="${HOME}/.cache/babel.json"
+export N_PREFIX="${HOME}/.dotfiles/.usr"

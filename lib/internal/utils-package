@@ -1,28 +1,52 @@
 #!/usr/bin/env bash
 
-#-- Check for existing package ---------------------------------------------------------------------
-package_installed () {
-  pacman -Q "$1" >/dev/null 2>&1 \
-    || command_exists "$1" \
-    || return 1
-  return 0
-}
+#-- Definitions ---------------------------------------------------------------------
+packageInstall () {
+  local packageName="${1}"
+  local noconfirm=false
 
-#-- Package install --------------------------------------------------------------------------------
-package_install () {
-  log "Installing $1..."
-
-  if package_installed "$1"; then
-    skip && return
+  if [[ "${packageName:0:11}" == "--noconfirm" ]]; then
+    packageName="${2}"
+    noconfirm=true
   fi
 
-  show_progress sudo pacman -Syu --needed "$1" && pass || {
-    fail
-    fatal "Package ($1) failed to install"
-  }
+  trySubheader "${packageName}"
+
+  if _packageInstalled "${packageName}"; then
+    skip "Installing ${packageName}..."
+    tryExitSubheader "${packageName}"
+    return
+  fi
+
+  clog "Installing ${packageName}..."
+
+  if [[ "${noconfirm}" == true ]]; then
+    checkSuccess showProgress sudo pacman -Syu --needed --noconfirm "${packageName}" \
+      || fatal "Package (${packageName}) failed to install"
+  else
+    checkSuccess showProgress sudo pacman -Syu --needed "${packageName}" \
+      || fatal "Package (${packageName}) failed to install"
+  fi
+
+  tryExitSubheader "${packageName}"
 }
 
-#-- Build tools ------------------------------------------------------------------------------------
-install_build_tools () {
-  package_install "base-devel"
+packageInstallList () {
+  local title="${1}"; shift
+  trySubheader "${title}"
+
+  while [[ "${#}" -ne 0 ]]; do
+    packageInstall "${1}"
+    shift
+  done
+
+  tryExitSubheader "${title}"
+}
+
+#-- Utilities --------------------------------------------------------------------------------------
+_packageInstalled () {
+  pacman -Q "$1" >/dev/null 2>&1 \
+    || commandExists "$1" \
+    || return 1
+  return 0
 }

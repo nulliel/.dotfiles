@@ -1,10 +1,34 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034,SC1090
 
 #-- Config -----------------------------------------------------------------------------------------
-export SCRIPT_HEIGHT="$(tput lines)"
+DOTFILES_FD_3=false
+DOTFILES_FD_4=false
+DOTFILES_FD_5=false
+DOTFILES_FD_6=false
 
-#-- Log input to file ------------------------------------------------------------------------------
-write_to_log () {
+#-- Definitions --------------------------------------------------------------------------------
+redirectOutput () {
+  # fd 3 - $DOTFILES_LOG
+  # fd 4 - $DOTFILES_LOG
+  eval "exec {FD}> >(_writeLog)" && DOTFILES_FD_3="${FD}"
+  eval "exec {FD}> >(_writeLog)" && DOTFILES_FD_4="${FD}"
+
+  # fd 5 - stdout + $DOTFILES_LOG
+  # fd 6 - stderr + $DOTFILES_LOG
+  eval "exec {FD}> >(tee /dev/fd/${DOTFILES_FD_3} >&1)" && DOTFILES_FD_5="${FD}"
+  eval "exec {FD}> >(tee /dev/fd/${DOTFILES_FD_4} >&2)" && DOTFILES_FD_6="${FD}"
+}
+
+restoreOutput() {
+  for i in $(seq 3 6); do
+    local str="DOTFILES_FD_${i}"
+    eval "exec ${!str}>&-"
+  done
+}
+
+#-- Utilities --------------------------------------------------------------------------------------
+_writeLog () {
   IFS=''
   while read -r data; do
     printf "%b\n" "$data" \
@@ -13,30 +37,4 @@ write_to_log () {
       | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K|A]//g" \
       >>"$DOTFILES_LOG"
   done
-
-  # Hack to maintain a copy of the actual height
-  SCRIPT_HEIGHT="$(tput lines)"
-}
-
-#-- Redirect output --------------------------------------------------------------------------------
-redirect_output () {
-  # fd 1 - stdout
-  # fd 2 - stderr
-  # fd 3 - $DOTFILES_LOG
-  # fd 4 - $DOTFILES_LOG
-  # fd 5 - stdout + $DOTFILES_LOG
-  # fd 6 - stderr + $DOTFILES_LOG
-  exec 3> >(write_to_log)      \
-       4> >(write_to_log)      \
-       5> >(tee /dev/fd/3)     \
-       6> >(tee /dev/fd/4 >&2)
-}
-
-restore_output() {
-  if { true 1>&3; } 2>/dev/null; then
-    exec 3>&- \
-         4>&- \
-         5>&- \
-         6>&-
-  fi
 }

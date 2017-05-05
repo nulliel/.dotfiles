@@ -1,96 +1,30 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034,SC1090
 
-#-- Cursor manipulation ----------------------------------------------------------------------------
-# From http://askubuntu.com/questions/366103/saving-more-corsor-positions-with-tput-in-bash-terminal
-save_cursor () {
+#-- Definitions ------------------------------------------------------------------------------------
+randomString () {
+  # $1 - Number of bytes to return
+  tr -dc "a-zA-Z0-9" </dev/urandom | fold -w "${1:-32}" | head -n 1
+}
+
+saveCursor () {
+  # $1 - Variable name to save cursor data into
+  local oldstty
+
   exec </dev/tty
   oldstty=$(stty -g)
   stty raw -echo min 0
-  printf "\e[6n" >/dev/tty
+  printf "\033[6n" >/dev/tty
   IFS=';' read -r -d R -a pos
   stty "$oldstty"
-  eval "$1[0]=$((${pos[0]:2} - 1))"
-  eval "$1[1]=$((${pos[1]} - 1))"
+  eval "${1}[0]=$(( ${pos[0]:2} - 1 ))"
+  eval "${1}[1]=$(( pos[1] - 1 ))"
 }
 
-restore_cursor () {
-    eval ARRAY=\( \${$1[@]} \)
-    tput cup "${ARRAY[0]}" "${ARRAY[1]}"
-}
+restoreCursor () {
+  # $1 - Variable name to get cursor data out of
+  local arr="${1}[@]"
+  arr=(${!arr})
 
-#-- Safe CD ----------------------------------------------------------------------------------------
-# $1 - Directory
-cd_safe () {
-  cd "$1" 2>/dev/null || {
-    fatal "Failed to change directory to $1"
-  }
-}
-
-#-- Check for set environment variables ------------------------------------------------------------
-# $1 - Environment Variable Name
-is_set () {
-  local flag="$1"
-
-  set +o nounset
-
-  if [[ "${!flag}" = true ]]; then
-    return 0
-  fi
-
-  set -o nounset
-
-  return 1
-}
-
-#-- Check for command existance --------------------------------------------------------------------
-# $1 - Command Name
-command_exists () {
-  command -v "$1" >/dev/null 2>&1 && return 0 || return 1
-}
-
-#-- Super user checks ------------------------------------------------------------------------------
-is_super_user () {
-  if [[ "$EUID" -eq "0" ]]; then
-    return 0
-  fi
-
-  return 1
-}
-
-can_use_sudo () {
-  sudo -n true || {
-    return 1
-  }
-
-  return 0
-}
-
-#-- Random -----------------------------------------------------------------------------------------
-random_string () {
-  tr -dc 'a-zA-Z0-9' </dev/urandom | fold -w "${1:-32}" | head -n 1
-}
-
-#-- Updating ---------------------------------------------------------------------------------------
-# Compare a version string (major.minor.build) to another version string to see if a newer
-# version is available.
-#
-# $1 - Installed version
-# $2 - Newest version
-function can_update() {
-  local installed="${1//./ }"
-  local available="${2//./ }"
-
-  installed=($installed)
-  available=($available)
-
-  [[ "${available[0]]}" -gt "${installed[0]}" ]] && return 0
-  [[ "${available[0]]}" -lt "${installed[0]}" ]] && return 1
-
-  [[ "${available[1]]}" -gt "${installed[1]}" ]] && return 0
-  [[ "${available[1]]}" -lt "${installed[1]}" ]] && return 1
-
-  [[ "${available[2]]}" -gt "${installed[2]}" ]] && return 0
-  [[ "${available[2]]}" -lt "${installed[2]}" ]] && return 1
-
-  return 1
+  tput cup "${arr[0]}" "${arr[1]}"
 }

@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+#-- Config -----------------------------------------------------------------------------------------
+LOCKFILE_FD=0
+
+#-- Definitions ------------------------------------------------------------------------------------
+lockfile () {
+  local fileName="${DOTFILES_STORE}/${1}.lock"
+
+  # Create the lock
+  eval "exec {FD}>${fileName}"
+
+  LOCKFILE_FD="${FD}"
+
+  # Acquire the lock
+  flock -n "${FD}" \
+    && return 0    \
+    || fatal "Only one instance of ${SCRIPT_NAME} can be run at a time."
+}
+
+trapExit () {
+  # Disable trap from being called multiple times
+  trap - EXIT
+
+  # Restore redirected console outputs and release used file descriptors
+  restoreOutput
+
+  # Release lockfile fd
+  if [[ "${LOCKFILE_FD}" != 0 ]]; then
+    eval "exec ${LOCKFILE_FD}>&-"
+  fi
+
+  # Restore line wrapping
+  tput smam
+}
+
+trapError () {
+  # Disable trap to prevent possible recursion
+  trap - ERR
+
+  # Print fatal error
+  fatal "Check the logfile at ${DOTFILES_LOG} for more information.\n"
+
+  # Restore redirected console outputs and release used file descriptors
+  restoreOutput
+
+  # Release lockfile fd
+  if [[ "${LOCKFILE_FD}" != 0 ]]; then
+    eval "exec ${LOCKFILE_FD}>&-"
+  fi
+
+  # Restore line wrapping
+  tput smam
+}

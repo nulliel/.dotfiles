@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+#-- Definitions ------------------------------------------------------------------------------------
+commandExists () {
+  command -v "${1}" >/dev/null 2>&1 && return 0 || return 1
+}
+
+isSet () {
+  local flag=1
+
+  set +o nounset
+
+  if [[ ! -z "${!1}" ]] || [[ "${!1}" = true ]]; then
+    flag=0
+  fi
+
+  set -o nounset
+  return "${flag}"
+}
