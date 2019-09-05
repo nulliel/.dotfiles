@@ -1,11 +1,17 @@
-# Dotfiles (Stephen Ribich)
+# Dotfiles
 
-My Fedora dotfiles. Intended for use with Fedora 22+.
+
 
 ## How to install
-The following command will bootstrap the dotfiles installation.
+The following command will install and run these dotfiles for the first time.
 
-    $ bash -c "$(curl -fsSL raw.github.com/nulliel/dotfiles/master/bin/install)"
+[view install](https://github.com/nulliel/dotfiles/blob/master/install)
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/nulliel/dotfiles/master/install)"
+```
+
+
 
 ## Features
 

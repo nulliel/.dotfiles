@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+#########
+## Config
+#########
+declare DOTFILES_DIR="${HOME}/.dotfiles"
+declare DOTFILES_TAR="https://github.com/nulliel/dotfiles/tarball/master"
+
+declare DOTFILES_TMP="$(mktemp)"
+
+############################
+## Create Dotfiles Directory
+############################
+if [[ -d "${DOTFILES_DIR}" || -f "${DOTFILES_DIR}" ]]; then
+    printf "[ERROR] An existing dotfiles configuration has been found\n" 1>&2
+    exit 1
+fi
+
+if ! mkdir "${DOTFILES_DIR}"; then
+    printf "[ERROR] Failed to create dotfiles directory\n" 1>&2
+    exit 1
+fi
+
+####################
+## Download Dotfiles
+####################
+printf "Downloading dotfiles\n"
+
+if ! curl -fsSLo "${DOTFILES_TMP}" "${DOTFILES_TAR}"; then
+    printf "[ERROR] Failed to download dotfiles\n" 1>&2
+    exit 1
+fi
+
+###################
+## Extract Dotfiles
+###################
+printf "Extracting dotfiles\n"
+
+if ! tar -zxf "${DOTFILES_TAR}" --strip-components 1 -C "${DOTFILES_DIR}"; then
+    printf "[ERROR] Failed to extract dotfiles\n" 1>&2
+    exit 1
+fi
+
+###############
+## Run Dotfiles
+###############
+source "${DOTFILES_DIR}/bin/dotfiles"
