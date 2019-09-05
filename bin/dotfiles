@@ -41,19 +41,19 @@ source "${DOTFILES_DIR}/src/internal/utils-process"
 
 #-- Require non root with sudo privileges ----------------------------------------------------------
 if [[ "$EUID" -eq 0 ]]; then
-  printf "This script should not be run using sudo or as the root user.\n"
+  printf "This script should not be run using sudo or as the root user\n"
   exit
 fi
 
-# if ! sudo -n true; then
-#   printf "This script requires the use of sudo.\n"
-#   exit
-# fi
+if ! sudo -n true; then
+    printf "This script requires the use of sudo\n"
+#    exit
+fi
 
-# if ! commandExists "git"; then
-#   printf "This script requires git.\n"
-#   exit
-# fi
+if ! command -v "git" 1>/dev/null 2>&1; then
+    printf "This script requires git\n" 1>&2
+    exit
+fi
 
 #-- Utils ------------------------------------------------------------------------------------------
 showUsage()
@@ -131,10 +131,10 @@ main()
     source "${DOTFILES_DIR}/src/internal/sync"
 
     #-- Install packages -----------------------------------------------------------------------------
-    # source "${DOTFILES_DIR}/lib/packages"
+    source "${DOTFILES_DIR}/src/configure_packages"
 
     #-- Create links ---------------------------------------------------------------------------------
-    # source "${DOTFILES_DIR}/lib/links"
+    source "${DOTFILES_DIR}/src/configure_links"
 
     #-- Restart terminal -----------------------------------------------------------------------------
     console.info "Please restart your terminal session for changes to take effect"

@@ -13,7 +13,7 @@ if ! git rev-parse --is-inside-work-tree 1>/dev/null 2>&1; then
         console.fail && exit 1
     fi
 
-    if ! git remote add origin "${DOTFILES_GIT_REMOTE}" 1>/dev/null 2>&1; then
+    if ! git remote add origin "${DOTFILES_REMOTE}" 1>/dev/null 2>&1; then
         console.fail && exit 1
     fi
 
@@ -36,8 +36,7 @@ fi
 console.raw "Syncing dotfiles..."
 
 if ! git pull --rebase origin master 1>/dev/null 2>&1; then
-    console.fail
+    console.fail && exit 1
 fi
 
 console.pass
-
