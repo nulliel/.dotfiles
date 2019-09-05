@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+declare -gi __bs__is_coproc_open=1
+
+##
+# Creates a coproc.
+#
+# The coproc immediately runs bash to start an interactive
+# session which will leave the coproc open to be sent commands.
+#
+# Multi-coprocs are still an experimental feature
+# in bash 4.X and will be disallowed in this library.
+#
+# If multiple coprocs are opened, an error will be displayed
+# and the process will exit.
+##
+coproc_open()
+{
+    if [[ "${__bs__is_coproc_open}" -eq 0 ]]; then
+        printf "Attempting to open multiple coprocs\n" 1>&2
+        exit 1
+    fi
+
+    coproc __bs__coproc {
+        bash
+    }
+
+    __bs__is_coproc_open=0
+}
+
+##
+# Destroys the active coproc.
+##
+coproc_close()
+{
+    if [[ "${__bs__is_coproc_open}" -eq 1 ]]; then
+        printf "Attempting to kill an inactive coproc\n" 1>&2
+        exit 1
+    fi
+
+    # Close the coproc file descriptor
+    eval "exec ${__bs__coproc[1]}>&-"
+
+    # Wait for the coproc process to close
+    # shellcheck disable=SC2154
+    wait "${__bs__coproc_PID}"
+
+    __bs__is_coproc_open=1
+}
+
+##
+# Reads the buffer of the active coproc.
+#
+# To read the buffer into a variable, use a subshell:
+#
+#   local var="$(__bs__coproc_read)"
+##
+coproc_read()
+{
+    if [[ "${__bs__is_coproc_open}" -eq 1 ]]; then
+        printf "Attempting to read from a closed coproc.\n"
+        exit 1
+    fi
+
+    while IFS= read -t0.01 -d $'\0' -n1 -ru "${__bs__coproc[0]}" line; do
+        printf "%s" "${line}"
+    done
+}
+
+## Sends a string `command` to the coproc.
+##
+## $1 - Command to send to the coproc
+##
+coproc_send()
+{
+    if [[ "${__bs__is_coproc_open}" -eq 1 ]]; then
+        printf "Attempting to send to a closed coproc.\n"
+        exit 1
+    fi
+
+    printf "%s\n" "${1}" >&"${__bs__coproc[1]}"
+}

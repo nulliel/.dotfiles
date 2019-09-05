@@ -36,7 +36,7 @@ fi
 ###################
 printf "Extracting dotfiles\n"
 
-if ! tar -zxf "${DOTFILES_TAR}" --strip-components 1 -C "${DOTFILES_DIR}"; then
+if ! tar -zxf "${DOTFILES_TMP}" --strip-components 1 -C "${DOTFILES_DIR}"; then
     printf "[ERROR] Failed to extract dotfiles\n" 1>&2
     exit 1
 fi

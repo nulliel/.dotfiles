@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+# module
+
+##########
+## Default
+##########
+raw()
+{
+    local bold=1
+    local linefeed=1
+    local sanitize=1
+
+    local message=""
+
+    while [[ "${#}" -ne 0 ]]; do
+        case "$1" in
+            --bold)
+                bold=0
+                ;;
+            --linefeed)
+                linefeed=0
+                ;;
+            --sanitize)
+                sanitize=0
+                ;;
+            *)
+                if [[ -n "${message}" || "${1:0:2}" == "--" ]]; then
+                    printf "[ERROR] Invalid argument '%s' passed to print" "${1}" 1>&2
+                    exit 1
+                fi
+
+                message="${1}"
+        esac
+
+        shift
+    done
+
+    if [[ "${bold}" -eq 0 ]]; then
+        message="${FONT_BOLD}${message}${FONT_RESET}"
+    fi
+
+    if [[ "${linefeed}" -eq 0 ]]; then
+        message="${message}\n"
+    fi
+
+    if [[ "${sanitize}" -eq 0 ]]; then
+        message="$(printf "%s" "${message}"           \
+                       | sed -r "s/\r//g"             \
+                       | sed -r "s/\x1B\[\?7[l|h]//g" \
+                       | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K|A]//g"
+        )"
+    fi
+
+    printf "%b" "${message}"
+}
+
+###############################################################################
+## Headers
+###############################################################################
+
+##
+# Print a header on top of the terminal. This clears the terminal to easily
+# get a position on the top of the terminal.
+#
+# Arguments:
+#
+#   $1 :: Text to print
+##
+title()
+{
+    clear
+    console.line
+    printf "%s%s%s\n"      \
+           "${FONT_BOLD}"  \
+           "${1}"          \
+           "${FONT_RESET}" \
+        | fold -sw "$(tput cols)"
+    console.line
+    printf "\n"
+}
+
+##
+# Print a horizontal rule of the character - that fills the console.
+##
+line()
+{
+    printf "%$(tput cols)s\n" | tr " " "-"
+}
+
+###############################################################################
+## Log Levels
+###############################################################################
+
+##
+# Prints a bold message to the terminal
+#
+# Arguments:
+#
+#   $1 :: Text to print
+##
+info()
+{
+    printf "%s%s%s\n"      \
+           "${FONT_BOLD}"  \
+           "${1}"          \
+           "${FONT_RESET}" \
+        | fold -sw "$(tput cols)"
+}
+
+## Print a bold yellow warning message to the terminal.
+##
+## $1 - Text to print.
+##
+warning()
+{
+    printf "%s%s%s\n"        \
+           "${FONT_BOLD}${FONT_YELLOW}" \
+           "${1}"            \
+           "${FONT_RESET}"   \
+        | fold -sw "$(tput cols)"
+}
+
+## Print a bold red error message to the terminal.
+##
+## $1 - Text to print.
+##
+error()
+{
+    printf "%s%s%s\n"      \
+           "${FONT_BOLD}${FONT_RED}"  \
+           "${1}"          \
+           "${FONT_RESET}" \
+        | fold -sw "$(tput cols)"
+}
+
+
+###############################################################################
+## Prompts
+###############################################################################
+
+## Set the prompt to $1 or to the default selection prompt.
+##
+## $1 - Prompt to set
+##
+set_prompt()
+{
+    PS3="Enter your selection: "
+
+    if [[ "$#" -ge 1 ]]; then
+        PS3="${1}"
+    fi
+}
+
+
+
+
+#-- Definitions ------------------------------------------------------------------------------------
+errora () {
+  printf "[\033[1;91mError\033[0m] %b\n" "$1" 1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+}
+
+warninga () {
+  printf "[\033[1;91mWarning\033[0m] %b\n" "$1 "1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+}
+
+fatala () {
+  if [[ "$#" -ge 1 ]]; then
+    printf "[\033[1;91mFatal\033[0m] %b\n" "$1" 1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+  fi
+
+  printf "[\e[1;91mFatal\e[0m] Check the logfile at %s for more information.\n" "$DOTFILES_LOG"
+
+  exit 1
+}
+
+#-- Definitions ------------------------------------------------------------------------------------
+pass() {
+  printf "${FONT_GREEN}OK${FONT_RESET}"
+  sleep 0.01
+  log --linefeed
+}
+
+fail () {
+  printf "\033[1;91mERROR\033[0m\n" 1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+  sleep 0.01
+  log --linefeed
+}
+
+skip () {
+  if [[ "${#}" -eq 1 ]]; then
+    clog "$1"
+  fi
+
+  printf "\033[1;92mSKIPPED\033[0m\n" 1>&"${DOTFILES_FD_5}" 2>&"${DOTFILES_FD_6}"
+  sleep 0.01
+  log --linefeed
+}
+
+checkSuccess () {
+  "$@" && pass || { fail; fatal; }
+}
+
+#-- Definitions ------------------------------------------------------------------------------------
+moveUp () {
+  # $1 - Number of lines to move
+  printf "\033[%iA" "${1:-1}"
+}
+
+moveDown () {
+  # $1 - Number of lines to move
+  if [[ "${#}" -eq 0 ]]; then
+    1=1
+  fi
+
+  printf "\033[%iB" "${1}"
+}
+
+clearLine () {
+  printf "\r\033[K"
+}
+
+clearRest () {
+  printf "\033[K"
+}

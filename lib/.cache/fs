@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# module
+
+cdSafe()
+{
+    cd "${1}" || {
+        console.fatal "Failed to change directory to '${1}'"
+        exit 1
+    }
+}
+
+mkdirSafe()
+{
+    if [[ ! -d "${1}" ]]; then
+        mkdir "${1}" || {
+            console.fatal "Failed to create directory '${1}'"
+            exit 1
+        }
+    fi
+}

@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+
+## Checks whether the `tput` is available, a utility used
+## to manipulate the terminal.
+##
+tput_available()
+{
+    if command -v "tput" 1>/dev/null 2>&1; then
+        return 0
+    fi
+
+    return 1
+}
+
+## Checks whether 256 colors are available on the terminal.
+##
+color_available()
+{
+    if [[ "$(tput colors 2>/dev/null)" -ge 8 ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
+## Checks whether unicode support is available in the terminal.
+##
+unicode_available()
+{
+    if color_available && $(printf "\uF3B7" | grep -v "F3B7" >/dev/null 2>&1); then
+        return 0
+    fi
+
+    return 1
+}
+
+set_colors()
+{
+    if tput_available && color_available; then
+        FONT_RESET="$(tput sgr0)"
+
+        # Colors
+        FONT_RED="$(tput setaf 1)"
+        FONT_GREEN="$(tput setaf 2)"
+        FONT_YELLOW="$(tput setaf 3)"
+        FONT_BLUE="$(tput setaf 4)"
+        FONT_PURPLE="$(tput setaf 5)"
+        FONT_CYAN="$(tput setaf 6)"
+        FONT_WHITE="$(tput setaf 7)"
+
+        # Flags
+        FONT_BOLD="$(tput bold || :)"
+        FONT_DIM="$(tput dim || :)"
+        FONT_ITALIC="$(tput sitm || :)"
+        FONT_UNDERLINE="$(tput smul || :)"
+        FONT_BLINK="$(tput blink || :)"
+        FONT_INVERT="$(tput rev || :)"
+        FONT_INVISIBLE="$(tput invis || :)"
+    else
+        FONT_RESET=""
+
+        # Colors
+        FONT_RED=""
+        FONT_GREEN=""
+        FONT_YELLOW=""
+        FONT_BLUE=""
+        FONT_PURPLE=""
+        FONT_CYAN=""
+        FONT_WHITE=""
+
+        # Flags
+        FONT_BOLD=""
+        FONT_DIM=""
+        FONT_ITALIC=""
+        FONT_UNDERLINE=""
+        FONT_BLINK=""
+        FONT_INVERT=""
+        FONT_INVISIBLE=""
+    fi
+}
+
+set_symbols()
+{
+    if tput_available && unicode_available; then
+        FONT_PointingArrow=$'\u27a1'
+        FONT_ArrowLeft=$'\ue0b2'
+        FONT_ArrowRight=$'\ue0b0'
+        FONT_ArrowRightDown=$'\u2198'
+        FONT_ArrowDown=$'\u2B07'
+        FONT_PlusMinus=$'\ue00b1'
+        FONT_Branch=$'\ue0a0'
+        FONT_RefersTo=$'\u27a6'
+        FONT_OK=$'\u2714'
+        FONT_Fail=$'\u2718'
+        FONT_Lightning=$'\u26a1'
+        FONT_Cog=$'\u2699'
+        FONT_Heart=$'\u2764'
+        
+        # colorful
+        FONT_Star=$'\u2b50'
+        FONT_Saxophone=$'\U1F3B7'
+        FONT_ThumbsUp=$'\U1F44D'
+    else
+        FONT_PointingArrow="~"
+        FONT_ArrowLeft="<"
+        FONT_ArrowRight=">"
+        FONT_ArrowRightDown=">"
+        FONT_ArrowDown="_"
+        FONT_PlusMinus="+-"
+        FONT_Branch="|}"
+        FONT_RefersTo="*"
+        FONT_OK="+"
+        FONT_Fail="x"
+        FONT_Lightning="!"
+        FONT_Cog="{*}"
+        FONT_Heart="<3"
+        
+        # colorful
+        FONT_Star="*"
+        FONT_Saxophone="(YEAH)"
+        FONT_ThumbsUp="(OK)"
+    fi
+}
+
+##
+# Verifies that the following file descriptors are open in the terminal:
+#
+#   - STDIN
+#   - STDOUT
+#   - STDERR
+#
+# If any of these descriptors are not available, the script will error
+# and exit.
+##
+check_file_descriptors()
+{
+    if [[ ! -t 0 ]]; then
+        printf "STDIN is not available\n" 1>&2
+        exit 1
+    fi
+
+    if [[ ! -t 1 ]]; then
+        printf "STDOUT is not available\n" 1>&2
+        exit 1
+    fi
+
+    if [[ ! -t 2 ]]; then
+        printf "STDERR is not available\n" 1>&2
+        exit 1
+    fi
+}
+
+set_colors
+set_symbols
+check_file_descriptors

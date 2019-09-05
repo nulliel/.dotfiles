@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+
+##
+# Prevent the script from being executed directly.
+##
+if [[ -z "$0" ]] || [[ "$0" == "bash" ]] || [[ "$0" == "-bash" ]]; then
+  printf "This script may only be sourced from other scripts.\n" 1>&2
+  exit 1
+fi
+
+export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+
+set -o errexit  # Exit when a command returns a non-zero status code
+set -o nounset  # Exit when an unset variable is used
+set -o pipefail # Exit when a command fails in a pipe. eg. command_will_fail | piped_command
+
+##-- Function Stubs -----------------------------------------------------------
+shopt -s expand_aliases
+
+alias import="Import::Main"
+alias source="Import::Main"
+alias .="Import::Main"
+
+##-- Importing ----------------------------------------------------------------
+
+declare -a IMPORT_HOOKS=()
+declare -a IMPORTED_FILES=()
+
+##
+#
+#
+# If any hook returns a non-zero status code, the
+# module will not be imported.
+##
+Import::Main()
+{
+    local package="${1}"
+    local cacheFile="${CACHE_DIR}/${package}"
+
+    if [[ ! -d "$(dirname "${cacheFile}")" ]]; then
+        mkdir -p "$(dirname "${cacheFile}")"
+    fi
+
+    for file in "${IMPORTED_FILES[@]}"; do
+        if [[ "${file}" == "${package}" ]]; then
+            return 0
+        fi
+    done
+
+    if [[ "${package}" == "/"* || "${package}" == "./"* ]]; then
+        if ! Import::File "${package}"; then
+            printf "Package '%s' could not be found" "${package}" 1>&2
+            exit 1
+        fi
+
+        IMPORTED_FILES+=("${package}")
+
+        return 0
+    fi
+
+    local handled=1
+    for source in "${IMPORT_SOURCES[@]}"; do
+        if [[ "${source}" == "http://"* || "${source}" == "https://"* ]]; then
+            if Import::HTTP "${source}" "${package}" "${cacheFile}"; then
+                handled=0
+                break
+            fi
+        elif [[ "${source}" == "/"* || "${source}" == "./"* ]]; then
+            if Import::File "${source}/${package}"; then
+                handled=0
+                break
+            fi
+        else
+            printf "[ERROR] Unknown import source '%s'\n" "${source}" 1>&2
+            exit 1
+        fi
+    done
+
+    if [[ "${handled}" -eq 1 ]]; then
+        printf "[ERROR] Package '%s' not found in any sources\n" "${package}" 1>&2
+        exit 1
+    fi
+
+    if [[ ! -f "${cacheFile}" ]]; then
+        printf "[ERROR] Imported file not found in the cache\n" 1>&2
+        exit 1
+    fi
+
+    IMPORTED_FILES+=("${package}")
+
+    if Import::runHooks "${cacheFile}"; then
+        builtin source "${cacheFile}"
+    fi
+}
+
+Import::HTTP()
+{
+    local source="${1}"
+    local package="${2}"
+    local outFile="${3}"
+
+    if command -v curl 1>/dev/null 2>&1; then
+        curl --fail -sL --retry 3 -H "Cache-Control: no-cache" -o "${outFile}" "${source}/${package}" || return 1
+    else
+        wget -t 3 -O - -o "${outFile}" "${source}/${package}" || return 1
+    fi
+}
+
+Import::File()
+{
+    local package="${1}"
+
+    if [[ ! -f "${package}" ]]; then
+        return 1
+    fi
+}
+
+Import::addHook()
+{
+    caller 1
+
+    local functionName="$1"
+
+    for element in "${IMPORT_HOOKS[@]}"; do
+        if [[ "${element}" == "${functionName}" ]]; then
+            printf "[ERROR] Attempted to register hook '%s' twice\n" "${functionName}" 1>&2
+            exit 1
+        fi
+    done
+
+    IMPORT_HOOKS+=("${functionName}")
+}
+
+Import::runHooks()
+{
+    local cacheFile="${1}"
+
+    for hook in "${IMPORT_HOOKS[@]}"; do
+        if ! "${hook}" "${cacheFile}"; then
+            return 1
+        fi
+    done
+
+    return 0
+}
+
+##
+# Ensures that the library will only be loaded once.
+#
+# Multiple attempts to load the library will result in an
+# error and exit
+##
+__bs__bootstrap()
+{
+    if [[ "${__bs__bootstrapped:-1}" -eq 0 ]]; then
+        printf "Attempting to bootstrap multiple times.\n" 1>&2
+        exit 1
+    fi
+
+    readonly __bs__bootstrapped=0
+}
+
+__bs__main()
+{
+    __bs__bootstrap
+
+    ##################
+    ## Default Modules
+    ##################
+    mkdir -p "${CACHE_DIR}"
+
+    import "core/coproc"
+    import "core/module"
+    import "core/colors"
+
+    import "console"
+
+    ##
+    # When scripts are called, their working directory is the directory in which
+    # they were called, not the location they reside.
+    #
+    # This causes issues when including local files, as you may not be in the
+    # directory you expect.
+    #
+    # This remedies this issue by changing the directory to the folder in which the
+    # called script resides.
+    #
+    # Note: greadlink is an osx command
+    #
+    # Arguments:
+    #
+    #   $1 :: The path to resolve
+    ##
+    __bs__resolve_path()
+    {
+        $(type -p greadlink readlink | head -1) -f "$1"
+    }
+
+    declare -g SCRIPT_ROOT
+    declare -g SCRIPT_SELF
+
+    SCRIPT_ROOT="$(dirname "$(__bs__resolve_path "$0")")"
+    SCRIPT_SELF="$(dirname "$(__bs__resolve_path "${BASH_SOURCE[0]}")")"
+
+    readonly SCRIPT_ROOT
+    readonly SCRIPT_SELF
+}
+
+################
+## Default Stubs
+################
+__bs__main "$@"

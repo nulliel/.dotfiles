@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2034,SC1090
+# shellcheck disable=SC1090
 
-#-- Options ----------------------------------------------------------------------------------------
-set -o errtrace    # Inherit error traps
-set -o nounset     # Disallow expansion of unset variables
+#-- Bash Starter -----------------------------------------------------------------------------------
+declare -g BOOTSTRAP_DIR && BOOTSTRAP_DIR="$(cd "${BASH_SOURCE[0]%/*}" && pwd)/../lib"
+declare -g CACHE_DIR="${BOOTSTRAP_DIR}/.cache"
+
+declare -ag IMPORT_SOURCES=(
+    "${CACHE_DIR}"
+    "https://raw.githubusercontent.com/nulliel/bash-starter/master/lib/modules"
+)
+
+# shellcheck source=lib/bootstrap
+source "${BOOTSTRAP_DIR}/bootstrap"
 
 #-- Config -----------------------------------------------------------------------------------------
 readonly SCRIPT_NAME="$(basename ${0})"
@@ -17,19 +25,19 @@ readonly DOTFILES_LOG="${DOTFILES_STORE}/dotfiles.log"
 readonly DOTFILES_REMOTE="https://github.com/nulliel/dotfiles.git"
 
 #-- Libraries --------------------------------------------------------------------------------------
-source "${DOTFILES_DIR}/lib/internal/utils"             # GOOD
-source "${DOTFILES_DIR}/lib/internal/utils-arguments"   # GOOD
-source "${DOTFILES_DIR}/lib/internal/utils-build"       #
-source "${DOTFILES_DIR}/lib/internal/utils-console"     # GOOD
-source "${DOTFILES_DIR}/lib/internal/utils-fs"          # GOOD
-source "${DOTFILES_DIR}/lib/internal/utils-header"      # GOOD
-source "${DOTFILES_DIR}/lib/internal/utils-interactive" # GOOD
-source "${DOTFILES_DIR}/lib/internal/utils-logging"     # GOOD
-source "${DOTFILES_DIR}/lib/internal/utils-npm"         #
-source "${DOTFILES_DIR}/lib/internal/utils-package"     # GOOD
-source "${DOTFILES_DIR}/lib/internal/utils-process"     # GOOD
-source "${DOTFILES_DIR}/lib/internal/utils-progress"    # GOOD
-source "${DOTFILES_DIR}/lib/internal/utils-system"      # GOOD
+# source "${DOTFILES_DIR}/lib/internal/utils"             # GOOD
+# source "${DOTFILES_DIR}/lib/internal/utils-arguments"   # GOOD
+# source "${DOTFILES_DIR}/lib/internal/utils-build"       #
+# source "${DOTFILES_DIR}/lib/internal/utils-console"     # GOOD
+# source "${DOTFILES_DIR}/lib/internal/utils-fs"          # GOOD
+# source "${DOTFILES_DIR}/lib/internal/utils-header"      # GOOD
+# source "${DOTFILES_DIR}/lib/internal/utils-interactive" # GOOD
+# source "${DOTFILES_DIR}/lib/internal/utils-logging"     # GOOD
+# source "${DOTFILES_DIR}/lib/internal/utils-npm"         #
+# source "${DOTFILES_DIR}/lib/internal/utils-package"     # GOOD
+source "${DOTFILES_DIR}/src/internal/utils-process"
+# source "${DOTFILES_DIR}/lib/internal/utils-progress"    # GOOD
+# source "${DOTFILES_DIR}/lib/internal/utils-system"      # GOOD
 
 #-- Require non root with sudo privileges ----------------------------------------------------------
 if [[ "$EUID" -eq 0 ]]; then
@@ -37,94 +45,106 @@ if [[ "$EUID" -eq 0 ]]; then
   exit
 fi
 
-if ! sudo -n true; then
-  printf "This script requires the use of sudo.\n"
-  exit
-fi
+# if ! sudo -n true; then
+#   printf "This script requires the use of sudo.\n"
+#   exit
+# fi
 
-if ! commandExists "git"; then
-  printf "This script requires git.\n"
-  exit
-fi
+# if ! commandExists "git"; then
+#   printf "This script requires git.\n"
+#   exit
+# fi
 
 #-- Utils ------------------------------------------------------------------------------------------
-showUsage () {
-  cat <<EOF
+showUsage()
+{
+    cat <<EOF
 Usage: $SCRIPT_NAME [options]
 
 Options:
-    --help        Print this help text
-    --no-sync     Skip syncing the git repository
+    -h, --help        Print this help text
+    -h, --no-sync     Skip syncing the git repository
 
 Documentation can be found at https://github.com/nulliel/dotfiles/
 EOF
 }
 
 #-- Main -------------------------------------------------------------------------------------------
-main () {
-  trap "trapError" ERR                          # utils-process
-  trap "trapExit"  EXIT SIGINT SIGTERM SIGTSTP  # utils-process
+main()
+{
+    import fs
 
-  # Disable word wrapping
-  tput rmam
+    trap "trapError" ERR                          # utils-process
+    trap "trapExit"  EXIT SIGINT SIGTERM SIGTSTP  # utils-process
 
-  #-- Console redirection --------------------------------------------------------------------------
-  redirectOutput
+    # Disable word wrapping
+    tput rmam
 
-  clear
-  console '\e[1m'
-  console "          888          888     .d888 d8b 888                  \n"
-  console '          888          888    d88P"  Y8P 888                  \n'
-  console '          888          888    888        888                  \n'
-  console '      .d88888  .d88b.  888888 888888 888 888  .d88b.  .d8888b \n'
-  console '     d88" 888 d88""88b 888    888    888 888 d8P  Y8b 88K     \n'
-  console '     888  888 888  888 888    888    888 888 88888888 "Y8888b.\n'
-  console '     Y88b 888 Y88..88P Y88b.  888    888 888 Y8b.          X88\n'
-  console '      "Y88888  "Y88P"   "Y888 888    888 888  "Y8888   88888P" \e[0m\n\n'
+    #-- Title --------------------------------------------------------------------------------------
+    clear
+    console.raw "${FONT_BOLD}"
+    console.raw '          888          888     .d888 d8b 888                  \n'
+    console.raw '          888          888    d88P"  Y8P 888                  \n'
+    console.raw '          888          888    888        888                  \n'
+    console.raw '      .d88888  .d88b.  888888 888888 888 888  .d88b.  .d8888b \n'
+    console.raw '     d88" 888 d88""88b 888    888    888 888 d8P  Y8b 88K     \n'
+    console.raw '     888  888 888  888 888    888    888 888 88888888 "Y8888b.\n'
+    console.raw '     Y88b 888 Y88..88P Y88b.  888    888 888 Y8b.          X88\n'
+    console.raw '      "Y88888  "Y88P"   "Y888 888    888 888  "Y8888   88888P"\n'
+    console.raw "${FONT_RESET}"
 
-  noSync=false # Prevent git synchronization
+    #-- Arguments ----------------------------------------------------------------------------------
+    local noSync=false # Prevent git synchronization
 
-  parseArguments "no-sync" "noSync"    bool      \
-                 "help"    "showUsage" func,exit \
-                 "--" "$@"
+    while (( "${#}" )); do
+        case "$1" in
+            -h|--help)
+                showUsage && exit 0
+                ;;
+            -n|--no-sync)
+                noSync=true
+                ;;
+        esac
 
-  #-- Make sure we're in the right directory -------------------------------------------------------
-  cdSafe "${DOTFILES_DIR}"
+        shift
+    done
 
-  #-- Create folder structures ---------------------------------------------------------------------
-  mkdirSafe "${DOTFILES_USR}"
-  mkdirSafe "${DOTFILES_USR}/bin"
-  mkdirSafe "${DOTFILES_USR}/etc"
-  mkdirSafe "${DOTFILES_USR}/include"
-  mkdirSafe "${DOTFILES_USR}/lib"
-  mkdirSafe "${DOTFILES_USR}/local"
-  mkdirSafe "${DOTFILES_USR}/share"
-  mkdirSafe "${DOTFILES_USR}/src"
+    #-- Make sure we're in the right directory -------------------------------------------------------
+    fs.cdSafe "${DOTFILES_DIR}"
 
-  mkdirSafe "${DOTFILES_BUILD}"
-  mkdirSafe "${DOTFILES_STORE}"
+    #-- Create folder structures ---------------------------------------------------------------------
+    fs.mkdirSafe "${DOTFILES_USR}"
+    fs.mkdirSafe "${DOTFILES_USR}/bin"
+    fs.mkdirSafe "${DOTFILES_USR}/etc"
+    fs.mkdirSafe "${DOTFILES_USR}/include"
+    fs.mkdirSafe "${DOTFILES_USR}/lib"
+    fs.mkdirSafe "${DOTFILES_USR}/local"
+    fs.mkdirSafe "${DOTFILES_USR}/share"
+    fs.mkdirSafe "${DOTFILES_USR}/src"
 
-  #-- Acquire the lock -----------------------------------------------------------------------------
-  lockfile "${SCRIPT_NAME}"
+    fs.mkdirSafe "${DOTFILES_BUILD}"
+    fs.mkdirSafe "${DOTFILES_STORE}"
 
-  #-- Empty the log file ---------------------------------------------------------------------------
-  printf "" >"$DOTFILES_LOG"
+    exit 1
 
-  #-- Sync repository ------------------------------------------------------------------------------
-  source "${DOTFILES_DIR}/lib/internal/sync"
+    #-- Acquire the lock ---------------------------------------------------------------------------
+    lockfile "${SCRIPT_NAME}"
 
-  #-- Install packages -----------------------------------------------------------------------------
-  # source "${DOTFILES_DIR}/lib/packages"
+    #-- Sync repository ------------------------------------------------------------------------------
+    # source "${DOTFILES_DIR}/lib/internal/sync"
 
-  #-- Create links ---------------------------------------------------------------------------------
-  source "${DOTFILES_DIR}/lib/links"
+    #-- Install packages -----------------------------------------------------------------------------
+    # source "${DOTFILES_DIR}/lib/packages"
 
-  #-- Restart terminal -----------------------------------------------------------------------------
-  console --bold --linefeed "Please restart your terminal session for changes to take effect"
+    #-- Create links ---------------------------------------------------------------------------------
+    # source "${DOTFILES_DIR}/lib/links"
 
-  while read -r; do
-    :
-  done
+    #-- Restart terminal -----------------------------------------------------------------------------
+    console.info "Please restart your terminal session for changes to take effect"
+
+    while read -r; do
+        :
+    done
 }
 
 main "$@"
