@@ -1,17 +1,24 @@
 # Dotfiles
 
+My tailored dotfiles for use in Arch Linux and OSX.
 
+See [nulliel/arch-bootstrap](https://github.com/nulliel/arch-bootstrap) for bootstrapping an Arch Linux setup.
 
 ## How to install
-The following command will install and run these dotfiles for the first time.
 
-[view install](https://github.com/nulliel/dotfiles/blob/master/install)
-
-```bash
+#### Arch Linux
+```shell script
+pacman -Sy git
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/nulliel/dotfiles/master/install)"
 ```
 
-
+#### OSX
+```shell script
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew tap discoteq/discoteq
+brew install git flock
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/nulliel/dotfiles/master/install)"
+```
 
 ## Features
 

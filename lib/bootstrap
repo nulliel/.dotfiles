@@ -37,10 +37,6 @@ Import::Main()
     local package="${1}"
     local cacheFile="${CACHE_DIR}/${package}"
 
-    if [[ ! -d "$(dirname "${cacheFile}")" ]]; then
-        mkdir -p "$(dirname "${cacheFile}")"
-    fi
-
     for file in "${IMPORTED_FILES[@]}"; do
         if [[ "${file}" == "${package}" ]]; then
             return 0
@@ -53,10 +49,9 @@ Import::Main()
             exit 1
         fi
 
-        builtin source "${package}"
-
         IMPORTED_FILES+=("${package}")
 
+        builtin source "${package}"
         return 0
     fi
 
@@ -101,8 +96,12 @@ Import::HTTP()
     local package="${2}"
     local outFile="${3}"
 
+    if [[ ! -d "$(dirname "${outFile}")" ]]; then
+        mkdir -p "$(dirname "${outFile}")"
+    fi
+
     if command -v curl 1>/dev/null 2>&1; then
-        curl --fail -sL --retry 3 -H "Cache-Control: no-cache" -o "${outFile}" "${source}/${package}" || return 1
+        curl --fail -sL --retry 3 -o "${outFile}" "${source}/${package}" || return 1
     else
         wget -t 3 -O - -o "${outFile}" "${source}/${package}" || return 1
     fi

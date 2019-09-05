@@ -14,7 +14,7 @@ declare -ag IMPORT_SOURCES=(
 source "${BOOTSTRAP_DIR}/bootstrap"
 
 #-- Config -----------------------------------------------------------------------------------------
-readonly SCRIPT_NAME="$(basename ${0})"
+readonly SCRIPT_NAME="$(basename "${0}")"
 
 readonly DOTFILES_DIR="${HOME}/.dotfiles"
 readonly DOTFILES_USR="${DOTFILES_DIR}/.usr"
@@ -82,16 +82,15 @@ main()
 
     #-- Title --------------------------------------------------------------------------------------
     clear
-    console.raw "${FONT_BOLD}"
-    console.raw '          888          888     .d888 d8b 888                  \n'
-    console.raw '          888          888    d88P"  Y8P 888                  \n'
-    console.raw '          888          888    888        888                  \n'
-    console.raw '      .d88888  .d88b.  888888 888888 888 888  .d88b.  .d8888b \n'
-    console.raw '     d88" 888 d88""88b 888    888    888 888 d8P  Y8b 88K     \n'
-    console.raw '     888  888 888  888 888    888    888 888 88888888 "Y8888b.\n'
-    console.raw '     Y88b 888 Y88..88P Y88b.  888    888 888 Y8b.          X88\n'
-    console.raw '      "Y88888  "Y88P"   "Y888 888    888 888  "Y8888   88888P"\n'
-    console.raw "${FONT_RESET}"
+    console.info '          888          888     .d888 d8b 888                  '
+    console.info '          888          888    d88P"  Y8P 888                  '
+    console.info '          888          888    888        888                  '
+    console.info '      .d88888  .d88b.  888888 888888 888 888  .d88b.  .d8888b '
+    console.info '     d88" 888 d88""88b 888    888    888 888 d8P  Y8b 88K     '
+    console.info '     888  888 888  888 888    888    888 888 88888888 "Y8888b.'
+    console.info '     Y88b 888 Y88..88P Y88b.  888    888 888 Y8b.          X88'
+    console.info '      "Y88888  "Y88P"   "Y888 888    888 888  "Y8888   88888P"'
+    console.info "\n"
 
     #-- Arguments ----------------------------------------------------------------------------------
     local noSync=false # Prevent git synchronization
@@ -125,13 +124,11 @@ main()
     fs.mkdirSafe "${DOTFILES_BUILD}"
     fs.mkdirSafe "${DOTFILES_STORE}"
 
-    exit 1
-
     #-- Acquire the lock ---------------------------------------------------------------------------
     lockfile "${SCRIPT_NAME}"
 
     #-- Sync repository ------------------------------------------------------------------------------
-    # source "${DOTFILES_DIR}/lib/internal/sync"
+    source "${DOTFILES_DIR}/src/internal/sync"
 
     #-- Install packages -----------------------------------------------------------------------------
     # source "${DOTFILES_DIR}/lib/packages"
