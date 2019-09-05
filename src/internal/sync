@@ -6,7 +6,7 @@ if [[ "${noSync}" == true ]]; then
 fi
 
 #-- Initialize the git repository ------------------------------------------------------------------
-print.raw "Initializing git repository..."
+console.raw "Initializing git repository..."
 
 if ! git rev-parse --is-inside-work-tree 1>/dev/null 2>&1; then
     if ! git init 1>/dev/null 2>&1; then
@@ -33,7 +33,7 @@ else
 fi
 
 #-- Sync the repository ----------------------------------------------------------------------------
-print.raw "Syncing dotfiles..."
+console.raw "Syncing dotfiles..."
 
 if ! git pull --rebase origin master 1>/dev/null 2>&1; then
     console.fail
