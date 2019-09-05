@@ -22,12 +22,9 @@ trapExit () {
   # Disable trap from being called multiple times
   trap - EXIT
 
-  # Restore redirected console outputs and release used file descriptors
-  restoreOutput
-
   # Release lockfile fd
   if [[ "${LOCKFILE_FD}" != 0 ]]; then
-    eval "exec ${LOCKFILE_FD}>&-"
+      eval "exec ${LOCKFILE_FD}>&-"
   fi
 
   # Restore line wrapping
@@ -35,20 +32,14 @@ trapExit () {
 }
 
 trapError () {
-  # Disable trap to prevent possible recursion
-  trap - ERR
+    # Disable trap to prevent possible recursion
+    trap - ERR
 
-  # Print fatal error
-  fatal "Check the logfile at ${DOTFILES_LOG} for more information.\n"
+    # Release lockfile fd
+    if [[ "${LOCKFILE_FD}" != 0 ]]; then
+        eval "exec ${LOCKFILE_FD}>&-"
+    fi
 
-  # Restore redirected console outputs and release used file descriptors
-  restoreOutput
-
-  # Release lockfile fd
-  if [[ "${LOCKFILE_FD}" != 0 ]]; then
-    eval "exec ${LOCKFILE_FD}>&-"
-  fi
-
-  # Restore line wrapping
-  tput smam
+    # Restore line wrapping
+    tput smam
 }

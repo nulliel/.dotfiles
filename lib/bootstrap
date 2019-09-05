@@ -53,6 +53,8 @@ Import::Main()
             exit 1
         fi
 
+        builtin source "${package}"
+
         IMPORTED_FILES+=("${package}")
 
         return 0
